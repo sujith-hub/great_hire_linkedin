@@ -4,7 +4,7 @@ import { User } from "../models/user.model.js";
 import cloudinary from "../utils/cloudinary.js";
 import getDataUri from "../utils/dataUri.js";
 
-
+// user Registration controller
 export const register = async (req, res) => {
   try {
     const { fullname, email, phoneNumber, password, role } = req.body;
@@ -45,6 +45,7 @@ export const register = async (req, res) => {
     console.log(error);
   }
 };
+
 //login section...
 export const login = async (req, res) => {
   try {
@@ -123,69 +124,6 @@ export const logout = async (req, res) => {
     console.log(error);
   }
 };
-//update profile...
-
-// export const updateProfile = async (req, res) => {
-//   try {
-//     const { fullname, email, phoneNumber, bio, skills } = req.body;
-//     const file = req.file;
-
-//        const fileUri = getDataUri(file);
-//        console.log(fileUri);
-       
-//        console.log(user);
-//        console.log();
-       
-//        const cloudResponse = await cloudinary.uploader.upload(fileUri.content)
-
-//         console.log(cloudResponse);
-         
-//     // cloudainary files come here....
-//     let skillsArray;
-//     if (skills) {
-//        skillsArray = skills.split(",");
-//     }
-
-//     const userId = req.id; // coming from middleware authentication...
-//     let user = await User.findById(userId);
-
-//     if (!user) {
-//       return res.status(400).json({
-//         message: "User not found.",
-//         success: false,
-//       });
-//     }
-//     //updating data....
-//     if (fullname) user.fullname = fullname;
-//     if (email) user.email = email;
-//     if (phoneNumber) user.phoneNumber = phoneNumber;
-//     if (bio) user.profile.bio = bio;
-//     if (skills) user.profile.skills = skillsArray;
-
-//     //resume pending here....
-//    if(cloudResponse){
-//     user.profile.resume = cloudResponse.secure_url
-//     user.profile.resumeOriginalName = file.originalname
-//    }
-//     await user.save();
-
-//     user = {
-//       _id: user._id,
-//       fullname: user.fullname,
-//       email: user.email,
-//       phoneNumber: user.phoneNumber,
-//       role: user.role,
-//       profile: user.profile,
-//     };
-//     return res.status(200).json({
-//       message: "Profile updated succesfully.",
-//       user,
-//       success: true,
-//     });
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
 
 export const updateProfile = async (req, res) => {
   try {
