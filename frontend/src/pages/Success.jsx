@@ -1,6 +1,6 @@
 import React from "react";
 import { FcCheckmark } from "react-icons/fc";
-import Navbar from "./shared/Navbar";
+import Navbar from "../components/shared/Navbar";
 import { Link } from "react-router-dom";
 
 export const Success = () => {

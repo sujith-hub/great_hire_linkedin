@@ -129,12 +129,10 @@ export const updateProfile = async (req, res) => {
   try {
     const { fullname, email, phoneNumber, bio, skills } = req.body;
     const file = req.file;
-
     let cloudResponse;
     if (file) {
       // Convert file to a URI
       const fileUri = getDataUri(file);
-      console.log("File URI:", fileUri);
 
       // Upload to Cloudinary
       cloudResponse = await cloudinary.uploader.upload(fileUri.content);
@@ -158,6 +156,7 @@ export const updateProfile = async (req, res) => {
       });
     }
 
+    
     // Update user fields
     if (fullname) user.fullname = fullname;
     if (email) user.email = email;
@@ -170,6 +169,7 @@ export const updateProfile = async (req, res) => {
       user.profile.resume = cloudResponse.secure_url;
       user.profile.resumeOriginalName = file.originalname;
     }
+    console.log(cloudResponse);
 
     // Save the updated user to the database
     await user.save();

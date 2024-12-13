@@ -1,8 +1,7 @@
 import React from "react";
 import { FaQuestionCircle, FaPhoneAlt, FaRegEnvelope } from "react-icons/fa";
-import { TfiUser } from "react-icons/tfi";
-import Navbar from "./shared/Navbar";
-import Footer from "./shared/Footer";
+import Navbar from "../components/shared/Navbar";
+import Footer from "../components/shared/Footer";
 
 const ContactSection = () => {
   return (

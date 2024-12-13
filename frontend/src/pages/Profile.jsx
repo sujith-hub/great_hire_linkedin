@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import Navbar from "./shared/Navbar";
-import { Avatar, AvatarImage } from "./ui/avatar";
+import Navbar from "../components/shared/Navbar";
+import { Avatar, AvatarImage } from "../components/ui/avatar";
 import { Contact, Mail, Pen } from "lucide-react";
-import { Badge } from "./ui/badge";
-import { Button } from "./ui/button";
-import { Label } from "./ui/label";
-import AppliedJobTable from "./AppliedJobTable";
-import UpdateProfile from "./UpdateProfile";
+import { Badge } from "../components/ui/badge";
+import { Button } from "../components/ui/button";
+import { Label } from "../components/ui/label";
+import AppliedJobTable from "../components/AppliedJobTable";
+import UpdateProfile from "../components/UpdateProfile";
 import { useSelector } from "react-redux";
 
 const isResume = true;

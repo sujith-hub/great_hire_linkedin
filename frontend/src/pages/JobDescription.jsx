@@ -1,7 +1,7 @@
 import React from "react";
-import Navbar from "./shared/Navbar";
-import { Badge } from "./ui/badge";
-import { Button } from "./ui/button";
+import Navbar from "../components/shared/Navbar";
+import { Badge } from "../components/ui/badge";
+import { Button } from "../components/ui/button";
 
 const JobDescription = () => {
   const isApplied = false;

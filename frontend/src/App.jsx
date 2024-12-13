@@ -1,19 +1,18 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Login from "./components/auth/Login";
 import Signup from "./components/auth/Signup";
-import Browse from "./components/Browse";
-import Contact from "./components/Contact";
-import Home from "./components/Home";
-import JobDescription from "./components/JobDescription";
+import Contact from "./pages/Contact";
+import Home from "./pages/Home";
+import JobDescription from "./pages/JobDescription";
 import Jobs from "./components/Jobs";
-import PrivacyPolicy from "./components/Policies/PrivacyPolicy";
-import RefundAndReturnPolicy from "./components/Policies/RefundAndReturnPolicy";
-import TermsAndConditions from "./components/Policies/TermsAndConditions";
-import Profile from "./components/Profile";
+import PrivacyPolicy from "./pages/policies/PrivacyPolicy";
+import RefundAndReturnPolicy from "./pages/policies/RefundAndReturnPolicy";
+import TermsAndConditions from "./pages/policies/TermsAndConditions";
+import Profile from "./pages/Profile";
 import { JobDetailsProvider } from "./context/JobDetailsContext";
 
 import MainApply from "./components/ApplyJobs/MainApply";
-import ReportJob from "./components/ReportJob";
+import ReportJob from "./pages/ReportJob";
 
 const appRouter = createBrowserRouter([
   {
@@ -39,10 +38,6 @@ const appRouter = createBrowserRouter([
   {
     path: "/apply",
     element:<MainApply />,
-  },
-  {
-    path: "/browse",
-    element: <Browse />,
   },
   {
     path: "/profile",

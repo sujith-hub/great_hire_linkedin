@@ -52,8 +52,7 @@ const Navbar = () => {
               <>
                 <li><Link to="/recruiter/dashboard" className="hover:text-blue-700">Dashboard</Link></li>
                 <li><Link to="/" className="hover:text-blue-700">Your Jobs</Link></li>
-                <li><Link to="/jobs" className="hover:text-blue-700">Search Jobs</Link></li>
-                <li><Link to="/recruiter/post-job" className="hover:text-blue-700">Post Job</Link></li>
+                <li><Link to="/jobs" className="hover:text-blue-700">Jobs</Link></li>
               </>
             ) : (
               <>
@@ -75,7 +74,7 @@ const Navbar = () => {
                 Policies
               </button>
               {isPolicyHovered && (
-                <div className="absolute left-0 bg-white border rounded-xl shadow-xl p-2 w-60 z-20">
+                <div className="absolute left-0 bg-white border animate-slide-in-right rounded-xl shadow-xl p-2 w-60 z-20">
                   <Link to="/policy/privacy-policy" className="px-4 py-2 hover:bg-gray-100 block">Privacy Policy</Link>
                   <Link to="/policy/refund-policy" className="px-4 py-2 hover:bg-gray-100 block">Refund and Return Policy</Link>
                   <Link to="/policy/terms-and-conditions" className="px-4 py-2 hover:bg-gray-100 block">Terms and Conditions</Link>
@@ -114,7 +113,7 @@ const Navbar = () => {
                   <div className="flex items-center gap-4">
                     <Avatar className="h-12 w-12 rounded-full">
                       <AvatarImage
-                        src={user?.profile?.profilePhoto || "https://github.com/shadcn.png"}
+                        src={user?.profile.profilePhoto || "https://github.com/shadcn.png"}
                         alt="User Avatar"
                         className="h-12 w-12 rounded-full object-cover"
                       />
@@ -202,9 +201,6 @@ const Navbar = () => {
           </li>
           <li className="px-4 py-2 hover:bg-gray-100">
             <Link to="/jobs" onClick={() => setIsMenuOpen(false)}>Jobs</Link>
-          </li>
-          <li className="px-4 py-2 hover:bg-gray-100">
-            <Link to="/browse" onClick={() => setIsMenuOpen(false)}>Browse</Link>
           </li>
           <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={() => handleScrollToSection("policies")}>
             <Link to="/policies" onClick={() => setIsMenuOpen(false)}>Policies</Link>
