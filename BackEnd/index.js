@@ -11,16 +11,6 @@ import connectDB from "./utils/db.js";
 dotenv.config({});
 
 const app = express();
-//middleware
-/*
-app.get("/home", (req, res) => {
-    return res.status(200).json({
-        message: "I am coming from BackEnd",
-        success:true
-    })
-})
-    */
-
  
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
