@@ -54,11 +54,6 @@ const Navbar = ({ user, isRecruiter, handleLogout }) => {
                 Jobs
               </Link>
             </li>
-            <li>
-              <Link to="/browse" className="hover:text-blue-700">
-                Browse
-              </Link>
-            </li>
             <li
               className="relative"
               onMouseEnter={() => setIsPolicyHovered(true)}
