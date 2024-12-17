@@ -5,6 +5,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import GoogleLogin from "../GoogleLogin";
 import { google_client_id } from "../../utils/GoogleOAuthCredentials.js";
 import axios from "axios";
+import Navbar from "../shared/Navbar";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -43,78 +44,83 @@ const Login = () => {
   };
 
   return (
-    <div className="flex flex-col-reverse md:flex-row h-screen">
-      {/* Left Section - Form */}
-      <div className="w-full md:w-1/2 lg:w-1/3 flex items-center justify-center bg-gradient-to-l from-white to-blue-100 p-6">
-        <form className="w-full max-w-md space-y-4" onSubmit={handleSubmit}>
-          <h1 className="text-3xl font-bold text-center">
-            Great<span className="text-blue-700">Hire</span>
-          </h1>
-          <h1 className="text-2xl md:text-4xl font-bold text-center">Login</h1>
-          <p className="text-sm md:text-md font-semibold text-gray-500 text-center">
-            Find the job made for you!
-          </p>
-          {/* Google Login Button */}
-          <GoogleOAuthProvider clientId={google_client_id}>
-            <GoogleLogin text="Login" role="student" />
-          </GoogleOAuthProvider>
-          <p className="text-sm font-semibold text-gray-400 text-center">
-            ---- or Login with email ----
-          </p>
-          <div className="flex flex-col space-y-4">
-            <label className="font-bold">Email</label>
-            <input
-              type="email"
-              name="email"
-              placeholder="mail@domain.com"
-              value={formData.email}
-              onChange={handleChange}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <label className="font-bold">Password</label>
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={formData.password}
-              onChange={handleChange}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
-          >
-            Login
-          </button>
-          <p className="text-center text-sm text-gray-500">
-            New at GreatHire?{" "}
-            <a href="" className="text-blue-500 hover:underline">
-              Signup
-            </a>
-          </p>
-        </form>
-      </div>
+    <>
+      <Navbar />
+      <div className="flex flex-col-reverse md:flex-row h-screen">
+        {/* Left Section - Form */}
+        <div className="w-full md:w-1/2 lg:w-1/3 flex items-center justify-center bg-gradient-to-l from-white to-blue-100 p-6">
+          <form className="w-full max-w-md space-y-4" onSubmit={handleSubmit}>
+            <h1 className="text-3xl font-bold text-center">
+              Great<span className="text-blue-700">Hire</span>
+            </h1>
+            <h1 className="text-2xl md:text-4xl font-bold text-center">
+              Login
+            </h1>
+            <p className="text-sm md:text-md font-semibold text-gray-500 text-center">
+              Find the job made for you!
+            </p>
+            {/* Google Login Button */}
+            <GoogleOAuthProvider clientId={google_client_id}>
+              <GoogleLogin text="Login" role="student" />
+            </GoogleOAuthProvider>
+            <p className="text-sm font-semibold text-gray-400 text-center">
+              ---- or Login with email ----
+            </p>
+            <div className="flex flex-col space-y-4">
+              <label className="font-bold">Email</label>
+              <input
+                type="email"
+                name="email"
+                placeholder="mail@domain.com"
+                value={formData.email}
+                onChange={handleChange}
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+              <label className="font-bold">Password</label>
+              <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                value={formData.password}
+                onChange={handleChange}
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+            </div>
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            >
+              Login
+            </button>
+            <p className="text-center text-sm text-gray-500">
+              New at GreatHire?{" "}
+              <a href="/signup" className="text-blue-500 hover:underline">
+                Signup
+              </a>
+            </p>
+          </form>
+        </div>
 
-      {/* Right Section - Background Image */}
-      <div className="relative w-full md:w-1/2 lg:w-2/3 h-1/2 md:h-full">
-        {/* Background Image */}
-        <img
-          src={img2}
-          alt="Background"
-          className="w-full h-full object-cover opacity-80"
-        />
-        {/* Centered Content */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center space-y-4 p-4 z-50">
-          <h1 className="font-bold text-2xl md:text-4xl text-gray-600">
-            Find the job made for you.
-          </h1>
-          <p className="font-medium text-gray-600 text-sm md:text-lg max-w-[90%] md:max-w-[70%]">
-            Browse over 150K jobs at top companies.
-          </p>
+        {/* Right Section - Background Image */}
+        <div className="relative w-full md:w-1/2 lg:w-2/3 h-1/2 md:h-full overflow-y-scroll">
+          {/* Background Image */}
+          <img
+            src={img2}
+            alt="Background"
+            className="w-full h-full object-cover opacity-80"
+          />
+          {/* Centered Content */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-center space-y-4 p-4 z-10">
+            <h1 className="font-bold text-2xl md:text-4xl text-gray-600">
+              Find the job made for you.
+            </h1>
+            <p className="font-medium text-gray-600 text-sm md:text-lg max-w-[90%] md:max-w-[70%]">
+              Browse over 150K jobs at top companies.
+            </p>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
