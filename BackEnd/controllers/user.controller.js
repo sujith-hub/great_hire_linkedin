@@ -3,54 +3,79 @@ import jwt from "jsonwebtoken";
 import { User } from "../models/user.model.js";
 import cloudinary from "../utils/cloudinary.js";
 import getDataUri from "../utils/dataUri.js";
+import { oauth2Client } from "../utils/googleConfig.js";
+import axios from "axios";
 
-// user Registration controller
 export const register = async (req, res) => {
   try {
     const { fullname, email, phoneNumber, password, role } = req.body;
+
+    // Validate required fields
     if (!fullname || !email || !phoneNumber || !password || !role) {
       return res.status(400).json({
         message: "Something is missing",
       });
     }
 
-    const file = req.file;
-    const fileUri = getDataUri(file);
-    const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
-
-    const user = await User.findOne({ email });
-    if (user) {
+    // Validate password length
+    if (password.length < 8) {
       return res.status(400).json({
-        message: "User already exist with this email.",
+        message: "Password must be at least 8 characters long.",
         success: false,
       });
     }
+
+    // Check if user already exists
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+      return res.status(400).json({
+        message: "Account already exists.",
+        success: false,
+      });
+    }
+
+    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await User.create({
+    let maxPostJobs = 0;
+    let maxResumeDownload = 0;
+
+    if (role === "recruiter") {
+      maxPostJobs = 10;
+      maxResumeDownload = 100;
+    }
+
+    // Create new user
+    const newUser = await User.create({
       fullname,
       email,
       phoneNumber,
       password: hashedPassword,
       role,
-      profile:{
-        profilePhoto: cloudResponse.secure_url,
-      }
+      maxPostJobs: maxPostJobs,
+      maxResumeDownload: maxResumeDownload,
     });
+    
+
+    // Send success response
     return res.status(201).json({
-      message: "Account created succesfully.",
+      message: "Account created successfully.",
       success: true,
+      user: newUser,
     });
   } catch (error) {
-    console.log(error);
+    console.error("Error during registration:", error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+    });
   }
 };
 
 //login section...
 export const login = async (req, res) => {
   try {
-    const { email, password, role } = req.body;
-    if (!email || !password || !role) {
+    const { email, password } = req.body.data;
+    if (!email || !password) {
       return res.status(400).json({
         message: "Something is missing",
         success: false,
@@ -69,14 +94,6 @@ export const login = async (req, res) => {
     if (!isPasswordMatch) {
       return res.status(400).json({
         message: "Incorrect email or password.",
-        success: false,
-      });
-    }
-    //check role is correct or not...
-    //like as a recruiter or as a employer...
-    if (role != user.role) {
-      return res.status(400).json({
-        message: "Account doesn't exist with current role.",
         success: false,
       });
     }
@@ -104,12 +121,115 @@ export const login = async (req, res) => {
         sameSite: "strict",
       })
       .json({
-        message: `Welcome back ${user.fullname}`,
+        message: `Welcome ${user.fullname}`,
         user,
         success: true,
       });
   } catch (error) {
     console.log(error);
+  }
+};
+
+// login by google
+export const googleLogin = async (req, res) => {
+  try {
+    const { code, role } = req.body;
+
+    if (!code) {
+      return res
+        .status(400)
+        .json({ message: "Authorization code is required" });
+    }
+
+    if (!role || !["student", "recruiter", "admin"].includes(role)) {
+      return res.status(400).json({ message: "Invalid or missing role" });
+    }
+
+    // Exchange authorization code for tokens
+    const { tokens } = await oauth2Client.getToken(code);
+    oauth2Client.setCredentials(tokens);
+
+    // Fetch user information from Google
+    const userRes = await axios.get(
+      `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${tokens.access_token}`
+    );
+
+    const googleUser = userRes.data;
+
+    // Check if user already exists
+    let user = await User.findOne({ email: googleUser.email });
+
+    if (user) {
+      const tokenData = {
+        userId: user._id,
+      };
+      const token = await jwt.sign(tokenData, process.env.SECRET_KEY, {
+        expiresIn: "1d",
+      });
+      // cookies strict used...
+      return res
+        .status(200)
+        .cookie("token", token, {
+          maxAge: 1 * 24 * 60 * 60 * 1000,
+          httpsOnly: true,
+          sameSite: "strict",
+        })
+        .json({
+          message: `Welcome back ${user.fullname}`,
+          user,
+          success: true,
+        });
+    }
+
+    let maxPostJobs = 0;
+    let maxResumeDownload = 0;
+
+    if (role === "recruiter") {
+      maxPostJobs = 10;
+      maxResumeDownload = 100;
+    }
+
+    // If user doesn't exist, create a new one
+    user = new User({
+      fullname: googleUser.name || googleUser.given_name || "No Name",
+      email: googleUser.email,
+      phoneNumber: "",
+      password: "", // No password for Google-authenticated users
+      role: role, // Use the provided role
+      maxPostJobs: maxPostJobs,
+      maxResumeDownload: maxResumeDownload,
+      profile: {
+        profilePhoto: googleUser.picture || "",
+      },
+    });
+
+    await user.save();
+
+    const tokenData = {
+      userId: user._id,
+    };
+    const token = await jwt.sign(tokenData, process.env.SECRET_KEY, {
+      expiresIn: "1d",
+    });
+    // cookies strict used...
+    return res
+      .status(200)
+      .cookie("token", token, {
+        maxAge: 1 * 24 * 60 * 60 * 1000,
+        httpsOnly: true,
+        sameSite: "strict",
+      })
+      .json({
+        message: `Welcome ${user.fullname}`,
+        user,
+        success: true,
+      });
+  } catch (err) {
+    console.error("Error during Google Login:", err.message);
+    return res.status(500).json({
+      message: "Google Login failed",
+      error: err.message,
+    });
   }
 };
 
@@ -156,7 +276,6 @@ export const updateProfile = async (req, res) => {
       });
     }
 
-    
     // Update user fields
     if (fullname) user.fullname = fullname;
     if (email) user.email = email;
@@ -198,4 +317,3 @@ export const updateProfile = async (req, res) => {
     });
   }
 };
-

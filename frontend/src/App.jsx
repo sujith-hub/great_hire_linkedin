@@ -1,6 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Login from "./components/auth/Login";
-import Signup from "./components/auth/Signup";
+import Signup from "./components/auth/user/Signup.jsx";
+import RecrutierSignup from "./components/auth/recruiter/Signup.jsx";
 import Contact from "./pages/Contact";
 import Home from "./pages/Home";
 import JobDescription from "./pages/JobDescription";
@@ -28,6 +29,10 @@ const appRouter = createBrowserRouter([
     element: <Signup />,
   },
   {
+    path: "/recruiter/signup",
+    element: <RecrutierSignup />,
+  },
+  {
     path: "/jobs",
     element: <Jobs />,
   },
@@ -37,7 +42,7 @@ const appRouter = createBrowserRouter([
   },
   {
     path: "/apply",
-    element:<MainApply />,
+    element: <MainApply />,
   },
   {
     path: "/profile",
@@ -63,7 +68,6 @@ const appRouter = createBrowserRouter([
     path: "/report-job/:id",
     element: <ReportJob />,
   },
-  
 ]);
 
 function App() {

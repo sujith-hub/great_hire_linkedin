@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+
 const userSchema = new mongoose.Schema(
   {
     fullname: {
@@ -11,25 +12,21 @@ const userSchema = new mongoose.Schema(
       unique: true,
     },
     phoneNumber: {
-      type: Number,
-      required: true,
+      type: String,
     },
     password: {
       type: String,
-      required: true,
     },
     role: {
       type: String,
-      enum: ["student", "recruiter"],
+      enum: ["student", "recruiter", "admin"],
       required: true,
     },
     maxPostJobs: {
       type: Number,
-      default: 10,
     },
     maxResumeDownload: {
       type: Number,
-      default: 100,
     },
     haveSubscription: {
       type: Boolean,
@@ -38,7 +35,7 @@ const userSchema = new mongoose.Schema(
     profile: {
       bio: { type: String },
       skills: [{ type: String }],
-      resume: { type: String }, //url for resume url link
+      resume: { type: String }, // URL for the resume
       resumeOriginalName: { type: String },
       company: { type: mongoose.Schema.Types.ObjectId, ref: "Company" },
       profilePhoto: {
@@ -49,4 +46,6 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
 export const User = mongoose.model("User", userSchema);
+
