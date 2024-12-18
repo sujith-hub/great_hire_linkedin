@@ -26,11 +26,11 @@ const ReviewPage = ({ handleReview1, formData }) => {
         </div>
         <div>
           <p className="text-sm text-gray-500">Email Address</p>
-          <h3 className="text-base font-semibold">abc123@gmail.com</h3>
+          <h3 className="text-base font-semibold">{formData.email}</h3>
           <small className="text-xs text-gray-500 block mt-2">
             To mitigate fraud, Indeed may mask your email address. If masked,
             the employer will see an address like
-            <strong>abc123@gmail.com</strong>. Some employers, however, may
+            <strong> abc123@gmail.com</strong>. Some employers, however, may
             still be able to unmask and see your actual email address.
           </small>
         </div>
@@ -44,7 +44,8 @@ const ReviewPage = ({ handleReview1, formData }) => {
         </div>
       </div>
 
-      <h4 className="text-lg font-medium mb-4">Resume</h4>
+      {/* <h4 className="text-lg font-medium mb-4">Resume</h4> */}
+      <p className="text-sm text-gray-500">Resume</p>
       <div className="flex items-center mb-6 space-x-4">
         <VscFilePdf className="text-2xl text-gray-500" />
         <h3 className="text-base font-semibold">{formData.resume}</h3>

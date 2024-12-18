@@ -15,6 +15,9 @@ import { JobDetailsProvider } from "./context/JobDetailsContext";
 import MainApply from "./components/ApplyJobs/MainApply";
 import ReportJob from "./pages/ReportJob";
 
+import Success from "./pages/Success";
+import PageNotFound from "./pages/PageNotFound";
+
 const appRouter = createBrowserRouter([
   {
     path: "/",
@@ -67,6 +70,14 @@ const appRouter = createBrowserRouter([
   {
     path: "/report-job/:id",
     element: <ReportJob />,
+  },
+  {
+    path: "/success",
+    element: <Success />,
+  },
+  {
+    path: "*",
+    element: <PageNotFound />,
   },
 ]);
 
