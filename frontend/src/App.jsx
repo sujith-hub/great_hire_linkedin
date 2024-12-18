@@ -10,6 +10,7 @@ import PrivacyPolicy from "./pages/policies/PrivacyPolicy";
 import RefundAndReturnPolicy from "./pages/policies/RefundAndReturnPolicy";
 import TermsAndConditions from "./pages/policies/TermsAndConditions";
 import Profile from "./pages/Profile";
+import OurService from "./pages/OurService";
 import { JobDetailsProvider } from "./context/JobDetailsContext";
 
 import MainApply from "./components/ApplyJobs/MainApply";
@@ -74,6 +75,10 @@ const appRouter = createBrowserRouter([
   {
     path: "/success",
     element: <Success />,
+  },
+  {
+    path: "/great-hire/service",
+    element: <OurService />,
   },
   {
     path: "*",

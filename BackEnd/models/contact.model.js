@@ -10,6 +10,10 @@ const contactSchema = new mongoose.Schema(
       type: String,
       required: true, // Email of the person contacting
     },
+    phoneNumber: {
+      type: String,
+      required: true, // phoneNumber of the person contacting
+    },
     message: {
       type: [String],
       required: true, // Message content

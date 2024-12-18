@@ -12,6 +12,7 @@ const ContactSection = () => {
   const [formData, setFormData] = useState({
     fullname: user ? user.fullname : "",
     email: user ? user.email : "",
+    phoneNumber: user ? user.phoneNumber : "",
     message: "",
   });
 
@@ -36,6 +37,7 @@ const ContactSection = () => {
         setFormData({
           fullname: user ? user.fullname : "",
           email: user ? user.email : "",
+          phoneNumber: user ? user.phoneNumber : "",
           message: "",
         });
       } else {
@@ -133,6 +135,24 @@ const ContactSection = () => {
                   className="w-full p-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   placeholder="Your Email"
                   value={user ? user.email : ""}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="phoneNumber"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Phone Number
+                </label>
+                <input
+                  type="email"
+                  name="phoneNumber"
+                  id="email"
+                  className="w-full p-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  placeholder="Your Email"
+                  value={user ? user.phoneNumber : ""}
                   onChange={handleChange}
                   required
                 />

@@ -321,7 +321,7 @@ export const updateProfile = async (req, res) => {
 
 export const sendMessage = async (req, res) => {
   try {
-    const { fullname, email, message } = req.body.formData;
+    const { fullname, email, phoneNumber, message } = req.body.formData;
 
     // Set up transporter for sending email
     const transporter = nodemailer.createTransport({
@@ -337,7 +337,7 @@ export const sendMessage = async (req, res) => {
       from: email,
       to: "sanketbabde@greathire.in",
       subject: `Message from ${fullname}`,
-      text: message,
+      text: `${message}\nContact: ${phoneNumber}`,
     };
 
     // Send the email
@@ -355,13 +355,14 @@ export const sendMessage = async (req, res) => {
       contact = await Contact.create({
         name: fullname,
         email,
+        phoneNumber,
         message: [message], // Store message as an array
       });
     }
 
     return res.status(200).json({
       success: true,
-      message: "Message sent successfully and stored in the database.",
+      message: "Our team touch with you soon!",
       contact,
     });
   } catch (err) {
