@@ -6,8 +6,15 @@ import GoogleLogin from "../GoogleLogin";
 import { google_client_id } from "../../utils/GoogleOAuthCredentials.js";
 import axios from "axios";
 import Navbar from "../shared/Navbar";
+import { useSelector, useDispatch } from "react-redux";
+import { setUser } from "@/redux/authSlice";
+import { toast } from "react-hot-toast";
 
 const Login = () => {
+  const { user } = useSelector((state) => state.auth);
+  console.log(user);
+
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
@@ -26,21 +33,31 @@ const Login = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await axios.post(
-      "http://localhost:8000/api/v1/user/login",
-      {
-        data: formData,
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/api/v1/user/login",
+        {
+          data: formData,
+        }
+      );
+      if (response.data.success) {
+        dispatch(setUser(response.data.user));
+        // Show success message
+        toast.success(response.data.message);
+        setFormData({
+          email: "",
+          password: "",
+        });
+        const userRole = response.data.user.role;
+        if (userRole.includes("student")) navigate("/");
+        else if (userRole.includes("recruiter")) navigate("/post-job");
+        else if (userRole.includes("admin")) navigate("/admin/dashboard");
+      } else {
+        toast.error(response.data.message);
       }
-    );
-    console.log(response.data);
-    setFormData({
-      email: "",
-      password: "",
-    });
-    const userRole = response.user.role;
-    if (userRole.includes("student")) navigate("/");
-    else if (userRole.includes("recruiter")) navigate("/post-job");
-    else if (userRole.includes("admin")) navigate("/admin/dashboard");
+    } catch (err) {
+      console.log(`error in login ${err}`);
+    }
   };
 
   return (

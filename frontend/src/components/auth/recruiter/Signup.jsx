@@ -39,27 +39,29 @@ const Signup = () => {
         }
       );
 
-      console.log(response);
+      if (response.data.success) {
+        // Show success message
+        toast.success(response.data.message);
 
-      // Show success message
-      toast.success(response.data.message);
+        // Reset form fields
+        setFormData({
+          fullname: "",
+          email: "",
+          phoneNumber: "",
+          password: "",
+        });
 
-      // Reset form fields
-      setFormData({
-        fullname: "",
-        email: "",
-        phoneNumber: "",
-        password: "",
-      });
-
-      // Redirect to login page
-      navigate("/login");
+        // Redirect to login page
+        navigate("/login");
+      }else{
+        toast.success(response.data.message);
+      }
     } catch (err) {
       console.log(err);
       // Show error message
       const errorMessage =
         err.response?.data?.message || "Something went wrong";
-      toast.error(errorMessage);
+        console.log(`error in recruiter signup ${errorMessage}`);
     }
   };
 

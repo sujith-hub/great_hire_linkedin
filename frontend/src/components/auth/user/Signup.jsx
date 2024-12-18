@@ -38,30 +38,34 @@ const Signup = () => {
         }
       );
 
-      // Show success message
-      toast.success(response.data.message);
+      if (response.data.success) {
+        // Show success message
+        toast.success(response.data.message);
 
-      // Reset form fields
-      setFormData({
-        fullname: "",
-        email: "",
-        phoneNumber: "",
-        password: "",
-      });
+        // Reset form fields
+        setFormData({
+          fullname: "",
+          email: "",
+          phoneNumber: "",
+          password: "",
+        });
 
-      // Redirect to login page
-      navigate("/login");
+        // Redirect to login page
+        navigate("/login");
+      }else{
+        toast.error(response.data.message);
+      }
     } catch (err) {
       // Show error message
       const errorMessage =
         err.response?.data?.message || "Something went wrong";
-      toast.error(errorMessage);
+      console.log(`error in user signup ${errorMessage}`);
     }
   };
 
   return (
     <>
-    <Navbar/>
+      <Navbar />
       <div className="flex flex-col md:flex-row h-screen">
         {/* Left Section - Background Image and Content */}
         <div className="relative w-full md:w-2/3 h-1/2 md:h-full">

@@ -1,9 +1,48 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaQuestionCircle, FaPhoneAlt, FaRegEnvelope } from "react-icons/fa";
 import Navbar from "../components/shared/Navbar";
 import Footer from "../components/shared/Footer";
+import { useSelector } from "react-redux";
+import { toast } from "react-hot-toast";
 
 const ContactSection = () => {
+  const { user } = useSelector((state) => state.auth);
+  const [formData, setFormData] = useState({
+    fullname: user ? user.fullname : "",
+    email: user ? user.email : "",
+    message: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const sendMessage = async (e) => {
+    try {
+      const { data } = await axios.post(
+        "http://localhost:8000/api/v1/user/sendMessage",
+        {
+          formData,
+        },
+        { withCredentials: true }
+
+        // Ensures the token is sent for authenticated routes
+      );
+      // use data.message
+      if (data.success) {
+        toast.success(data.message);
+        setFormData({
+          ...formData,
+          message: "",
+        });
+      } else {
+        toast.error(data.message);
+      }
+    } catch (err) {
+      console.log(`error in sending message ${err}`);
+    }
+  };
   return (
     <>
       <Navbar />
@@ -68,8 +107,11 @@ const ContactSection = () => {
                 <input
                   type="text"
                   id="name"
+                  name="fullname"
                   className="w-full p-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   placeholder="Your Name"
+                  value={user ? user.fullname : ""}
+                  onChange={handleChange}
                 />
               </div>
               <div>
@@ -81,9 +123,12 @@ const ContactSection = () => {
                 </label>
                 <input
                   type="email"
+                  name="email"
                   id="email"
                   className="w-full p-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   placeholder="Your Email"
+                  value={user ? user.email : ""}
+                  onChange={handleChange}
                 />
               </div>
               <div>
@@ -96,13 +141,16 @@ const ContactSection = () => {
                 <textarea
                   id="message"
                   rows="5"
+                  name="message"
                   className="w-full p-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   placeholder="Your Message"
+                  onChange={handleChange}
                 ></textarea>
               </div>
               <button
                 type="submit"
                 className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300"
+                onClick={sendMessage}
               >
                 Send
               </button>

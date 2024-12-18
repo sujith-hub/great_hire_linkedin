@@ -5,6 +5,8 @@ import cloudinary from "../utils/cloudinary.js";
 import getDataUri from "../utils/dataUri.js";
 import { oauth2Client } from "../utils/googleConfig.js";
 import axios from "axios";
+import { Contact } from "../models/contact.model.js";
+import nodemailer from "nodemailer";
 
 export const register = async (req, res) => {
   try {
@@ -12,14 +14,14 @@ export const register = async (req, res) => {
 
     // Validate required fields
     if (!fullname || !email || !phoneNumber || !password || !role) {
-      return res.status(400).json({
+      return res.status(200).json({
         message: "Something is missing",
       });
     }
 
     // Validate password length
     if (password.length < 8) {
-      return res.status(400).json({
+      return res.status(200).json({
         message: "Password must be at least 8 characters long.",
         success: false,
       });
@@ -28,7 +30,7 @@ export const register = async (req, res) => {
     // Check if user already exists
     const userExists = await User.findOne({ email });
     if (userExists) {
-      return res.status(400).json({
+      return res.status(200).json({
         message: "Account already exists.",
         success: false,
       });
@@ -55,7 +57,6 @@ export const register = async (req, res) => {
       maxPostJobs: maxPostJobs,
       maxResumeDownload: maxResumeDownload,
     });
-    
 
     // Send success response
     return res.status(201).json({
@@ -84,15 +85,15 @@ export const login = async (req, res) => {
     //check mail is correct or not...
     let user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({
-        message: "Incorrect email or password.",
+      return res.status(200).json({
+        message: "Account Not found.",
         success: false,
       });
     }
     //checking password is correct or not...
     const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch) {
-      return res.status(400).json({
+      return res.status(200).json({
         message: "Incorrect email or password.",
         success: false,
       });
@@ -137,12 +138,12 @@ export const googleLogin = async (req, res) => {
 
     if (!code) {
       return res
-        .status(400)
+        .status(200)
         .json({ message: "Authorization code is required" });
     }
 
     if (!role || !["student", "recruiter", "admin"].includes(role)) {
-      return res.status(400).json({ message: "Invalid or missing role" });
+      return res.status(200).json({ message: "Invalid or missing role" });
     }
 
     // Exchange authorization code for tokens
@@ -317,3 +318,58 @@ export const updateProfile = async (req, res) => {
     });
   }
 };
+
+export const sendMessage = async (req, res) => {
+  try {
+    const { fullname, email, message } = req.body;
+
+    // Set up transporter for sending email
+    const transporter = nodemailer.createTransport({
+      service: "Gmail",
+      auth: {
+        user: process.env.EMAIL_USER, // Access from .env
+        pass: process.env.EMAIL_PASS, // Access from .env
+      },
+    });
+
+    // Define the email options
+    const mailOptions = {
+      from: email,
+      to: "sanketbabde@greathire.in",
+      subject: `Message from ${fullname}`,
+      text: message,
+    };
+
+    // Send the email
+    await transporter.sendMail(mailOptions);
+
+    // Check if a contact with this email already exists
+    let contact = await Contact.findOne({ email });
+
+    if (contact) {
+      // Email exists, push the new message to the message array
+      contact.message.push(message);
+      await contact.save();
+    } else {
+      // Email doesn't exist, create a new contact
+      contact = await Contact.create({
+        name: fullname,
+        email,
+        message: [message], // Store message as an array
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Message sent successfully and stored in the database.",
+      contact,
+    });
+  } catch (err) {
+    console.error("Error sending message:", err);
+    return res.status(500).json({
+      success: false,
+      message: "An error occurred while sending the message.",
+    });
+  }
+};
+
