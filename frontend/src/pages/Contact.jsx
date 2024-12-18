@@ -24,9 +24,7 @@ const ContactSection = () => {
         "http://localhost:8000/api/v1/user/sendMessage",
         {
           formData,
-        },
-        { withCredentials: true }
-
+        }
         // Ensures the token is sent for authenticated routes
       );
       // use data.message
