@@ -54,10 +54,6 @@ const ApplyForm = ({ setRight }) => {
     setStep4(true);
   };
 
-//   const handleChoose = () => {
-//     inputRef.current.click();
-//   };
-
   const handleChoose = () => {
     if (inputRef.current) {
       inputRef.current.click();
@@ -131,9 +127,18 @@ const ApplyForm = ({ setRight }) => {
               onChange={handleChange}
               className="mt-1 w-full p-2 border border-gray-300 rounded-md"
             />
-
-            <h4 className="text-sm font-medium mt-4">Email</h4>
-            <p className="text-gray-600 text-sm">abc123@gmil.com</p>
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700 mt-4"
+            >
+              Email
+            </label>
+            <input
+              type="email"
+              name="email"
+              onChange={handleChange}
+              className="mt-1 w-full p-2 border border-gray-300 rounded-md"
+            />
 
             <label
               htmlFor="city"
@@ -225,29 +230,6 @@ const ApplyForm = ({ setRight }) => {
             {resume && <TiTick className="text-green-500 ml-auto" />}
           </div>
 
-          {/* <h4 className="text-lg font-bold mt-6">Add a resume </h4>
-
-          <input
-            type="file"
-            name="resume"
-            onChange={handleChange}
-            ref={inputRef}
-            className="hidden"
-          />
-          <div
-            className="flex items-center mt-6 p-4 border border-gray-300 rounded-md cursor-pointer"
-            onClick={handleChoose}
-          >
-            <BsFileEarmarkArrowUp className="text-gray-500 mr-4" />
-            <section>
-              <h4 className="text-base font-semibold">Upload resume</h4>
-              <p className="text-sm text-gray-500">
-                Use a pdf, docx, doc, rtf, or txt
-              </p>
-            </section>
-            <TiTick className="text-green-500 ml-auto" />
-          </div> */}
-
           <div className="flex justify-between items-center mt-6">
             <Link
               to="/"
@@ -283,10 +265,35 @@ const ApplyForm = ({ setRight }) => {
               }}
             />
 
-            <h6 className="ml-2 text-sm text-gray-500">
+            <h6 className="ml-2 text-sm text-gray-500 my-4">
               Application step 3 of 5
             </h6>
           </div>
+
+          <label
+            htmlFor="jobTitle"
+            className="block text-sm font-medium text-gray-700 mt-4"
+          >
+            Job Profile
+          </label>
+          <input
+            type="text"
+            name="jobTitle"
+            onChange={handleChange}
+            className="mt-1 w-full p-2 border border-gray-300 rounded-md"
+          />
+          <label
+            htmlFor="company"
+            className="block text-sm font-medium text-gray-700 mt-4"
+          >
+            Company Name
+          </label>
+          <input
+            type="text"
+            name="company"
+            onChange={handleChange}
+            className="mt-1 w-full p-2 border border-gray-300 rounded-md"
+          />
 
           <h4 className="text-lg font-bold mt-6">
             Add Your Experience<span className="text-gray-400">(optional)</span>
