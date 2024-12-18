@@ -111,6 +111,12 @@ const Navbar = () => {
               )}
             </li>
             <li>
+              <Link to="/great-hire/service" className="hover:text-blue-700">
+                Our Services
+              </Link>
+            </li>
+
+            <li>
               <Link to="/contact" className="hover:text-blue-700">
                 Contact Us
               </Link>
