@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { BsFillInfoCircleFill } from "react-icons/bs";
+import { useNavigate } from "react-router-dom";
 
 
 const ReportJob = () => {
+  const navigate = useNavigate();
   const [selectedProblem, setSelectedProblem] = useState("");
   const [description, setDescription] = useState("");
 
@@ -31,7 +33,7 @@ const ReportJob = () => {
         <div className="flex justify-between items-center border-b pb-2">
           <h2 className="text-lg font-semibold">Choose a Problem</h2>
           <button
-            onClick={() => console.log("Close modal")}
+            onClick={() => navigate(-1)}
             className="text-gray-500 hover:text-gray-800"
           >
             X

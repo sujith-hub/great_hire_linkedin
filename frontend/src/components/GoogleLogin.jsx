@@ -4,9 +4,12 @@ import { FcGoogle } from "react-icons/fc";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import { setUser } from "@/redux/authSlice";
+import { useDispatch } from "react-redux";
 
 const GoogleLogin = ({ text, role }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // Function to handle Google login response
   const responseGoogle = async (authResult) => {
@@ -27,6 +30,7 @@ const GoogleLogin = ({ text, role }) => {
 
         // Navigate based on user role
         const userRole = response.data.user.role;
+        dispatch(setUser(response.data.user));
         if (userRole.includes("student")) navigate("/");
         else if (userRole.includes("recruiter")) navigate("/post-job");
         else if (userRole.includes("admin")) navigate("/admin/dashboard");
