@@ -1,11 +1,17 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { logOut } from "@/redux/authSlice";
 
-const Navbar = ({ user, isRecruiter, handleLogout }) => {
+const Navbar = () => {
+  const { user } = useSelector((state) => state.auth);
+  const isRecruiter = user?.role.includes("recruiter")
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isPolicyHovered, setIsPolicyHovered] = useState(false);
   const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
-  const navigate = useNavigate();
 
   const handleScrollToSection = (id) => {
     const section = document.getElementById(id);
@@ -15,19 +21,21 @@ const Navbar = ({ user, isRecruiter, handleLogout }) => {
     }
   };
 
-  
-
-
-
   const handleJobButtonClick = () => {
     navigate("/signup"); // Redirect to login page
     setIsSignupModalOpen(false); // Close modal if open
   };
 
-
   const handleCandidateButtonClick = () => {
     navigate("/recruiter/signup"); // Redirect to recruiter signup
     setIsSignupModalOpen(false); // Close modal if open
+  };
+
+  const handleLogout = () => {
+    if (user) {
+      dispatch(logOut());
+      navigate("/login");
+    }
   };
 
   return (
@@ -46,7 +54,10 @@ const Navbar = ({ user, isRecruiter, handleLogout }) => {
             {isRecruiter ? (
               <>
                 <li>
-                  <Link to="/recruiter/dashboard" className="hover:text-blue-700">
+                  <Link
+                    to="/recruiter/dashboard"
+                    className="hover:text-blue-700"
+                  >
                     Dashboard
                   </Link>
                 </li>
@@ -126,7 +137,10 @@ const Navbar = ({ user, isRecruiter, handleLogout }) => {
               <div className="relative">
                 <button className="flex items-center gap-2">
                   <img
-                    src={user?.profile?.profilePhoto || "https://github.com/shadcn.png"}
+                    src={
+                      user?.profile?.profilePhoto ||
+                      "https://github.com/shadcn.png"
+                    }
                     alt="User Avatar"
                     className="h-10 w-10 rounded-full border"
                   />
@@ -173,113 +187,112 @@ const Navbar = ({ user, isRecruiter, handleLogout }) => {
         </button>
       </div>
 
-     {/* Sliding Sidebar for Small Devices */}
-{isMenuOpen && (
-  <div
-    className={`fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-50 transform ${
-      isMenuOpen ? "translate-x-0" : "-translate-x-full"
-    } transition-transform ease-in-out duration-300`}
-  >
-    <div className="flex items-center justify-between px-4 py-4 border-b">
-      <h1 className="text-xl font-bold">
-        Great<span className="text-blue-700">Hire</span>
-      </h1>
-      <button
-        className="text-gray-700"
-        onClick={() => setIsMenuOpen(false)}
-      >
-        <svg
-          className="w-6 h-6"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
+      {/* Sliding Sidebar for Small Devices */}
+      {isMenuOpen && (
+        <div
+          className={`fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-50 transform ${
+            isMenuOpen ? "translate-x-0" : "-translate-x-full"
+          } transition-transform ease-in-out duration-300`}
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M6 18L18 6M6 6l12 12"
-          />
-        </svg>
-      </button>
-    </div>
-    <ul className="mt-4 px-4 space-y-2">
-      <li>
-        <Link to="/" onClick={() => setIsMenuOpen(false)}>
-          Home
-        </Link>
-      </li>
-      <li>
-        <Link to="/jobs" onClick={() => setIsMenuOpen(false)}>
-          Jobs
-        </Link>
-      </li>
-      {/* Policies Dropdown for Mobile View */}
-      <li className="relative">
-        <button
-          className="flex justify-between w-full items-center py-2 hover:text-blue-700"
-          onClick={() => setIsPolicyHovered(!isPolicyHovered)}
-        >
-          Policies
-          <svg
-            className={`w-5 h-5 transform ${
-              isPolicyHovered ? "rotate-180" : "rotate-0"
-            } transition-transform duration-200`}
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M19 9l-7 7-7-7"
-            />
-          </svg>
-        </button>
-        {isPolicyHovered && (
-          <div className="bg-white shadow-md rounded-lg border mt-2">
-            <ul className="flex flex-col">
-              <li>
-                <Link
-                  to="/policy/privacy-policy"
-                  className="px-4 py-2 hover:bg-gray-100 block"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/policy/refund-policy"
-                  className="px-4 py-2 hover:bg-gray-100 block"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Refund and Return Policy
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/policy/terms-and-conditions"
-                  className="px-4 py-2 hover:bg-gray-100 block"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Terms and Conditions
-                </Link>
-              </li>
-            </ul>
+          <div className="flex items-center justify-between px-4 py-4 border-b">
+            <h1 className="text-xl font-bold">
+              Great<span className="text-blue-700">Hire</span>
+            </h1>
+            <button
+              className="text-gray-700"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <svg
+                className="w-6 h-6"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
           </div>
-        )}
-      </li>
-      <li>
-        <Link to="/contact" onClick={() => setIsMenuOpen(false)}>
-          Contact Us
-        </Link>
-      </li>
-    </ul>
-
+          <ul className="mt-4 px-4 space-y-2">
+            <li>
+              <Link to="/" onClick={() => setIsMenuOpen(false)}>
+                Home
+              </Link>
+            </li>
+            <li>
+              <Link to="/jobs" onClick={() => setIsMenuOpen(false)}>
+                Jobs
+              </Link>
+            </li>
+            {/* Policies Dropdown for Mobile View */}
+            <li className="relative">
+              <button
+                className="flex justify-between w-full items-center py-2 hover:text-blue-700"
+                onClick={() => setIsPolicyHovered(!isPolicyHovered)}
+              >
+                Policies
+                <svg
+                  className={`w-5 h-5 transform ${
+                    isPolicyHovered ? "rotate-180" : "rotate-0"
+                  } transition-transform duration-200`}
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+              {isPolicyHovered && (
+                <div className="bg-white shadow-md rounded-lg border mt-2">
+                  <ul className="flex flex-col">
+                    <li>
+                      <Link
+                        to="/policy/privacy-policy"
+                        className="px-4 py-2 hover:bg-gray-100 block"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        Privacy Policy
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/policy/refund-policy"
+                        className="px-4 py-2 hover:bg-gray-100 block"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        Refund and Return Policy
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        to="/policy/terms-and-conditions"
+                        className="px-4 py-2 hover:bg-gray-100 block"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        Terms and Conditions
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </li>
+            <li>
+              <Link to="/contact" onClick={() => setIsMenuOpen(false)}>
+                Contact Us
+              </Link>
+            </li>
+          </ul>
 
           {/* Add Login and Signup Buttons */}
           <div className="px-4 mt-6">
@@ -295,10 +308,7 @@ const Navbar = ({ user, isRecruiter, handleLogout }) => {
               I'm looking for a Job
             </button>
 
-            <button
-              className="w-full mt-2 bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-blue-800"
-              
-            >
+            <button className="w-full mt-2 bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-blue-800">
               I'm looking for Candidates
             </button>
           </div>
@@ -316,16 +326,15 @@ const Navbar = ({ user, isRecruiter, handleLogout }) => {
             >
               I'm looking for a Job
             </button>
-            <button className="w-full bg-gray-900 text-white py-2 rounded-lg hover:bg-gray-800" 
-            onClick={handleCandidateButtonClick} // Redirect to signup for recreuiter
+            <button
+              className="w-full bg-gray-900 text-white py-2 rounded-lg hover:bg-gray-800"
+              onClick={handleCandidateButtonClick} // Redirect to signup for recreuiter
             >
-
               I'm looking for Candidates
             </button>
             <button
               onClick={() => setIsSignupModalOpen(false)}
               className="w-full mt-2 py-2 rounded-lg text-gray-700 hover:bg-gray-200"
-
             >
               Close
             </button>
