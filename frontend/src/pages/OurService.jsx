@@ -4,55 +4,70 @@ import Footer from "@/components/shared/Footer";
 import { useNavigate } from "react-router-dom";
 
 const OurService = () => {
-   const navigate = useNavigate();
+  const navigate = useNavigate();
   const services = [
+    {
+      title: "Job Finder Services",
+      description:
+        "Discover the perfect job opportunities tailored to your skills and goals.",
+      icon: "🔍",
+      url: "https://www.mobiusengine.ai",
+    },
     {
       title: "Accounts and Payroll",
       description:
         "Streamline your financial operations and payroll management with precision.",
       icon: "💼",
+      url: "",
     },
     {
       title: "Digital Marketing",
       description:
         "Enhance your online presence and connect with your audience effectively.",
       icon: "📈",
+      url: "",
     },
     {
       title: "Staffing",
       description:
         "Find the right talent for your organization with our expert staffing solutions.",
       icon: "🤝",
+      url: "",
     },
     {
       title: "Web & Mobile App Development",
       description:
         "Develop and maintain high-quality web and mobile applications tailored to your needs.",
       icon: "📱",
+      url: "",
     },
     {
       title: "BPO",
       description:
         "Optimize business processes and reduce operational costs with our BPO services.",
       icon: "📞",
+      url: "",
     },
     {
       title: "Cybersecurity Services",
       description:
         "Protect your business with advanced cybersecurity solutions.",
       icon: "🔒",
+      url: "",
     },
     {
       title: "Cloud Computing Services",
       description:
         "Leverage cloud technologies to improve scalability and flexibility.",
       icon: "☁️",
+      url: "",
     },
     {
       title: "AI & Machine Learning",
       description:
         "Integrate AI and ML to automate processes and drive innovation.",
       icon: "🤖",
+      url: "",
     },
   ];
 
@@ -62,8 +77,8 @@ const OurService = () => {
       <div className="bg-gray-50">
         {/* Hero Section */}
         <header className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-16">
-          <div className="max-w-7xl mx-auto px-6 text-center">
-            <h1 className="text-4xl md:text-5xl font-bold">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 className="text-3xl md:text-5xl font-bold">
               Our Services Tailored for Your Success
             </h1>
             <p className="mt-4 text-lg md:text-xl">
@@ -74,22 +89,28 @@ const OurService = () => {
         </header>
 
         {/* Services Section */}
-        <section className="py-16">
-          <div className="max-w-7xl mx-auto px-6">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-8 text-gray-800">
+        <section className="py-16 bg-blue-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
+            <h2 className="text-2xl md:text-4xl font-bold text-center mb-12 text-blue-600 animate-bounce ">
               What We Offer
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3
+             gap-6 lg:gap-8">
               {services.map((service, index) => (
                 <div
                   key={index}
-                  className="bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300"
+                  className=" bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 hover:scale-95 cursor-pointer"
+                  onClick={() =>
+                    window.open(service.url, "_blank")
+                  }
                 >
                   <div className="text-4xl mb-4">{service.icon}</div>
-                  <h3 className="text-xl font-semibold text-gray-800">
+                  <h3 className="text-lg md:text-xl font-semibold text-gray-800">
                     {service.title}
                   </h3>
-                  <p className="mt-2 text-gray-600">{service.description}</p>
+                  <p className="mt-2 text-gray-600 text-sm md:text-base">
+                    {service.description}
+                  </p>
                 </div>
               ))}
             </div>
@@ -98,7 +119,7 @@ const OurService = () => {
 
         {/* Call-to-Action Section */}
         <section className="bg-gradient-to-r from-teal-500 to-blue-500 text-white py-16">
-          <div className="max-w-7xl mx-auto px-6 text-center">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-3xl md:text-4xl font-bold">
               Let's Work Together
             </h2>
@@ -106,7 +127,10 @@ const OurService = () => {
               Ready to take your business to the next level? Get in touch with
               us today.
             </p>
-            <button className="mt-8 bg-white text-blue-500 py-3 px-8 rounded-lg shadow-lg font-medium hover:bg-gray-100 transition duration-300" onClick={()=> navigate('/contact')}>
+            <button
+              className="mt-8 bg-white text-blue-500 py-3 px-8 rounded-lg shadow-lg font-medium hover:bg-gray-100 transition duration-300"
+              onClick={() => navigate("/contact")}
+            >
               Contact Us
             </button>
           </div>
