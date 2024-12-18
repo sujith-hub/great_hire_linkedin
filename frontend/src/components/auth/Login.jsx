@@ -26,7 +26,6 @@ const Login = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Log form data for now (or send it to your backend)
     const response = await axios.post(
       "http://localhost:8000/api/v1/user/login",
       {
@@ -38,7 +37,6 @@ const Login = () => {
       email: "",
       password: "",
     });
-    // Navigate based on user role
     const userRole = response.user.role;
     if (userRole.includes("student")) navigate("/");
     else if (userRole.includes("recruiter")) navigate("/post-job");
@@ -46,6 +44,7 @@ const Login = () => {
   };
 
   return (
+<<<<<<< HEAD
     <div>
       <Navbar />
       <div className="flex flex-col md:flex-row h-screen">
@@ -67,6 +66,31 @@ const Login = () => {
               ---- or Login with email ----
             </h1>
             <div className="flex flex-col space-y-2">
+=======
+    <>
+      <Navbar />
+      <div className="flex flex-col-reverse md:flex-row h-screen">
+        {/* Left Section - Form */}
+        <div className="w-full md:w-1/2 lg:w-1/3 flex items-center justify-center bg-gradient-to-l from-white to-blue-100 p-6">
+          <form className="w-full max-w-md space-y-4" onSubmit={handleSubmit}>
+            <h1 className="text-3xl font-bold text-center">
+              Great<span className="text-blue-700">Hire</span>
+            </h1>
+            <h1 className="text-2xl md:text-4xl font-bold text-center">
+              Login
+            </h1>
+            <p className="text-sm md:text-md font-semibold text-gray-500 text-center">
+              Find the job made for you!
+            </p>
+            {/* Google Login Button */}
+            <GoogleOAuthProvider clientId={google_client_id}>
+              <GoogleLogin text="Login" role="student" />
+            </GoogleOAuthProvider>
+            <p className="text-sm font-semibold text-gray-400 text-center">
+              ---- or Login with email ----
+            </p>
+            <div className="flex flex-col space-y-4">
+>>>>>>> fe56816b2cc714b0c9fbf27b4bccb7d7a202020b
               <label className="font-bold">Email</label>
               <input
                 type="email"
@@ -93,14 +117,20 @@ const Login = () => {
               Login
             </button>
             <p className="text-center text-sm text-gray-500">
+<<<<<<< HEAD
               New at GreatHire. Welcome!{" "}
               <a href="/login" className="text-blue-500 hover:underline">
+=======
+              New at GreatHire?{" "}
+              <a href="/signup" className="text-blue-500 hover:underline">
+>>>>>>> fe56816b2cc714b0c9fbf27b4bccb7d7a202020b
                 Signup
               </a>
             </p>
           </form>
         </div>
 
+<<<<<<< HEAD
         {/* Right Section - Form */}
         <div className="relative w-full md:w-2/3 h-1/2 md:h-full">
           {/* Background Image */}
@@ -115,12 +145,28 @@ const Login = () => {
               Find the job made for you.
             </h1>
             <p className="font-medium text-gray-600 text-md md:text-lg w-4/5 md:w-3/5">
+=======
+        {/* Right Section - Background Image */}
+        <div className="relative w-full md:w-1/2 lg:w-2/3 h-1/2 md:h-full overflow-y-scroll">
+          {/* Background Image */}
+          <img
+            src={img2}
+            alt="Background"
+            className="w-full h-full object-cover opacity-80"
+          />
+          {/* Centered Content */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-center space-y-4 p-4 z-10">
+            <h1 className="font-bold text-2xl md:text-4xl text-gray-600">
+              Find the job made for you.
+            </h1>
+            <p className="font-medium text-gray-600 text-sm md:text-lg max-w-[90%] md:max-w-[70%]">
+>>>>>>> fe56816b2cc714b0c9fbf27b4bccb7d7a202020b
               Browse over 150K jobs at top companies.
             </p>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

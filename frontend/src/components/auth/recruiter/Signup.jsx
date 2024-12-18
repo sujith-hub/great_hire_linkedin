@@ -8,7 +8,10 @@ import { google_client_id } from "../../../utils/GoogleOAuthCredentials.js";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import Navbar from "@/components/shared/Navbar";
+<<<<<<< HEAD
 import Footer from "@/components/shared/Footer";
+=======
+>>>>>>> fe56816b2cc714b0c9fbf27b4bccb7d7a202020b
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -65,7 +68,12 @@ const Signup = () => {
   };
 
   return (
+<<<<<<< HEAD
     <div>
+=======
+    <>
+      <Navbar />
+>>>>>>> fe56816b2cc714b0c9fbf27b4bccb7d7a202020b
       <div className="flex flex-col md:flex-row h-screen ">
         {/* Left Section - Background Image and Content */}
         <div className="relative w-full md:w-2/3 h-1/2 md:h-full">
@@ -101,7 +109,11 @@ const Signup = () => {
         </div>
 
         {/* Right Section - Form */}
+<<<<<<< HEAD
         <div className="w-full md:w-1/3 flex items-center justify-center bg-gradient-to-r from-white to-blue-100">
+=======
+        <div className="w-full md:w-1/3 flex items-center justify-center bg-gradient-to-r from-white to-blue-100 p-6">
+>>>>>>> fe56816b2cc714b0c9fbf27b4bccb7d7a202020b
           <form className="w-4/5 space-y-4" onSubmit={handleSubmit}>
             <h1 className="text-3xl font-bold text-center">
               Great<span className="text-blue-700">Hire</span>
@@ -175,8 +187,12 @@ const Signup = () => {
           </form>
         </div>
       </div>
+<<<<<<< HEAD
       <Footer />
     </div>
+=======
+    </>
+>>>>>>> fe56816b2cc714b0c9fbf27b4bccb7d7a202020b
   );
 };
 
