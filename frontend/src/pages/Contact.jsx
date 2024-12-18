@@ -4,8 +4,10 @@ import Navbar from "../components/shared/Navbar";
 import Footer from "../components/shared/Footer";
 import { useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
+import axios from "axios";
 
 const ContactSection = () => {
+  const [disable, setDisable] = useState(false);
   const { user } = useSelector((state) => state.auth);
   const [formData, setFormData] = useState({
     fullname: user ? user.fullname : "",
@@ -18,27 +20,31 @@ const ContactSection = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const sendMessage = async (e) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setDisable(true);
     try {
       const { data } = await axios.post(
         "http://localhost:8000/api/v1/user/sendMessage",
         {
           formData,
         }
-        // Ensures the token is sent for authenticated routes
       );
       // use data.message
       if (data.success) {
         toast.success(data.message);
         setFormData({
-          ...formData,
+          fullname: user ? user.fullname : "",
+          email: user ? user.email : "",
           message: "",
         });
       } else {
         toast.error(data.message);
       }
+      setDisable(false);
     } catch (err) {
       console.log(`error in sending message ${err}`);
+      setDisable(false);
     }
   };
   return (
@@ -94,7 +100,7 @@ const ContactSection = () => {
             <h2 className="text-4xl font-semibold mb-6 text-indigo-700">
               Send a Message
             </h2>
-            <form className="space-y-6">
+            <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
                 <label
                   htmlFor="name"
@@ -110,6 +116,7 @@ const ContactSection = () => {
                   placeholder="Your Name"
                   value={user ? user.fullname : ""}
                   onChange={handleChange}
+                  required
                 />
               </div>
               <div>
@@ -127,6 +134,7 @@ const ContactSection = () => {
                   placeholder="Your Email"
                   value={user ? user.email : ""}
                   onChange={handleChange}
+                  required
                 />
               </div>
               <div>
@@ -143,12 +151,15 @@ const ContactSection = () => {
                   className="w-full p-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   placeholder="Your Message"
                   onChange={handleChange}
+                  required
                 ></textarea>
               </div>
               <button
                 type="submit"
-                className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300"
-                onClick={sendMessage}
+                className={`w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 ${
+                  disable && "bg-blue-300"
+                }`}
+                disabled={disable}
               >
                 Send
               </button>

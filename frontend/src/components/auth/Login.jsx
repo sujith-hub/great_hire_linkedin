@@ -6,6 +6,7 @@ import GoogleLogin from "../GoogleLogin";
 import { google_client_id } from "../../utils/GoogleOAuthCredentials.js";
 import axios from "axios";
 import Navbar from "../shared/Navbar";
+import Footer from "../shared/Footer";
 import { useSelector, useDispatch } from "react-redux";
 import { setUser } from "@/redux/authSlice";
 import { toast } from "react-hot-toast";
@@ -135,6 +136,7 @@ const Login = () => {
           </div>
         </div>
       </div>
+      <Footer/>
     </div>
   );
 };

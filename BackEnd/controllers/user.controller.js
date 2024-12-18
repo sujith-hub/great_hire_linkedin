@@ -321,7 +321,7 @@ export const updateProfile = async (req, res) => {
 
 export const sendMessage = async (req, res) => {
   try {
-    const { fullname, email, message } = req.body;
+    const { fullname, email, message } = req.body.formData;
 
     // Set up transporter for sending email
     const transporter = nodemailer.createTransport({
@@ -372,4 +372,3 @@ export const sendMessage = async (req, res) => {
     });
   }
 };
-
