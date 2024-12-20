@@ -10,6 +10,7 @@ import Footer from "../shared/Footer";
 import { useSelector, useDispatch } from "react-redux";
 import { setUser } from "@/redux/authSlice";
 import { toast } from "react-hot-toast";
+import Loading from "../Loading";
 
 const Login = () => {
   const { user } = useSelector((state) => state.auth);
@@ -68,9 +69,9 @@ const Login = () => {
   return (
     <div>
       <Navbar />
-      <div className="flex flex-col md:flex-row h-screen">
+      <div className="flex flex-col-reverse md:flex-row h-screen">
         {/* Left Section - Form */}
-        <div className="w-full md:w-1/2 lg:w-1/3 flex items-center justify-center bg-gradient-to-l from-white to-blue-100 p-6">
+        <div className="w-full md:w-1/2 flex items-center justify-center bg-gradient-to-l from-white to-blue-100 p-6">
           <form className="w-full max-w-md space-y-4" onSubmit={handleSubmit}>
             <h1 className="text-3xl font-bold text-center">
               Great<span className="text-blue-700">Hire</span>
@@ -123,7 +124,7 @@ const Login = () => {
               }`}
               disabled={loading} // Disable button when loading
             >
-              {loading ? "Loging..." : "Login"}
+              {loading ? <><Loading/></> : "Login"}
             </button>
             <p className="text-center text-sm text-gray-500">
               New at GreatHire?{" "}
@@ -135,7 +136,7 @@ const Login = () => {
         </div>
 
         {/* Right Section - Background Image */}
-        <div className="relative w-full md:w-1/2 lg:w-2/3 h-1/2 md:h-full">
+        <div className="relative w-full md:w-1/2  h-60 md:h-full">
           <img
             src={img2}
             alt="Background"

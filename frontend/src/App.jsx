@@ -12,6 +12,7 @@ import TermsAndConditions from "./pages/policies/TermsAndConditions";
 import Profile from "./pages/Profile";
 import OurService from "./pages/OurService";
 import { JobDetailsProvider } from "./context/JobDetailsContext";
+import PostJobForm from "./pages/recruiter/PostJobForm";
 
 import MainApply from "./components/ApplyJobs/MainApply";
 import ReportJob from "./pages/ReportJob";
@@ -38,6 +39,10 @@ const appRouter = createBrowserRouter([
   {
     path: "/recruiter/signup",
     element: <RecrutierSignup />,
+  },
+  {
+    path: "/recruiter/post-job",
+    element: <PostJobForm />,
   },
   {
     path: "/forgot-password",
