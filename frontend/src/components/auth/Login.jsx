@@ -124,7 +124,7 @@ const Login = () => {
               }`}
               disabled={loading} // Disable button when loading
             >
-              {loading ? <><Loading/></> : "Login"}
+              {loading ? <><Loading color="white"/></> : "Login"}
             </button>
             <p className="text-center text-sm text-gray-500">
               New at GreatHire?{" "}

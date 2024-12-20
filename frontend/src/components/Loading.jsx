@@ -1,6 +1,6 @@
 import React from "react";
 
-const Loading = () => {
+const Loading = ({color}) => {
   return (
     <>
       {/* Container with 5 bouncing divs */}
@@ -8,7 +8,7 @@ const Loading = () => {
         {[...Array(4)].map((_, index) => (
           <div
             key={index}
-            className={`w-3 h-3 bg-white rounded-full animate-wave-bounce`}
+            className={`w-3 h-3 bg-${color} rounded-full animate-wave-bounce`}
             style={{ animationDelay: `${index * 0.2}s` }} // Staggered animation delay
           ></div>
         ))}
