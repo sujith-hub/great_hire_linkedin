@@ -161,12 +161,19 @@ export const googleLogin = async (req, res) => {
     let user = await User.findOne({ email: googleUser.email });
 
     if (user) {
+      if (role !== user.role) {
+        res.status(200).json({
+          message: "Account already exist use another!",
+          success: false,
+        });
+      }
       const tokenData = {
         userId: user._id,
       };
       const token = await jwt.sign(tokenData, process.env.SECRET_KEY, {
         expiresIn: "1d",
       });
+
       // cookies strict used...
       return res
         .status(200)
@@ -234,15 +241,26 @@ export const googleLogin = async (req, res) => {
   }
 };
 
-//for logout....
+// Logout Section
 export const logout = async (req, res) => {
   try {
-    return res.status(200).cookie("token", "", { maxAge: 0 }).json({
-      message: "Logged out succesfully.",
-      success: true,
-    });
+    return res
+      .status(200)
+      .cookie("token", "", {
+        maxAge: 0,
+        httpOnly: true,
+        sameSite: "strict",
+      })
+      .json({
+        message: "Logged out successfully.",
+        success: true,
+      });
   } catch (error) {
-    console.log(error);
+    console.error("Logout Error:", error);
+    return res.status(500).json({
+      message: "An error occurred during logout. Please try again later.",
+      success: false,
+    });
   }
 };
 
@@ -406,7 +424,7 @@ export const forgotPassword = async (req, res) => {
 
     // Email options
     const mailOptions = {
-      from: `"GreatHire Support" <${process.env.EMAIL_USER}>`,
+      from: `"GreatHire Support" <${process.env.SUPPORT_EMAIL}>`,
       to: email,
       subject: "Reset Password",
       html: `

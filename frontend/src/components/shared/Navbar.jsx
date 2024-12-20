@@ -2,11 +2,12 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logOut } from "@/redux/authSlice";
-import {toast} from "react-hot-toast";
+import axios from "axios";
+import { toast } from "react-hot-toast";
 
 const Navbar = () => {
   const { user } = useSelector((state) => state.auth);
-  const isRecruiter = user?.role?.includes("recruiter");;
+  const isRecruiter = user?.role?.includes("recruiter");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
@@ -30,22 +31,28 @@ const Navbar = () => {
   // Prevent body scroll when mobile menu is open
   useEffect(() => {
     if (isMenuOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     }
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     };
   }, [isMenuOpen]);
 
   // Handle click outside for menus
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (policyMenuRef.current && !policyMenuRef.current.contains(event.target)) {
+      if (
+        policyMenuRef.current &&
+        !policyMenuRef.current.contains(event.target)
+      ) {
         setIsPolicyMenuOpen(false);
       }
-      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
+      if (
+        profileMenuRef.current &&
+        !profileMenuRef.current.contains(event.target)
+      ) {
         setIsProfileMenuOpen(false);
       }
     };
@@ -54,11 +61,23 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleLogout = () => {
-    dispatch(logOut());
-    setIsProfileMenuOpen(false);
-    setIsMenuOpen(false);
-    navigate("/login");
+  const handleLogout = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8000/api/v1/user/logout"
+      );
+      if (response.data.success) {
+        dispatch(logOut());
+        setIsProfileMenuOpen(false);
+        setIsMenuOpen(false);
+        toast.success(response.data.message);
+        navigate("/login");
+      } else {
+        toast.error("error in logout");
+      }
+    } catch (err) {
+      toast.error(`error in logout ${err}`);
+    }
   };
 
   const handleSignupOption = (type) => {
@@ -99,15 +118,15 @@ const Navbar = () => {
             <ul className="flex font-medium items-center gap-5">
               {navLinks.map(({ to, label }) => (
                 <li key={to}>
-                  <Link 
-                    to={to} 
+                  <Link
+                    to={to}
                     className="hover:text-blue-700 transition-colors"
                   >
                     {label}
                   </Link>
                 </li>
               ))}
-              
+
               {/* Policy Menu */}
               <li ref={policyMenuRef} className="relative">
                 <button
@@ -125,7 +144,12 @@ const Navbar = () => {
                     viewBox="0 0 24 24"
                     stroke="currentColor"
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
                   </svg>
                 </button>
                 {isPolicyMenuOpen && (
@@ -171,11 +195,16 @@ const Navbar = () => {
                     aria-haspopup="true"
                   >
                     <img
-                      src={user?.profile?.profilePhoto || "https://github.com/shadcn.png"}
+                      src={
+                        user?.profile?.profilePhoto ||
+                        "https://github.com/shadcn.png"
+                      }
                       alt={`${user.fullname || "User"}'s avatar`}
                       className="h-10 w-10 rounded-full border object-cover"
                     />
-                    <span className="font-medium">{user.fullname || "User"}</span>
+                    <span className="font-medium">
+                      {user.fullname || "User"}
+                    </span>
                   </button>
                   {isProfileMenuOpen && (
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border p-1 z-20">
@@ -216,7 +245,11 @@ const Navbar = () => {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={2}
-                d={isMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}
+                d={
+                  isMenuOpen
+                    ? "M6 18L18 6M6 6l12 12"
+                    : "M4 6h16M4 12h16M4 18h16"
+                }
               />
             </svg>
           </button>
@@ -242,7 +275,10 @@ const Navbar = () => {
               {user ? (
                 <div className="flex items-center gap-3">
                   <img
-                    src={user?.profile?.profilePhoto || "https://github.com/shadcn.png"}
+                    src={
+                      user?.profile?.profilePhoto ||
+                      "https://github.com/shadcn.png"
+                    }
                     alt="Profile"
                     className="h-12 w-12 rounded-full border object-cover"
                   />
@@ -368,4 +404,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
