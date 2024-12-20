@@ -373,3 +373,92 @@ export const sendMessage = async (req, res) => {
     });
   }
 };
+
+export const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    // Check if email exists
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(200).json({
+        message: "User not found with this email.",
+        success: false,
+      });
+    }
+
+    // Create a token with a 5-minute expiry
+    const resetToken = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, {
+      expiresIn: "5m",
+    });
+
+    // Generate reset URL
+    const resetURL = `http://localhost:5173/reset-password/${resetToken}`;
+
+    // Setup nodemailer
+    const transporter = nodemailer.createTransport({
+      service: "Gmail", // or your email service provider
+      auth: {
+        user: process.env.EMAIL_USER, // Your email
+        pass: process.env.EMAIL_PASS, // Your email password
+      },
+    });
+
+    // Email options
+    const mailOptions = {
+      from: `"GreatHire Support" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "Reset Password",
+      html: `
+        <p>Hi ${user.fullname},</p>
+        <p>You requested to reset your password. Click the link below to reset it:</p>
+        <a href="${resetURL}" target="_blank">${resetURL}</a>
+        <p>This link will expire in 5 minutes.</p>
+      `,
+    };
+
+    // Send email
+    await transporter.sendMail(mailOptions);
+
+    return res.status(200).json({
+      message: "Password reset link sent successfully.",
+      success: true,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error", success: false });
+  }
+};
+
+export const resetPassword = async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+
+    // Verify token
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+
+    // Check if user exists
+    const user = await User.findById(decoded.userId);
+    if (!user) {
+      return res.status(404).json({
+        message: "Invalid or expired token.",
+        success: false,
+      });
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update user password
+    user.password = hashedPassword;
+    await user.save();
+
+    return res.status(200).json({
+      message: "Password reset successfully.",
+      success: true,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error", success: false });
+  }
+};

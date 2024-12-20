@@ -10,6 +10,7 @@ import Footer from "../shared/Footer";
 import { useSelector, useDispatch } from "react-redux";
 import { setUser } from "@/redux/authSlice";
 import { toast } from "react-hot-toast";
+import Loading from "../Loading";
 
 const Login = () => {
   const { user } = useSelector((state) => state.auth);
@@ -21,6 +22,7 @@ const Login = () => {
     email: "",
     password: "",
   });
+  const [loading, setLoading] = useState(false); // Add loading state
 
   // Update state when input fields change
   const handleChange = (e) => {
@@ -34,6 +36,7 @@ const Login = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Set loading to true
     try {
       const response = await axios.post(
         "http://localhost:8000/api/v1/user/login",
@@ -43,7 +46,6 @@ const Login = () => {
       );
       if (response.data.success) {
         dispatch(setUser(response.data.user));
-        // Show success message
         toast.success(response.data.message);
         setFormData({
           email: "",
@@ -58,15 +60,18 @@ const Login = () => {
       }
     } catch (err) {
       console.log(`error in login ${err}`);
+      toast.error("An error occurred. Please try again.");
+    } finally {
+      setLoading(false); // Set loading to false
     }
   };
 
   return (
     <div>
       <Navbar />
-      <div className="flex flex-col md:flex-row h-screen">
+      <div className="flex flex-col-reverse md:flex-row h-screen">
         {/* Left Section - Form */}
-        <div className="w-full md:w-1/2 lg:w-1/3 flex items-center justify-center bg-gradient-to-l from-white to-blue-100 p-6">
+        <div className="w-full md:w-1/2 flex items-center justify-center bg-gradient-to-l from-white to-blue-100 p-6">
           <form className="w-full max-w-md space-y-4" onSubmit={handleSubmit}>
             <h1 className="text-3xl font-bold text-center">
               Great<span className="text-blue-700">Hire</span>
@@ -103,12 +108,23 @@ const Login = () => {
                 onChange={handleChange}
                 className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
+              <div className="flex flex-row-reverse ">
+                <p
+                  className="text-blue-600 text-sm cursor-pointer"
+                  onClick={() => navigate("/forgot-password")}
+                >
+                  Forgot Password
+                </p>
+              </div>
             </div>
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className={`w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+                loading ? "cursor-not-allowed" : ""
+              }`}
+              disabled={loading} // Disable button when loading
             >
-              Login
+              {loading ? <><Loading color="white"/></> : "Login"}
             </button>
             <p className="text-center text-sm text-gray-500">
               New at GreatHire?{" "}
@@ -120,7 +136,7 @@ const Login = () => {
         </div>
 
         {/* Right Section - Background Image */}
-        <div className="relative w-full md:w-1/2 lg:w-2/3 h-1/2 md:h-full">
+        <div className="relative w-full md:w-1/2  h-60 md:h-full">
           <img
             src={img2}
             alt="Background"
@@ -136,7 +152,7 @@ const Login = () => {
           </div>
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </div>
   );
 };

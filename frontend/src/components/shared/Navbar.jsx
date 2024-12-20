@@ -2,10 +2,11 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logOut } from "@/redux/authSlice";
+import {toast} from "react-hot-toast";
 
 const Navbar = () => {
   const { user } = useSelector((state) => state.auth);
-  const isRecruiter = user?.role?.includes("recruiter");
+  const isRecruiter = user?.role?.includes("recruiter");;
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
