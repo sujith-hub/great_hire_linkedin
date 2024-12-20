@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logOut } from "@/redux/authSlice";
+import { toast } from "react-hot-toast";
 
 const Navbar = () => {
   const { user } = useSelector((state) => state.auth);
-  const isRecruiter = user?.role.includes("recruiter")
+  const isRecruiter = user?.role.includes("recruiter");
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -34,7 +35,8 @@ const Navbar = () => {
   const handleLogout = () => {
     if (user) {
       dispatch(logOut());
-      navigate("/login");
+      toast.success("Logout Successfully!");
+      navigate("/");
     }
   };
 
@@ -111,7 +113,7 @@ const Navbar = () => {
               )}
             </li>
             <li>
-              <Link to="/great-hire/service" className="hover:text-blue-700">
+              <Link to="/great-hire/services" className="hover:text-blue-700">
                 Our Services
               </Link>
             </li>

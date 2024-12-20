@@ -21,6 +21,7 @@ const Login = () => {
     email: "",
     password: "",
   });
+  const [loading, setLoading] = useState(false); // Add loading state
 
   // Update state when input fields change
   const handleChange = (e) => {
@@ -34,6 +35,7 @@ const Login = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Set loading to true
     try {
       const response = await axios.post(
         "http://localhost:8000/api/v1/user/login",
@@ -43,7 +45,6 @@ const Login = () => {
       );
       if (response.data.success) {
         dispatch(setUser(response.data.user));
-        // Show success message
         toast.success(response.data.message);
         setFormData({
           email: "",
@@ -58,6 +59,9 @@ const Login = () => {
       }
     } catch (err) {
       console.log(`error in login ${err}`);
+      toast.error("An error occurred. Please try again.");
+    } finally {
+      setLoading(false); // Set loading to false
     }
   };
 
@@ -103,12 +107,23 @@ const Login = () => {
                 onChange={handleChange}
                 className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
+              <div className="flex flex-row-reverse ">
+                <p
+                  className="text-blue-600 text-sm cursor-pointer"
+                  onClick={() => navigate("/forgot-password")}
+                >
+                  Forgot Password
+                </p>
+              </div>
             </div>
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className={`w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+                loading ? "cursor-not-allowed" : ""
+              }`}
+              disabled={loading} // Disable button when loading
             >
-              Login
+              {loading ? "Loging..." : "Login"}
             </button>
             <p className="text-center text-sm text-gray-500">
               New at GreatHire?{" "}
@@ -136,7 +151,7 @@ const Login = () => {
           </div>
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </div>
   );
 };
