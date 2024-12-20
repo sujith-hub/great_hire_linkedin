@@ -75,7 +75,7 @@ const Navbar = () => {
         ]
       : [{ to: "/", label: "Home" }]),
     { to: "/jobs", label: "Jobs" },
-    { to: "/great-hire/service", label: "Our Services" },
+    { to: "/great-hire/services", label: "Our Services" },
     { to: "/contact", label: "Contact Us" },
   ];
 
