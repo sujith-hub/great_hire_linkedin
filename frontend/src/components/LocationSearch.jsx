@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FaLocationDot } from "react-icons/fa6";
 import { MdClear } from "react-icons/md";
-import { useJobDetails } from "@/context/JobDetailsContext";
+import axios from "axios";
 
 const Locations = ({ locations, onSelectLocation }) => {
   return (
@@ -14,7 +14,7 @@ const Locations = ({ locations, onSelectLocation }) => {
             onClick={() => onSelectLocation(location)}
           >
             <FaLocationDot size={16} className="text-gray-500" />
-            <span>{location}</span>
+            <span>{location.description}</span>
           </div>
         ))
       ) : (
@@ -24,59 +24,64 @@ const Locations = ({ locations, onSelectLocation }) => {
   );
 };
 
-const SearchWithLocations = ({ onSelectLocation }) => {
+const LocationSearch = ({ onSelectLocation }) => {
   const [inputValue, setInputValue] = useState("");
   const [showLocations, setShowLocations] = useState(false);
   const [filteredLocations, setFilteredLocations] = useState([]);
-  const { resetFilter } = useJobDetails(); // Access functions from context
 
-  const allLocations = [
-    "Jaipur, Rajasthan",
-    "Delhi, Delhi",
-    "Gurugram, Haryana",
-    "Noida, Uttar Pradesh",
-    "Lucknow, Uttar Pradesh",
-    "Ahmedabad, Gujarat",
-    "Bhopal, Madhya Pradesh",
-    "Kolkata, West Bengal",
-    "Mumbai, Maharashtra",
-    "Pune, Maharashtra",
-    "Hyderabad, Telangana",
-    "Bengaluru, Karnataka",
-    "Chennai, Tamil Nadu",
-    "Remote"
-  ];
+  const apiKey = "pk.e14db5ac88f4d29e8f6eeafdc1981a37"; // Replace with your LocationIQ API key
 
-  const handleFocus = () => {
-    setShowLocations(true);
-    setFilteredLocations(allLocations); // Show all locations when input is focused
-  };
+  const handleFocus = () => setShowLocations(true);
 
   const handleBlur = () => setTimeout(() => setShowLocations(false), 150);
 
-  const handleLocationSelect = (location) => {
-    setInputValue(location);
-    setShowLocations(false);
-    onSelectLocation(location);
-  };
-
-  const handleInputChange = (e) => {
+  const handleInputChange = async (e) => {
     const value = e.target.value;
     setInputValue(value);
 
-    // Filter locations based on user input
-    const filtered = allLocations.filter((location) =>
-      location.toLowerCase().includes(value.toLowerCase())
-    );
-    setFilteredLocations(filtered);
+    if (value.length < 3) {
+      setFilteredLocations([]);
+      return;
+    }
+
+    try {
+      const response = await axios.get(
+        `https://us1.locationiq.com/v1/search.php`,
+        {
+          params: {
+            key: apiKey,
+            q: value,
+            format: "json",
+            countrycodes: "IN",
+            addressdetails: 1,
+            language: "en",
+          },
+        }
+      );
+
+      const formattedSuggestions = response.data.map((item) => {
+        return {
+          description: `${item.address.station || ""} ${item.address.city || ""} ${item.address.state || ""} ${item.address.country || ""}`,
+        };
+      });
+
+      setFilteredLocations(formattedSuggestions);
+    } catch (error) {
+      console.error("Error fetching location suggestions:", error);
+    }
 
     setShowLocations(true);
   };
 
   const clearInput = () => {
     setInputValue("");
-    setFilteredLocations(allLocations); // Reset the filtered list
-    resetFilter();
+    setFilteredLocations([]);
+  };
+
+  const handleLocationSelect = (location) => {
+    setInputValue(location.description);
+    setShowLocations(false);
+    onSelectLocation(location);
   };
 
   return (
@@ -85,7 +90,7 @@ const SearchWithLocations = ({ onSelectLocation }) => {
         <FaLocationDot size={25} className="text-gray-500" />
         <input
           type="text"
-          placeholder='Your dream location'
+          placeholder="Your dream location"
           className="py-3 px-2 outline-none flex-1 bg-transparent text-sm sm:text-base w-full"
           value={inputValue}
           onFocus={handleFocus}
@@ -112,4 +117,4 @@ const SearchWithLocations = ({ onSelectLocation }) => {
   );
 };
 
-export default SearchWithLocations;
+export default LocationSearch;
