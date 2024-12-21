@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FaLocationDot } from "react-icons/fa6";
-import { MdClear } from "react-icons/md"
+import { MdClear } from "react-icons/md";
+import { useJobDetails } from "@/context/JobDetailsContext";
 import axios from "axios";
 
 const Locations = ({ locations, onSelectLocation }) => {
@@ -26,7 +27,7 @@ const Locations = ({ locations, onSelectLocation }) => {
   );
 };
 
-const LocationSearch = ({ onSelectLocation }) => {
+const LocationSearch = ({ onSelectLocation, handleLocationSelect }) => {
   const [inputValue, setInputValue] = useState("");
   const [showLocations, setShowLocations] = useState(false);
   const [filteredLocations, setFilteredLocations] = useState([]);
@@ -140,10 +141,8 @@ const LocationSearch = ({ onSelectLocation }) => {
   const handleInputChange = async (e) => {
     const value = e.target.value;
     setInputValue(value);
-
-<<<<<<< HEAD:frontend/src/components/LocationSearch.jsx
     if (value.length < 3) {
-      setFilteredLocations([]);
+      setFilteredLocations([]);``
       return;
     }
 

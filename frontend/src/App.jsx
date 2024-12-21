@@ -23,6 +23,7 @@ import JobServicePlans from "./pages/JobServicePlans";
 import CreateCompany from "./pages/CreateCompany";
 
 
+
 const appRouter = createBrowserRouter([
   {
     path: "/",
@@ -102,7 +103,6 @@ const appRouter = createBrowserRouter([
     path:"/recruiter/create-company",
     element:<CreateCompany />
   },
-
   {
     path: "*",
     element: <PageNotFound />,

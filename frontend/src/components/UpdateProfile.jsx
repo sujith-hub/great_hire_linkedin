@@ -88,13 +88,16 @@ const UpdateProfile = ({ open, setOpen }) => {
         <DialogHeader className="flex justify-between items-center">
           <DialogTitle className="text-lg font-semibold">Update Profile</DialogTitle>
           {/* Close button at the top right */}
-          <button
+          {/* <button
             type="button"
             onClick={() => setOpen(false)}
             className="text-gray-500 hover:text-gray-700 absolute top-2 right-2"
-          >
-            <X className="h-5 w-5" />
-          </button>
+          > */}
+            <X 
+            type="button"
+            onClick={() => setOpen(false)}
+            className="text-gray-500 hover:text-gray-700 absolute top-2 right-2 h-5 w-5" />
+          {/* </button> */}
         </DialogHeader>
 
         <form onSubmit={submitHandler} className="space-y-4">
