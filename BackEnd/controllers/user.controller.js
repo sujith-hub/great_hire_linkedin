@@ -186,8 +186,7 @@ export const googleLogin = async (req, res) => {
         });
     }
 
-    if(!role)
-        role = "student"
+    if (!role) role = "student";
 
     let maxPostJobs = 0;
     let maxResumeDownload = 0;

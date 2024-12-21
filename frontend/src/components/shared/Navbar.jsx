@@ -94,7 +94,7 @@ const Navbar = () => {
         ]
       : [{ to: "/", label: "Home" }]),
     { to: "/jobs", label: "Jobs" },
-    { to: "/great-hire/service", label: "Our Services" },
+    { to: "/great-hire/services", label: "Our Services" },
     { to: "/contact", label: "Contact Us" },
   ];
 
@@ -198,7 +198,7 @@ const Navbar = () => {
                       src={
                         user?.profile?.profilePhoto ||
                         "https://github.com/shadcn.png"
-                       }
+                      }
                       alt={`${user.fullname || "User"}'s avatar`}
                       className="h-10 w-10 rounded-full border object-cover"
                     />
