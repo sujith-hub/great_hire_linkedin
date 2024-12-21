@@ -14,7 +14,6 @@ const GoogleLogin = ({ text, role }) => {
   // Function to handle Google login response
   const responseGoogle = async (authResult) => {
     try {
-      console.log("Authorization Code:", authResult.code);
       if (authResult.code) {
         // Send the authorization code to your backend
         const response = await axios.post(

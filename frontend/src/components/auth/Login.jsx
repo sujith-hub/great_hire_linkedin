@@ -84,7 +84,7 @@ const Login = () => {
             </p>
             {/* Google Login Button */}
             <GoogleOAuthProvider clientId={google_client_id}>
-              <GoogleLogin text="Login" role="student" />
+              <GoogleLogin text="Login" role={null} />
             </GoogleOAuthProvider>
             <p className="text-sm font-semibold text-gray-400 text-center">
               ---- or Login with email ----
@@ -124,7 +124,13 @@ const Login = () => {
               }`}
               disabled={loading} // Disable button when loading
             >
-              {loading ? <><Loading color="white"/></> : "Login"}
+              {loading ? (
+                <>
+                  <Loading color="white" />
+                </>
+              ) : (
+                "Login"
+              )}
             </button>
             <p className="text-center text-sm text-gray-500">
               New at GreatHire?{" "}
