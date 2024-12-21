@@ -142,10 +142,6 @@ export const googleLogin = async (req, res) => {
         .json({ message: "Authorization code is required" });
     }
 
-    if (!role || !["student", "recruiter", "admin"].includes(role)) {
-      return res.status(200).json({ message: "Invalid or missing role" });
-    }
-
     // Exchange authorization code for tokens
     const { tokens } = await oauth2Client.getToken(code);
     oauth2Client.setCredentials(tokens);
@@ -161,12 +157,13 @@ export const googleLogin = async (req, res) => {
     let user = await User.findOne({ email: googleUser.email });
 
     if (user) {
-      if (role !== user.role) {
+      if (role && role !== user.role) {
         res.status(200).json({
           message: "Account already exist use another!",
           success: false,
         });
       }
+
       const tokenData = {
         userId: user._id,
       };
@@ -188,6 +185,9 @@ export const googleLogin = async (req, res) => {
           success: true,
         });
     }
+
+    if(!role)
+        role = "student"
 
     let maxPostJobs = 0;
     let maxResumeDownload = 0;

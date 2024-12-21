@@ -198,7 +198,7 @@ const Navbar = () => {
                       src={
                         user?.profile?.profilePhoto ||
                         "https://github.com/shadcn.png"
-                      }
+                       }
                       alt={`${user.fullname || "User"}'s avatar`}
                       className="h-10 w-10 rounded-full border object-cover"
                     />
