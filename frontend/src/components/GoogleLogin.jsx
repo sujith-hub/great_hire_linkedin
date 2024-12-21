@@ -14,7 +14,6 @@ const GoogleLogin = ({ text, role }) => {
   // Function to handle Google login response
   const responseGoogle = async (authResult) => {
     try {
-      console.log("Authorization Code:", authResult.code);
       if (authResult.code) {
         // Send the authorization code to your backend
         const response = await axios.post(
@@ -25,15 +24,19 @@ const GoogleLogin = ({ text, role }) => {
           }
         );
 
-        // Display message using the Toaster
-        toast.success(response.data.message)
+        if (response.data.success) {
+          // Display message using the Toaster
+          toast.success(response.data.message);
 
-        // Navigate based on user role
-        const userRole = response.data.user.role;
-        dispatch(setUser(response.data.user));
-        if (userRole.includes("student")) navigate("/");
-        else if (userRole.includes("recruiter")) navigate("/post-job");
-        else if (userRole.includes("admin")) navigate("/admin/dashboard");
+          // Navigate based on user role
+          const userRole = response.data.user.role;
+          dispatch(setUser(response.data.user));
+          if (userRole.includes("student")) navigate("/");
+          else if (userRole.includes("recruiter")) navigate("/recruiter/create-company");
+          else if (userRole.includes("admin")) navigate("/admin/dashboard");
+        }else{
+          toast.success(response.data.message);
+        }
       }
     } catch (err) {
       console.error(`Error while Google authentication: ${err}`);

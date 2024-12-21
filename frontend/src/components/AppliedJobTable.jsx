@@ -10,15 +10,28 @@ import {
 } from "./ui/table";
 import { Badge } from "./ui/badge";
 
-const appliedJobs =[1,2];
+const appliedJobs = [
+  { date: "07-12-2024", role: "Backend Developer", company: "TechCorp", status: "Selected" },
+  { date: "15-11-2024", role: "Frontend Developer", company: "Innovatech", status: "Pending" },
+  { date: "01-10-2024", role: "Full Stack Engineer", company: "DevWorks", status: "Rejected" },
+  { date: "25-09-2024", role: "Data Analyst", company: "AnalyzeIT", status: "Pending" },
+  { date: "12-09-2024", role: "Mobile App Developer", company: "Appify", status: "Selected" },
+];
 
+const statusStyles = {
+  Selected: "bg-green-100 text-green-700",
+  Pending: "bg-yellow-100 text-yellow-700",
+  Rejected: "bg-red-100 text-red-700",
+};
 
 const AppliedJobTable = () => {
   return (
-    <div>
-      <Table>
-        <TableCaption>List of applied jobs</TableCaption>
-        <TableHeader>
+    <div className="p-5 bg-gray-50 shadow-md rounded-lg">
+      <Table className="w-full border-collapse border border-gray-200">
+        <TableCaption className="text-gray-600 text-sm">
+          Below is the list of jobs you have applied for.
+        </TableCaption>
+        <TableHeader className="bg-gray-100">
           <TableRow>
             <TableHead>Date</TableHead>
             <TableHead>Job Role</TableHead>
@@ -27,18 +40,25 @@ const AppliedJobTable = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-            {
-                appliedJobs.map((item, index) => (
-                    <TableRow key={index}>
-                    <TableCell>07-12-2024</TableCell>
-                    <TableCell>Backend Developer</TableCell>
-                    <TableCell>Caompany</TableCell>
-                    <TableCell className="text-right">
-                      <Badge>Selected</Badge>
-                    </TableCell>
-                  </TableRow>
-                ))  
-            }
+          {appliedJobs.map((job, index) => (
+            <TableRow
+              key={index}
+              className="hover:bg-gray-50 transition duration-150"
+            >
+              <TableCell className="text-gray-700">{job.date}</TableCell>
+              <TableCell className="text-gray-800 font-medium">
+                {job.role}
+              </TableCell>
+              <TableCell className="text-gray-800 font-medium">
+                {job.company}
+              </TableCell>
+              <TableCell className="text-right">
+                <Badge className={`px-2 py-1 rounded-md ${statusStyles[job.status]}`}>
+                  {job.status}
+                </Badge>
+              </TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
     </div>

@@ -11,6 +11,7 @@ import Navbar from "@/components/shared/Navbar";
 
 const Signup = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     fullname: "",
     email: "",
@@ -29,7 +30,7 @@ const Signup = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+    setLoading(true); // Set loading to true
     try {
       const response = await axios.post(
         "http://localhost:8000/api/v1/user/register",
@@ -38,8 +39,6 @@ const Signup = () => {
           role: "recruiter",
         }
       );
-
-      console.log(response);
 
       // Show success message
       toast.success(response.data.message);
@@ -60,6 +59,8 @@ const Signup = () => {
       const errorMessage =
         err.response?.data?.message || "Something went wrong";
       toast.error(errorMessage);
+    } finally {
+      setLoading(false); // Set loading to false
     }
   };
 
@@ -162,9 +163,12 @@ const Signup = () => {
             </div>
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className={`w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+                loading ? "cursor-not-allowed" : ""
+              }`}
+              disabled={loading} // Disable button when loading`}
             >
-              Create Account
+              {loading ? "Creating..." : "Create Account"}
             </button>
             <p className="text-center text-sm text-gray-500">
               Already have an account?{" "}

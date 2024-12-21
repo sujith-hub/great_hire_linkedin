@@ -59,9 +59,14 @@ export default {
           "0%": { transform: "translateX(10%)", opacity: "0" },
           "100%": { transform: "translateX(0)", opacity: "1" },
         },
+        wave: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-20px)" },
+        },
       },
       animation: {
         "slide-in-right": "slideInRight 0.5s ease-out",
+        "wave-bounce": "wave 1s infinite ease-in-out", // Custom animation name
       },
     },
   },

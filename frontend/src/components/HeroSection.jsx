@@ -28,7 +28,9 @@ const HeroSection = ({ searchInfo }) => {
         </h1>
 
         <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl mt-4">
-          Connecting Talent with Opportunity-Your Next Great Hire Awaits!
+          Connecting <span className="text-[#384ac2]">Skills</span> with{" "}
+          <span className="text-[#384ac2]">Opportunity</span> - Your Next Great{" "}
+          <span className="text-[#384ac2]">Hire</span> Awaits!
         </p>
 
         <JobSearch searchInfo={searchInfo} />

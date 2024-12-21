@@ -142,10 +142,6 @@ export const googleLogin = async (req, res) => {
         .json({ message: "Authorization code is required" });
     }
 
-    if (!role || !["student", "recruiter", "admin"].includes(role)) {
-      return res.status(200).json({ message: "Invalid or missing role" });
-    }
-
     // Exchange authorization code for tokens
     const { tokens } = await oauth2Client.getToken(code);
     oauth2Client.setCredentials(tokens);
@@ -161,12 +157,20 @@ export const googleLogin = async (req, res) => {
     let user = await User.findOne({ email: googleUser.email });
 
     if (user) {
+      if (role && role !== user.role) {
+        res.status(200).json({
+          message: "Account already exist use another!",
+          success: false,
+        });
+      }
+
       const tokenData = {
         userId: user._id,
       };
       const token = await jwt.sign(tokenData, process.env.SECRET_KEY, {
         expiresIn: "1d",
       });
+
       // cookies strict used...
       return res
         .status(200)
@@ -181,6 +185,8 @@ export const googleLogin = async (req, res) => {
           success: true,
         });
     }
+
+    if (!role) role = "student";
 
     let maxPostJobs = 0;
     let maxResumeDownload = 0;
@@ -234,15 +240,26 @@ export const googleLogin = async (req, res) => {
   }
 };
 
-//for logout....
+// Logout Section
 export const logout = async (req, res) => {
   try {
-    return res.status(200).cookie("token", "", { maxAge: 0 }).json({
-      message: "Logged out succesfully.",
-      success: true,
-    });
+    return res
+      .status(200)
+      .cookie("token", "", {
+        maxAge: 0,
+        httpOnly: true,
+        sameSite: "strict",
+      })
+      .json({
+        message: "Logged out successfully.",
+        success: true,
+      });
   } catch (error) {
-    console.log(error);
+    console.error("Logout Error:", error);
+    return res.status(500).json({
+      message: "An error occurred during logout. Please try again later.",
+      success: false,
+    });
   }
 };
 
@@ -371,5 +388,94 @@ export const sendMessage = async (req, res) => {
       success: false,
       message: "An error occurred while sending the message.",
     });
+  }
+};
+
+export const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    // Check if email exists
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(200).json({
+        message: "User not found with this email.",
+        success: false,
+      });
+    }
+
+    // Create a token with a 5-minute expiry
+    const resetToken = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, {
+      expiresIn: "5m",
+    });
+
+    // Generate reset URL
+    const resetURL = `http://localhost:5173/reset-password/${resetToken}`;
+
+    // Setup nodemailer
+    const transporter = nodemailer.createTransport({
+      service: "Gmail", // or your email service provider
+      auth: {
+        user: process.env.EMAIL_USER, // Your email
+        pass: process.env.EMAIL_PASS, // Your email password
+      },
+    });
+
+    // Email options
+    const mailOptions = {
+      from: `"GreatHire Support" <${process.env.SUPPORT_EMAIL}>`,
+      to: email,
+      subject: "Reset Password",
+      html: `
+        <p>Hi ${user.fullname},</p>
+        <p>You requested to reset your password. Click the link below to reset it:</p>
+        <a href="${resetURL}" target="_blank">${resetURL}</a>
+        <p>This link will expire in 5 minutes.</p>
+      `,
+    };
+
+    // Send email
+    await transporter.sendMail(mailOptions);
+
+    return res.status(200).json({
+      message: "Password reset link sent successfully.",
+      success: true,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error", success: false });
+  }
+};
+
+export const resetPassword = async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+
+    // Verify token
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+
+    // Check if user exists
+    const user = await User.findById(decoded.userId);
+    if (!user) {
+      return res.status(404).json({
+        message: "Invalid or expired token.",
+        success: false,
+      });
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update user password
+    user.password = hashedPassword;
+    await user.save();
+
+    return res.status(200).json({
+      message: "Password reset successfully.",
+      success: true,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error", success: false });
   }
 };

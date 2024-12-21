@@ -11,7 +11,7 @@ const OurService = () => {
       description:
         "Discover the perfect job opportunities tailored to your skills and goals.",
       icon: "🔍",
-      url: "https://www.mobiusengine.ai",
+      url: "/job-service/plans",
     },
     {
       title: "Accounts and Payroll",
@@ -76,7 +76,7 @@ const OurService = () => {
       <Navbar />
       <div className="bg-gray-50">
         {/* Hero Section */}
-        <header className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-16">
+        <header className="bg-gradient-to-tr from-indigo-400 to-purple-500 text-white py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h1 className="text-3xl md:text-5xl font-bold">
               Our Services Tailored for Your Success
@@ -101,7 +101,7 @@ const OurService = () => {
                   key={index}
                   className=" bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 hover:scale-95 cursor-pointer"
                   onClick={() =>
-                    window.open(service.url, "_blank")
+                    navigate(service.url)
                   }
                 >
                   <div className="text-4xl mb-4">{service.icon}</div>
@@ -118,7 +118,7 @@ const OurService = () => {
         </section>
 
         {/* Call-to-Action Section */}
-        <section className="bg-gradient-to-r from-teal-500 to-blue-500 text-white py-16">
+        <section className="bg-gradient-to-tr from-teal-500 to-blue-500 text-white py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-3xl md:text-4xl font-bold">
               Let's Work Together

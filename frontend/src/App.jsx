@@ -15,9 +15,13 @@ import { JobDetailsProvider } from "./context/JobDetailsContext";
 
 import MainApply from "./components/ApplyJobs/MainApply";
 import ReportJob from "./pages/ReportJob";
-
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import Success from "./pages/Success";
 import PageNotFound from "./pages/PageNotFound";
+import JobServicePlans from "./pages/JobServicePlans";
+import CreateCompany from "./pages/CreateCompany";
+
 
 const appRouter = createBrowserRouter([
   {
@@ -35,6 +39,14 @@ const appRouter = createBrowserRouter([
   {
     path: "/recruiter/signup",
     element: <RecrutierSignup />,
+  },
+  {
+    path: "/forgot-password",
+    element: <ForgotPassword />,
+  },
+  {
+    path: "/reset-password/:token",
+    element: <ResetPassword />,
   },
   {
     path: "/jobs",
@@ -77,9 +89,20 @@ const appRouter = createBrowserRouter([
     element: <Success />,
   },
   {
-    path: "/great-hire/service",
+    path: "/great-hire/services",
     element: <OurService />,
   },
+  {
+    path: "/job-service/plans",
+    element: <JobServicePlans />,
+  },
+  
+
+  {
+    path:"/recruiter/create-company",
+    element:<CreateCompany />
+  },
+
   {
     path: "*",
     element: <PageNotFound />,
