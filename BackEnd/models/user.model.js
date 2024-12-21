@@ -32,6 +32,10 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    isVerified:{
+      type:Boolean,
+      default:false
+    },
     profile: {
       bio: { type: String },
       skills: [{ type: String }],

@@ -22,8 +22,6 @@ import PageNotFound from "./pages/PageNotFound";
 import JobServicePlans from "./pages/JobServicePlans";
 import CreateCompany from "./pages/CreateCompany";
 
-
-
 const appRouter = createBrowserRouter([
   {
     path: "/",
@@ -97,8 +95,6 @@ const appRouter = createBrowserRouter([
     path: "/job-service/plans",
     element: <JobServicePlans />,
   },
-  
-
   {
     path:"/recruiter/create-company",
     element:<CreateCompany />
