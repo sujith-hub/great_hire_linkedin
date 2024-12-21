@@ -33,7 +33,7 @@ const GoogleLogin = ({ text, role }) => {
           const userRole = response.data.user.role;
           dispatch(setUser(response.data.user));
           if (userRole.includes("student")) navigate("/");
-          else if (userRole.includes("recruiter")) navigate("/post-job");
+          else if (userRole.includes("recruiter")) navigate("/recruiter/create-company");
           else if (userRole.includes("admin")) navigate("/admin/dashboard");
         }else{
           toast.success(response.data.message);
