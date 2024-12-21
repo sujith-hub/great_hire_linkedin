@@ -21,7 +21,6 @@ import Success from "./pages/Success";
 import PageNotFound from "./pages/PageNotFound";
 import JobServicePlans from "./pages/JobServicePlans";
 
-
 const appRouter = createBrowserRouter([
   {
     path: "/",
