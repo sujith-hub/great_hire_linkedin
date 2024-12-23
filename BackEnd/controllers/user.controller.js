@@ -452,13 +452,27 @@ export const resetPassword = async (req, res) => {
     const { token, newPassword } = req.body;
 
     // Verify token
-    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.SECRET_KEY);
+    } catch (err) {
+      if (err.name === "TokenExpiredError") {
+        return res.status(401).json({
+          message: "Token has expired.",
+          success: false,
+        });
+      }
+      return res.status(400).json({
+        message: "Invalid token.",
+        success: false,
+      });
+    }
 
     // Check if user exists
     const user = await User.findById(decoded.userId);
     if (!user) {
       return res.status(404).json({
-        message: "Invalid or expired token.",
+        message: "User not found.",
         success: false,
       });
     }
@@ -475,7 +489,10 @@ export const resetPassword = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error", success: false });
+    console.error("Error resetting password:", error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+      success: false,
+    });
   }
 };

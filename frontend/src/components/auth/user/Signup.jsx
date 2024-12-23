@@ -40,19 +40,23 @@ const Signup = () => {
         }
       );
 
-      // Show success message
-      toast.success(response.data.message);
+      if (response.data.success) {
+        // Show success message
+        toast.success(response.data.message);
 
-      // Reset form fields
-      setFormData({
-        fullname: "",
-        email: "",
-        phoneNumber: "",
-        password: "",
-      });
+        // Reset form fields
+        setFormData({
+          fullname: "",
+          email: "",
+          phoneNumber: "",
+          password: "",
+        });
 
-      // Redirect to login page
-      navigate("/login");
+        // Redirect to login page
+        navigate("/login");
+      }else{
+        toast.error(response.data.message);
+      }
     } catch (err) {
       // Show error message
       const errorMessage =
@@ -151,7 +155,6 @@ const Signup = () => {
               disabled={loading} // Disable button when loading`}
             >
               {loading ? "Creating..." : "Create Account"}
-              
             </button>
             <p className="text-center text-sm text-gray-500">
               Already have an account?{" "}

@@ -30,7 +30,6 @@ const ResetPassword = () => {
           newPassword: password,
         }
       );
-
       if (response.data.success) {
         toast.success(response.data.message);
         navigate("/login");
