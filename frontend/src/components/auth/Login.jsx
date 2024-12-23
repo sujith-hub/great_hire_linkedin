@@ -53,7 +53,8 @@ const Login = () => {
         });
         const userRole = response.data.user.role;
         if (userRole.includes("student")) navigate("/");
-        else if (userRole.includes("recruiter")) navigate("/post-job");
+        else if (userRole.includes("recruiter"))
+          navigate("/recruiter/create-company");
         else if (userRole.includes("admin")) navigate("/admin/dashboard");
       } else {
         toast.error(response.data.message);
@@ -84,7 +85,7 @@ const Login = () => {
             </p>
             {/* Google Login Button */}
             <GoogleOAuthProvider clientId={google_client_id}>
-              <GoogleLogin text="Login" role={null} />
+              <GoogleLogin text="Login" role={null} route="user"/>
             </GoogleOAuthProvider>
             <p className="text-sm font-semibold text-gray-400 text-center">
               ---- or Login with email ----

@@ -5,6 +5,7 @@ import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 
 const ResetPassword = () => {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ const ResetPassword = () => {
     try {
       setLoading(true);
       const response = await axios.post(
-        "http://localhost:8000/api/v1/user/reset-password",
+        `${USER_API_END_POINT}/reset-password`,
         {
           token,
           newPassword: password,

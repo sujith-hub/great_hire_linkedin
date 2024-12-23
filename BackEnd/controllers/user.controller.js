@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { User } from "../models/user.model.js";
+import { Recruiter } from "../models/recruiter.model.js";
 import cloudinary from "../utils/cloudinary.js";
 import getDataUri from "../utils/dataUri.js";
 import { oauth2Client } from "../utils/googleConfig.js";
@@ -10,10 +11,10 @@ import nodemailer from "nodemailer";
 
 export const register = async (req, res) => {
   try {
-    const { fullname, email, phoneNumber, password, role } = req.body;
+    const { fullname, email, phoneNumber, password } = req.body;
 
     // Validate required fields
-    if (!fullname || !email || !phoneNumber || !password || !role) {
+    if (!fullname || !email || !phoneNumber || !password) {
       return res.status(200).json({
         message: "Something is missing",
       });
@@ -39,23 +40,12 @@ export const register = async (req, res) => {
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    let maxPostJobs = 0;
-    let maxResumeDownload = 0;
-
-    if (role === "recruiter") {
-      maxPostJobs = 10;
-      maxResumeDownload = 100;
-    }
-
     // Create new user
     const newUser = await User.create({
       fullname,
       email,
       phoneNumber,
       password: hashedPassword,
-      role,
-      maxPostJobs: maxPostJobs,
-      maxResumeDownload: maxResumeDownload,
     });
 
     // Send success response
@@ -84,6 +74,9 @@ export const login = async (req, res) => {
     }
     //check mail is correct or not...
     let user = await User.findOne({ email });
+    if (!user) {
+      user = await Recruiter.findOne({ email });
+    }
     if (!user) {
       return res.status(200).json({
         message: "Account Not found.",
@@ -155,6 +148,7 @@ export const googleLogin = async (req, res) => {
 
     // Check if user already exists
     let user = await User.findOne({ email: googleUser.email });
+    if (!user) user = await Recruiter.findOne({ email: googleUser.email });
 
     if (user) {
       if (role && role !== user.role) {
@@ -188,14 +182,6 @@ export const googleLogin = async (req, res) => {
 
     if (!role) role = "student";
 
-    let maxPostJobs = 0;
-    let maxResumeDownload = 0;
-
-    if (role === "recruiter") {
-      maxPostJobs = 10;
-      maxResumeDownload = 100;
-    }
-
     // If user doesn't exist, create a new one
     user = new User({
       fullname: googleUser.name || googleUser.given_name || "No Name",
@@ -203,8 +189,6 @@ export const googleLogin = async (req, res) => {
       phoneNumber: "",
       password: "", // No password for Google-authenticated users
       role: role, // Use the provided role
-      maxPostJobs: maxPostJobs,
-      maxResumeDownload: maxResumeDownload,
       profile: {
         profilePhoto: googleUser.picture || "",
       },
@@ -288,10 +272,7 @@ export const updateProfile = async (req, res) => {
     let user = await User.findById(userId);
 
     if (!user) {
-      return res.status(404).json({
-        message: "User not found.",
-        success: false,
-      });
+      user = await Recruiter.findById(userId);
     }
 
     // Update user fields
@@ -396,7 +377,10 @@ export const forgotPassword = async (req, res) => {
     const { email } = req.body;
 
     // Check if email exists
-    const user = await User.findOne({ email });
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = await Recruiter.findOne({ email });
+    }
     if (!user) {
       return res.status(200).json({
         message: "User not found with this email.",
@@ -469,7 +453,10 @@ export const resetPassword = async (req, res) => {
     }
 
     // Check if user exists
-    const user = await User.findById(decoded.userId);
+    let user = await User.findById(decoded.userId);
+    if (!user) {
+      user = await Recruiter.findById(decoded.userId);
+    }
     if (!user) {
       return res.status(404).json({
         message: "User not found.",

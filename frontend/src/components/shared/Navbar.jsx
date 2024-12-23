@@ -2,8 +2,10 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logOut } from "@/redux/authSlice";
+import { removeCompany } from "@/redux/companySlice";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+
 
 const Navbar = () => {
   const { user } = useSelector((state) => state.auth);
@@ -68,6 +70,7 @@ const Navbar = () => {
       );
       if (response.data.success) {
         dispatch(logOut());
+        dispatch(removeCompany());
         setIsProfileMenuOpen(false);
         setIsMenuOpen(false);
         toast.success(response.data.message);

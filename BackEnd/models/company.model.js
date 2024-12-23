@@ -1,27 +1,47 @@
 import mongoose from "mongoose";
 
-const companySchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
-        unique:true
+const companySchema = new mongoose.Schema(
+  {
+    companyName: {
+      type: String,
+      required: true,
+      unique: true,
     },
-    description: {
-        type: String,
+    companyWebsite: {
+      type: String,
     },
-    website: {
-        type: String,
+    industry: {
+      type: String,
     },
-    location: {
-        type: String,
+    address: {
+      streetAddress: { type: String },
+      city: { type: String },
+      state: { type: String },
+      country: { type: String },
+      postalCode: { type: String },
     },
-    logo: {
-        type: String,   // URL to company logo...
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      match: [/.+@.+\..+/, "Please enter a valid email address"],
+    },
+    phone: {
+      type: String,
+    },
+    taxId: {
+      type: String,
+    },
+    businessFile: {
+      type: String, // Store the file path or URL
     },
     userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-    }
-}, { timestamps: true })
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+  },
+  { timestamps: true }
+);
+
 export const Company = mongoose.model("Company", companySchema);
