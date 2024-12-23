@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import ApplyForm from "./ApplyForm";
 import Navbar from "../shared/Navbar";
+import Footer from "../shared/Footer"
 
 const MainApply = () => {
   const [right, setRight] = useState(true);
@@ -46,6 +47,7 @@ const MainApply = () => {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 };

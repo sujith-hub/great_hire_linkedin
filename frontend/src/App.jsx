@@ -95,13 +95,10 @@ const appRouter = createBrowserRouter([
     path: "/job-service/plans",
     element: <JobServicePlans />,
   },
-  
-
   {
     path:"/recruiter/create-company",
     element:<CreateCompany />
   },
-
   {
     path: "*",
     element: <PageNotFound />,

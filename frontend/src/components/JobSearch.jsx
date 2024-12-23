@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { IoIosSearch } from "react-icons/io";
-import SearchWithLocations from "./SearchWithLocations";
+import LocationSearch from "./LocationSearch";
 import { useJobDetails } from "@/context/JobDetailsContext";
 
 const JobSearch = ({ searchInfo }) => {
@@ -38,7 +38,7 @@ const JobSearch = ({ searchInfo }) => {
         </div>
 
         {/* Location Search */}
-        <SearchWithLocations onSelectLocation={handleLocationSelect} />
+        <LocationSearch onSelectLocation={handleLocationSelect} />
 
         {/* Desktop Search Button */}
         <div className="hidden md:block">

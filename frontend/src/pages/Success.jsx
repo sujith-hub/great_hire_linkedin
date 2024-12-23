@@ -10,11 +10,11 @@ export const Success = () => {
 
       {/* Success Message */}
       <div className="flex flex-col items-center justify-center p-6">
-        <img
+        {/* <img
           src="/Your-application.png"
           alt="Application Submitted"
           className="w-40 h-40 mb-6"
-        />
+        /> */}
 
         <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-md text-center">
           <div className="flex items-center gap-2 mb-4">

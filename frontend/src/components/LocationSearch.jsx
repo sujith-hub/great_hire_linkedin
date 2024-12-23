@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FaLocationDot } from "react-icons/fa6";
 import { MdClear } from "react-icons/md";
 import { useJobDetails } from "@/context/JobDetailsContext";
+import axios from "axios";
 
 const Locations = ({ locations, onSelectLocation }) => {
   return (
@@ -26,7 +27,7 @@ const Locations = ({ locations, onSelectLocation }) => {
   );
 };
 
-const SearchWithLocations = ({ onSelectLocation }) => {
+const LocationSearch = ({ onSelectLocation, handleLocationSelect }) => {
   const [inputValue, setInputValue] = useState("");
   const [showLocations, setShowLocations] = useState(false);
   const [filteredLocations, setFilteredLocations] = useState([]);
@@ -137,22 +138,44 @@ const SearchWithLocations = ({ onSelectLocation }) => {
 
   const handleBlur = () => setTimeout(() => setShowLocations(false), 150);
 
-  const handleLocationSelect = (location) => {
-    setInputValue(location);
-    setShowLocations(false);
-    onSelectLocation(location);
-  };
-
-  const handleInputChange = (e) => {
+  const handleInputChange = async (e) => {
     const value = e.target.value;
     setInputValue(value);
+    if (value.length < 3) {
+      setFilteredLocations([]);``
+      return;
+    }
 
+    try {
+      const response = await axios.get(
+        `https://us1.locationiq.com/v1/search.php`,
+        {
+          params: {
+            key: apiKey,
+            q: value,
+            format: "json",
+            countrycodes: "IN",
+            addressdetails: 1,
+            language: "en",
+          },
+        }
+      );
+
+      const formattedSuggestions = response.data.map((item) => {
+        return {
+          description: `${item.address.station || ""} ${item.address.city || ""} ${item.address.state || ""} ${item.address.country || ""}`,
+        };
+      });
+
+      setFilteredLocations(formattedSuggestions);
+    } catch (error) {
+      console.error("Error fetching location suggestions:", error);
+    }
     const allLocationsArray = Object.values(allLocations).flat();
     const filtered = allLocationsArray.filter((location) =>
       location.toLowerCase().includes(value.toLowerCase())
     );
     setFilteredLocations(filtered);
-
     setShowLocations(true);
   };
 
@@ -195,4 +218,4 @@ const SearchWithLocations = ({ onSelectLocation }) => {
   );
 };
 
-export default SearchWithLocations;
+export default LocationSearch;

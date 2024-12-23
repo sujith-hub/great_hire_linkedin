@@ -51,6 +51,7 @@ const ApplyForm = ({ setRight }) => {
   };
 
   const handleReview1 = () => {
+    setReview(false);
     setStep4(true);
   };
 
@@ -179,7 +180,9 @@ const ApplyForm = ({ setRight }) => {
 
           <p className="text-sm text-gray-600 mt-4">
             Having an issue with this application?{" "}
-            <span className="text-blue-500 cursor-pointer">Tell us more</span>
+            <Link to="/contact" className="text-blue-500 cursor-pointer">
+              Tell us more
+            </Link>
           </p>
         </div>
       )}
@@ -247,7 +250,9 @@ const ApplyForm = ({ setRight }) => {
 
           <p className="text-sm text-gray-600 mt-4">
             Having an issue with this application?{" "}
-            <span className="text-blue-500 cursor-pointer">Tell us more</span>
+            <Link to="/contact" className="text-blue-500 cursor-pointer">
+              Tell us more
+            </Link>
           </p>
         </div>
       )}
@@ -324,7 +329,9 @@ const ApplyForm = ({ setRight }) => {
 
           <p className="text-sm text-gray-600 mt-4">
             Having an issue with this application?{" "}
-            <span className="text-blue-500 cursor-pointer">Tell us more</span>
+            <Link to="/contact" className="text-blue-500 cursor-pointer">
+              Tell us more
+            </Link>
           </p>
         </div>
       )}
@@ -414,7 +421,9 @@ const ApplyForm = ({ setRight }) => {
 
           <p className="text-sm text-gray-600 mt-4">
             Having an issue with this application?{" "}
-            <span className="text-blue-500 cursor-pointer">Tell us more</span>
+            <Link to="/contact" className="text-blue-500 cursor-pointer">
+              Tell us more
+            </Link>
           </p>
         </div>
       )}

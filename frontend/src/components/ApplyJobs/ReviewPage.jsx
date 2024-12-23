@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 const ReviewPage = ({ handleReview1, formData }) => {
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+    <div className="max-w-3xl justify-center mx-auto p-6 bg-white shadow-lg rounded-lg">
       <div className="flex items-center mb-6">
         <BiArrowBack
           className="text-gray-600 cursor-pointer text-2xl"
@@ -28,8 +28,8 @@ const ReviewPage = ({ handleReview1, formData }) => {
           <p className="text-sm text-gray-500">Email Address</p>
           <h3 className="text-base font-semibold">{formData.email}</h3>
           <small className="text-xs text-gray-500 block mt-2">
-            To mitigate fraud, Indeed may mask your email address. If masked,
-            the employer will see an address like
+            To mitigate fraud, Great Hire may mask your email address. If
+            masked, the employer will see an address like
             <strong> abc123@gmail.com</strong>. Some employers, however, may
             still be able to unmask and see your actual email address.
           </small>
@@ -44,7 +44,6 @@ const ReviewPage = ({ handleReview1, formData }) => {
         </div>
       </div>
 
-      {/* <h4 className="text-lg font-medium mb-4">Resume</h4> */}
       <p className="text-sm text-gray-500">Resume</p>
       <div className="flex items-center mb-6 space-x-4">
         <VscFilePdf className="text-2xl text-gray-500" />
@@ -71,7 +70,9 @@ const ReviewPage = ({ handleReview1, formData }) => {
 
       <p className="text-sm text-gray-500 mb-6">
         If you notice an error in your application, please <br />
-        <span className="underline cursor-pointer">contact Indeed</span>
+        <Link to="/contact" className="underline cursor-pointer">
+          contact Great Hire
+        </Link>
       </p>
 
       <div className="mb-6">
@@ -86,7 +87,9 @@ const ReviewPage = ({ handleReview1, formData }) => {
         </div>
         <small className="text-xs text-gray-500 block">
           By creating a job alert, you agree to our{" "}
-          <span className="underline cursor-pointer">Terms</span>. You can
+          <Link to="/policy/privacy-policy" className="underline cursor-pointer">
+          Terms
+        </Link>. You can
           change your consent settings at any time by unsubscribing or as
           detailed in our terms.
         </small>
@@ -94,12 +97,12 @@ const ReviewPage = ({ handleReview1, formData }) => {
 
       <small className="text-xs text-gray-500 block mb-6">
         By pressing apply: 1) you agree to our{" "}
-        <span className="underline cursor-pointer">
+        <Link to="/policy/privacy-policy" className="underline cursor-pointer">
           Terms, Cookie & Privacy Policies
-        </span>
+        </Link>
         ; 2) you consent to your application being transmitted to the Employer
-        (Indeed does not guarantee receipt), & processed & analyzed in
-        accordance with its & Indeed's terms & privacy policies; & 3) you
+        (Great Hire does not guarantee receipt), & processed & analyzed in
+        accordance with its & Great Hire's terms & privacy policies; & 3) you
         acknowledge that when you apply to jobs outside your country it may
         involve you sending your personal data to countries with lower levels of
         data protection.
@@ -115,7 +118,9 @@ const ReviewPage = ({ handleReview1, formData }) => {
 
       <p className="text-center text-sm text-gray-500">
         Having an issue with this application?{" "}
-        <span className="underline cursor-pointer">Tell us more</span>
+        <Link to="/contact" className="underline text-blue-500 cursor-pointer">
+          Tell us more
+        </Link>
       </p>
     </div>
   );
