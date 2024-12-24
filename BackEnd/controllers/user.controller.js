@@ -105,6 +105,7 @@ export const login = async (req, res) => {
       phoneNumber: user.phoneNumber,
       role: user.role,
       profile: user.profile,
+      isVerify:user.isVerify
     };
     // cookies strict used...
     return res
@@ -247,6 +248,7 @@ export const logout = async (req, res) => {
   }
 };
 
+
 export const updateProfile = async (req, res) => {
   try {
     const { fullname, email, phoneNumber, bio, skills } = req.body;
@@ -258,7 +260,6 @@ export const updateProfile = async (req, res) => {
 
       // Upload to Cloudinary
       cloudResponse = await cloudinary.uploader.upload(fileUri.content);
-      console.log("Cloudinary Response:", cloudResponse);
     }
 
     // Convert skills to an array if provided
@@ -433,24 +434,8 @@ export const forgotPassword = async (req, res) => {
 
 export const resetPassword = async (req, res) => {
   try {
-    const { token, newPassword } = req.body;
+    const { decoded, newPassword } = req.body;
 
-    // Verify token
-    let decoded;
-    try {
-      decoded = jwt.verify(token, process.env.SECRET_KEY);
-    } catch (err) {
-      if (err.name === "TokenExpiredError") {
-        return res.status(401).json({
-          message: "Token has expired.",
-          success: false,
-        });
-      }
-      return res.status(400).json({
-        message: "Invalid token.",
-        success: false,
-      });
-    }
 
     // Check if user exists
     let user = await User.findById(decoded.userId);

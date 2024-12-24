@@ -21,6 +21,10 @@ const recruiterSchema = new mongoose.Schema(
       type: String,
       default: "recruiter",
     },
+    position:{
+      type: String,
+      default: "" 
+    },
     maxPostJobs: {
       type: Number,
       default:10
@@ -33,13 +37,9 @@ const recruiterSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    isVerified: {
-      type: Boolean,
-      default: false,
-    },
-    verificationChanceByCompany: {
+    isVerify: {
       type: Number,
-      default: 2,
+      default: 0,
     },
     profile: {
       bio: { type: String },

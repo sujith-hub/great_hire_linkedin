@@ -21,6 +21,8 @@ import Success from "./pages/Success";
 import PageNotFound from "./pages/PageNotFound";
 import JobServicePlans from "./pages/JobServicePlans";
 import CreateCompany from "./pages/CreateCompany";
+import VerifyRecruiter from "./pages/recruiter/VerifyRecruiter";
+import PostJob from "./pages/recruiter/PostJob";
 
 const appRouter = createBrowserRouter([
   {
@@ -98,6 +100,14 @@ const appRouter = createBrowserRouter([
   {
     path:"/recruiter/create-company",
     element:<CreateCompany />
+  },
+  {
+    path:"/recruiter/post-job",
+    element:<PostJob />
+  },
+  {
+    path:"/verify-recruiter/:token",
+    element:<VerifyRecruiter />
   },
   {
     path: "*",

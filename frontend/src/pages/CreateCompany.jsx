@@ -9,10 +9,13 @@ import { useSelector, useDispatch } from "react-redux";
 import { COMPANY_API_END_POINT } from "@/utils/ApiEndPoint";
 import axios from "axios";
 import { addCompany } from "@/redux/companySlice";
+import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const CreateCompany = () => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
@@ -29,7 +32,7 @@ const CreateCompany = () => {
     recruiterPosition: "",
     recruiterPhone: user?.phoneNumber || "",
     taxId: "",
-    businessFile: null,
+    file: null,
     isAgree: false,
   });
 
@@ -50,7 +53,12 @@ const CreateCompany = () => {
   const onDrop = (acceptedFiles) => {
     const file = acceptedFiles[0];
     if (file) {
-      setFormData({ ...formData, businessFile: file });
+      const allowedTypes = ["image/jpeg", "image/png"];
+      if (!allowedTypes.includes(file.type)) {
+        toast.error("Only allow jpg or png file");
+        return;
+      }
+      setFormData({ ...formData, file: file });
       setFileUploaded(false);
       setUploadProgress(0);
 
@@ -74,9 +82,16 @@ const CreateCompany = () => {
     e.preventDefault();
     try {
       setLoading(true);
+      // Add userEmail to formData
+      const updatedFormData = new FormData();
+      Object.entries(formData).forEach(([key, value]) => {
+        updatedFormData.append(key, value);
+      });
+      updatedFormData.append("userEmail", user.email); // Include userEmail
+
       const res = await axios.post(
         `${COMPANY_API_END_POINT}/register`,
-        formData,
+        updatedFormData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -84,8 +99,11 @@ const CreateCompany = () => {
           withCredentials: true,
         }
       );
-      if(res.data.success){
-
+      if (res.data.success) {
+        toast.success(
+          "Company created successfully, Sent verification email to your company"
+        );
+        navigate("/recruiter/post-job");
       }
     } catch (err) {
       console.log(`error in submitting company details ${err}`);
@@ -268,7 +286,11 @@ const CreateCompany = () => {
                     isDragActive ? "bg-blue-100 border-blue-400" : "bg-gray-50"
                   } hover:bg-blue-50`}
                 >
-                  <input {...getInputProps()} />
+                  <input
+                    {...getInputProps({
+                      accept: "image/jpeg, image/png", // Accept only JPG and PNG files
+                    })}
+                  />
                   {uploadProgress > 0 ? (
                     <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-70 rounded-lg">
                       <div className="w-20">
@@ -291,9 +313,9 @@ const CreateCompany = () => {
                     </p>
                   )}
                 </div>
-                {formData.businessFile && (
+                {formData.file && (
                   <p className="mt-2 text-green-500 text-center">
-                    File ready: {formData.businessFile.name}
+                    File ready: {formData.file.name}
                   </p>
                 )}
               </div>
@@ -352,7 +374,7 @@ const CreateCompany = () => {
             <button
               type="submit"
               className={`w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 ${
-                loading ? "opacity-50 cursor-not-allowed" : ""
+                loading ? "cursor-not-allowed" : ""
               }`}
             >
               {loading ? "Creating..." : "Create Company"}
@@ -360,7 +382,11 @@ const CreateCompany = () => {
           </form>
         </div>
         <div className="hidden md:block md:w-1/2">
-          <img src={img} alt="bg" className="w-full h-full object-cover" />
+          <img
+            src={img}
+            alt="bg"
+            className="w-full h-full object-full opacity-90"
+          />
         </div>
       </div>
       <Footer />

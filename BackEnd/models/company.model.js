@@ -35,11 +35,22 @@ const companySchema = new mongoose.Schema(
     businessFile: {
       type: String, // Store the file path or URL
     },
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
+    bussinessFileName: {
+      type: String,
     },
+    userId: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+        isVerified: {
+          type: Boolean,
+          default: false,
+        },
+      },
+    ],
   },
   { timestamps: true }
 );

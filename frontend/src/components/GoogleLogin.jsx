@@ -21,6 +21,9 @@ const GoogleLogin = ({ text, role, route }) => {
           {
             code: authResult.code,
             role: role,
+          },
+          {
+            withCredentials: true,
           }
         );
 
@@ -32,9 +35,10 @@ const GoogleLogin = ({ text, role, route }) => {
           const userRole = response.data.user.role;
           dispatch(setUser(response.data.user));
           if (userRole.includes("student")) navigate("/");
-          else if (userRole.includes("recruiter")) navigate("/recruiter/create-company");
+          else if (userRole.includes("recruiter"))
+            navigate("/recruiter/create-company");
           else if (userRole.includes("admin")) navigate("/admin/dashboard");
-        }else{
+        } else {
           toast.success(response.data.message);
         }
       }
