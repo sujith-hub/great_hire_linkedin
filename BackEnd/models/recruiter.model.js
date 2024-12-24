@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema(
+const recruiterSchema = new mongoose.Schema(
   {
     fullname: {
       type: String,
@@ -19,7 +19,27 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      default: "student",
+      default: "recruiter",
+    },
+    maxPostJobs: {
+      type: Number,
+      default:10
+    },
+    maxResumeDownload: {
+      type: Number,
+      default:10
+    },
+    haveSubscription: {
+      type: Boolean,
+      default: false,
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    verificationChanceByCompany: {
+      type: Number,
+      default: 2,
     },
     profile: {
       bio: { type: String },
@@ -33,7 +53,8 @@ const userSchema = new mongoose.Schema(
       },
     },
   },
+
   { timestamps: true }
 );
 
-export const User = mongoose.model("User", userSchema);
+export const Recruiter = mongoose.model("Recruiter", recruiterSchema);

@@ -8,6 +8,7 @@ import { google_client_id } from "../../../utils/GoogleOAuthCredentials.js";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import Navbar from "@/components/shared/Navbar";
+import { RECRUITER_API_END_POINT } from "@/utils/ApiEndPoint";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -33,10 +34,9 @@ const Signup = () => {
     setLoading(true); // Set loading to true
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/v1/user/register",
+        `${RECRUITER_API_END_POINT}/register`,
         {
           ...formData,
-          role: "recruiter",
         }
       );
 
@@ -114,7 +114,7 @@ const Signup = () => {
             {/* Google Sign-Up Button */}
             {/* Google Sign up Button */}
             <GoogleOAuthProvider clientId={google_client_id}>
-              <GoogleLogin text="Sign up" role="recruiter" />
+              <GoogleLogin text="Sign up" role="recruiter" route="recruiter" />
             </GoogleOAuthProvider>
             <h1 className="text-sm font-semibold text-gray-400 text-center">
               ---- or Sign up with email ----

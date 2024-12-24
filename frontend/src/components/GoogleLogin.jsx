@@ -7,7 +7,7 @@ import { toast } from "react-hot-toast";
 import { setUser } from "@/redux/authSlice";
 import { useDispatch } from "react-redux";
 
-const GoogleLogin = ({ text, role }) => {
+const GoogleLogin = ({ text, role, route }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -17,10 +17,10 @@ const GoogleLogin = ({ text, role }) => {
       if (authResult.code) {
         // Send the authorization code to your backend
         const response = await axios.post(
-          `http://localhost:8000/api/v1/user/googleLogin`,
+          `http://localhost:8000/api/v1/${route}/googleLogin`,
           {
             code: authResult.code,
-            role: role || "student",
+            role: role,
           }
         );
 

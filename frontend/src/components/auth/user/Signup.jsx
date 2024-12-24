@@ -7,6 +7,7 @@ import { google_client_id } from "../../../utils/GoogleOAuthCredentials.js";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import Navbar from "@/components/shared/Navbar";
+import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -32,27 +33,27 @@ const Signup = () => {
     e.preventDefault();
     setLoading(true); // Set loading to true
     try {
-      const response = await axios.post(
-        "http://localhost:8000/api/v1/user/register",
-        {
-          ...formData,
-          role: "student",
-        }
-      );
-
-      // Show success message
-      toast.success(response.data.message);
-
-      // Reset form fields
-      setFormData({
-        fullname: "",
-        email: "",
-        phoneNumber: "",
-        password: "",
+      const response = await axios.post(`${USER_API_END_POINT}/register`, {
+        ...formData,
       });
 
-      // Redirect to login page
-      navigate("/login");
+      if (response.data.success) {
+        // Show success message
+        toast.success(response.data.message);
+
+        // Reset form fields
+        setFormData({
+          fullname: "",
+          email: "",
+          phoneNumber: "",
+          password: "",
+        });
+
+        // Redirect to login page
+        navigate("/login");
+      } else {
+        toast.error(response.data.message);
+      }
     } catch (err) {
       // Show error message
       const errorMessage =
@@ -96,7 +97,7 @@ const Signup = () => {
             </h1>
             {/* Google Sign up Button */}
             <GoogleOAuthProvider clientId={google_client_id}>
-              <GoogleLogin text="Sign up" role="student" />
+              <GoogleLogin text="Sign up" role="student" route="user" />
             </GoogleOAuthProvider>
             <h1 className="text-sm font-semibold text-gray-400 text-center">
               ---- or Sign up with email ----
@@ -151,7 +152,6 @@ const Signup = () => {
               disabled={loading} // Disable button when loading`}
             >
               {loading ? "Creating..." : "Create Account"}
-              
             </button>
             <p className="text-center text-sm text-gray-500">
               Already have an account?{" "}
