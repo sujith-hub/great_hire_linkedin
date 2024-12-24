@@ -1,15 +1,8 @@
 import React, { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "./ui/dialog";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { Loader2, X } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
@@ -79,28 +72,29 @@ const UpdateProfile = ({ open, setOpen }) => {
     setOpen(false);
   };
 
-  return (
-    <Dialog open={open}>
-      <DialogContent
-        className="sm:max-w-[500px] bg-white rounded-lg shadow-lg"
-        onInteractOutside={() => setOpen(false)}
-      >
-        <DialogHeader className="flex justify-between items-center">
-          <DialogTitle className="text-lg font-semibold">Update Profile</DialogTitle>
-          {/* Close button at the top right */}
-          {/* <button
-            type="button"
-            onClick={() => setOpen(false)}
-            className="text-gray-500 hover:text-gray-700 absolute top-2 right-2"
-          > */}
-            <X 
-            type="button"
-            onClick={() => setOpen(false)}
-            className="text-gray-500 hover:text-gray-700 absolute top-2 right-2 h-5 w-5" />
-          {/* </button> */}
-        </DialogHeader>
+  if (!open) return null; // Return null if the modal is not open
 
-        <form onSubmit={submitHandler} className="space-y-4">
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+      onClick={() => setOpen(false)} // Close modal on background click
+    >
+      <div
+        className="bg-white sm:max-w-[500px] w-full p-6 rounded-lg shadow-lg"
+        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
+      >
+        <div className="flex justify-between items-center">
+          <h2 className="text-lg font-semibold">Update Profile</h2>
+          <button
+            type="button"
+            onClick={() => setOpen(false)}
+            className="text-gray-500 hover:text-gray-700 focus:outline-none"
+            aria-label="Close"
+          >
+            ✖
+          </button>
+        </div>
+        <form onSubmit={submitHandler} className="space-y-4 mt-4">
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="fullname" className="text-right">
@@ -193,7 +187,7 @@ const UpdateProfile = ({ open, setOpen }) => {
               </div>
             </div>
           </div>
-          <DialogFooter>
+          <div>
             {loading ? (
               <Button className="w-full my-4" disabled>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait
@@ -203,11 +197,12 @@ const UpdateProfile = ({ open, setOpen }) => {
                 Update
               </Button>
             )}
-          </DialogFooter>
+          </div>
         </form>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   );
 };
 
 export default UpdateProfile;
+

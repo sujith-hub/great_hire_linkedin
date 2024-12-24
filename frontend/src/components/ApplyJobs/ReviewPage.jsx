@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 const ReviewPage = ({ handleReview1, formData }) => {
   return (
-    <div className="max-w-3xl justify-center mx-auto p-6 bg-white shadow-lg rounded-lg">
+    <div className="max-w-6xl justify-center mx-auto p-6 bg-white shadow-lg rounded-lg">
       <div className="flex items-center mb-6">
         <BiArrowBack
           className="text-gray-600 cursor-pointer text-2xl"
