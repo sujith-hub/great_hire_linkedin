@@ -9,7 +9,7 @@ import Jobs from "./components/Jobs";
 import PrivacyPolicy from "./pages/policies/PrivacyPolicy";
 import RefundAndReturnPolicy from "./pages/policies/RefundAndReturnPolicy";
 import TermsAndConditions from "./pages/policies/TermsAndConditions";
-import Profile from "./pages/Profile";
+import UserProfile from "./pages/UserProfile";
 import OurService from "./pages/OurService";
 import { JobDetailsProvider } from "./context/JobDetailsContext";
 
@@ -21,6 +21,8 @@ import Success from "./pages/Success";
 import PageNotFound from "./pages/PageNotFound";
 import JobServicePlans from "./pages/JobServicePlans";
 import CreateCompany from "./pages/CreateCompany";
+import RecruiterProfile from "./pages/RecruiterProfile";
+import Dashboard from "./components/admin/Dashboard";
 
 const appRouter = createBrowserRouter([
   {
@@ -61,7 +63,7 @@ const appRouter = createBrowserRouter([
   },
   {
     path: "/profile",
-    element: <Profile />,
+    element: <UserProfile />,
   },
   {
     path: "/policy/privacy-policy",
@@ -98,6 +100,14 @@ const appRouter = createBrowserRouter([
   {
     path:"/recruiter/create-company",
     element:<CreateCompany />
+  },
+  {
+    path: "/recruiter/profile",
+    element: <RecruiterProfile />,
+  },
+  {
+    path: "/admin/dashboard",
+    element: <Dashboard />,
   },
   {
     path: "*",

@@ -7,11 +7,14 @@ import { Label } from './ui/label'
 const fitlerData = [
     {
         fitlerType: "Location",
-        array: ["Delhi NCR", "Bangalore", "Hyderabad", "Pune", "Mumbai", "Gurugram", "Kolkata", "Noida", "Lucknow", "Jaipur", "Bhopal", "Chennai", "Ahemdabad"]
+        array: ["Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Delhi", "Goa", "Gujrat", "Haryana", "Himachal Pradesh","Jharkhand", "Jammu and Kashmir", "Karnataka", "Kerala", "Ladakh", " Maharashtra",
+             "Madhya Pradesh", " Manipur", "Meghalya", "Mizoram", "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bangal", 
+             "Arizona", "California", "Florida", "Illinois", "New York", "North Carolina", "Ohio", "Pennsylvania", "Texas", 
+             "Remote"]
     },
     {
         fitlerType: "Industry",
-        array: ["Frontend Developer", "Backend Developer", "FullStack Developer", "Website Designer", "Java Developer", "Data Science", "Graphic Designer"]
+        array: ["Frontend Developer", "Backend Developer", "FullStack Developer", "Website Designer", "Java Developer", "Data Science", "Graphic Designer", "Data Entry Operator", "Dotnet Developer"]
     },
     {
         fitlerType: "Salary",
@@ -29,7 +32,7 @@ const FilterCard = () => {
     //     dispatch(setSearchedQuery(selectedValue));
     // },[selectedValue]);
     return (
-        <div className='w-full bg-white p-3 rounded-md'>
+        <div className='w-full bg-white p-3 sticky top-0 rounded-md'>
             <h1 className='font-bold text-lg'>Filter Jobs</h1>
             <hr className='mt-3' />
             {/* <RadioGroup value={selectedValue} onValueChange={changeHandler}> */}
