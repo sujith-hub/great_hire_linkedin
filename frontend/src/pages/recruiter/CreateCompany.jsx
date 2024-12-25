@@ -107,9 +107,7 @@ const CreateCompany = () => {
         }
       );
       if (res.data.success) {
-        toast.success(
-          "Company created successfully, Sent verification email to your company"
-        );
+        toast.success("Created successfully! Link sent to company email");
         navigate("/recruiter/dashboard");
       }
     } catch (err) {

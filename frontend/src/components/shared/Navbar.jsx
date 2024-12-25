@@ -94,7 +94,7 @@ const Navbar = () => {
     ...(isRecruiter
       ? [
           { to: "/recruiter/dashboard", label: "Dashboard" },
-          { to: "/your-jobs", label: "Your Jobs" },
+          { to: "/", label: "Your Jobs" },
         ]
       : [{ to: "/", label: "Home" }]),
     { to: "/jobs", label: "Jobs" },

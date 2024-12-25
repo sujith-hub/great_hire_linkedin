@@ -4,6 +4,7 @@ import cloudinary from "../utils/cloudinary.js";
 import getDataUri from "../utils/dataUri.js";
 import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 
 export const registerCompany = async (req, res) => {
   try {
@@ -169,6 +170,35 @@ export const getCompanyById = async (req, res) => {
     console.log(error);
   }
 };
+
+export const getCompanyByUserId = async (req, res) => {
+  const { userId } = req.body;
+
+  try {
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required." });
+    }
+
+    // Query to find the company where the userId matches in the userId array
+    const company = await Company.findOne({
+      userId: { $elemMatch: { user: new mongoose.Types.ObjectId(userId) } },
+    });
+
+    if (company) {
+      return res.status(200).json({ success: true, company });
+    } else {
+      return res
+        .status(404)
+        .json({ success: false, message: "Company not found for the given user ID." });
+    }
+  } catch (err) {
+    console.error(`Error in fetching company by user ID: ${err}`);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error." });
+  }
+};
+
 //update company
 export const updateCompany = async (req, res) => {
   try {
