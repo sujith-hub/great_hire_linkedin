@@ -29,7 +29,9 @@ export const register = async (req, res) => {
     }
 
     // Check if user already exists
-    const userExists = await User.findOne({ email });
+    let userExists = await User.findOne({ email });
+    if (!userExists) userExists = await Recruiter.findOne({ email });
+
     if (userExists) {
       return res.status(200).json({
         message: "Account already exists.",
@@ -97,6 +99,11 @@ export const login = async (req, res) => {
     const token = await jwt.sign(tokenData, process.env.SECRET_KEY, {
       expiresIn: "1d",
     });
+    let isVerify = 0;
+    let isCompanyCreated = false;
+    if (user.isVerify) isVerify = user.isVerify;
+    if (user.isCompanyCreated) isCompanyCreated = user.isCompanyCreated;
+
     //return user
     user = {
       _id: user._id,
@@ -105,7 +112,8 @@ export const login = async (req, res) => {
       phoneNumber: user.phoneNumber,
       role: user.role,
       profile: user.profile,
-      isVerify:user.isVerify
+      isVerify,
+      isCompanyCreated,
     };
     // cookies strict used...
     return res
@@ -247,7 +255,6 @@ export const logout = async (req, res) => {
     });
   }
 };
-
 
 export const updateProfile = async (req, res) => {
   try {
@@ -435,7 +442,6 @@ export const forgotPassword = async (req, res) => {
 export const resetPassword = async (req, res) => {
   try {
     const { decoded, newPassword } = req.body;
-
 
     // Check if user exists
     let user = await User.findById(decoded.userId);

@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { Recruiter } from "../models/recruiter.model.js";
+import { User } from "../models/user.model.js";
 import { oauth2Client } from "../utils/googleConfig.js";
 import axios from "axios";
 
@@ -24,7 +25,10 @@ export const register = async (req, res) => {
     }
 
     // Check if user already exists
-    const userExists = await Recruiter.findOne({ email });
+    let userExists = await Recruiter.findOne({ email });
+    if(!userExists)
+      userExists = await User.findOne({ email });
+
     if (userExists) {
       return res.status(200).json({
         message: "Account already exists.",

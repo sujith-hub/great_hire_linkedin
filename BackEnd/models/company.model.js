@@ -26,6 +26,12 @@ const companySchema = new mongoose.Schema(
       unique: true,
       match: [/.+@.+\..+/, "Please enter a valid email address"],
     },
+    adminEmail: {
+      type: String,
+      required: true,
+      unique: true,
+      match: [/.+@.+\..+/, "Please enter a valid email address"],
+    },
     phone: {
       type: String,
     },
@@ -44,10 +50,6 @@ const companySchema = new mongoose.Schema(
           type: mongoose.Schema.Types.ObjectId,
           ref: "User",
           required: true,
-        },
-        isVerified: {
-          type: Boolean,
-          default: false,
         },
       },
     ],

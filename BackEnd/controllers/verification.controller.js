@@ -1,5 +1,8 @@
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
+import { Recruiter } from "../models/recruiter.model.js";
+import { Company } from "../models/company.model.js";
+import mongoose from "mongoose";
 
 export const verifyToken = async (req, res) => {
   const { token } = req.body;
@@ -76,6 +79,28 @@ export const sendVerificationStatus = async (req, res) => {
         <p>Thanks</p>
       `,
     };
+    // Email to Recruiter
+    const mailOptionsForRecrutier = {
+      from: ` "GreatHire Support" <${process.env.EMAIL_USER}>`,
+      to: recruiterData.email,
+      subject: `Recruiter Verification Status by ${companyData.companyName}`,
+      html: `
+        <h3>Recruiter Verification Status</h3>
+        <p><strong>Company Name:</strong> ${companyData.companyName}</p>
+        <p><strong>Recruiter Name:</strong> ${recruiterData.fullname}</p>
+        <p><strong>Recruiter Email:</strong> ${recruiterData.email}</p>
+        <p><strong>Status:</strong> ${
+          status === 1 ? "Verified" : "Not Verified"
+        }</p>
+        <p>${message}</p>
+        <p><strong>Now you ${
+          status === 1 ? "can" : "can't"
+        } post job and add user to company </strong></p>
+        <br/>
+        <p>Thanks,</p>
+        <p>Great Hire</p>
+      `,
+    };
 
     // Email to Company
     const mailOptionsForCompany = {
@@ -91,10 +116,37 @@ export const sendVerificationStatus = async (req, res) => {
       `,
     };
 
+    if (status === 1) {
+      await Recruiter.updateOne({
+        email: recruiterData.email,
+        isVerify: status,
+      });
+    } else if (status === -1) {
+      if (companyData.adminEmail === recruiterData.email) {
+        await Company.deleteOne({ email: companyData.email });
+      } else {
+        // step 1: remove particular email id
+        await Company.updateOne(
+          { email: companyData.email },
+          {
+            $pull: {
+              userId: { user: new mongoose.Types.ObjectId(recruiterData._id) },
+            },
+          }
+        );
+      }
+      // Step 2: Set isCompanyCreated to false in Recruiter model
+      await Recruiter.updateOne({
+        email: recruiterData.email,
+        isVerify: status,
+      });
+    }
+
     // Send emails concurrently
     await Promise.all([
-      transporter.sendMail(mailOptionsForGreatHire),
       transporter.sendMail(mailOptionsForCompany),
+      transporter.sendMail(mailOptionsForGreatHire),
+      transporter.sendMail(mailOptionsForRecrutier),
     ]);
 
     // Return success response

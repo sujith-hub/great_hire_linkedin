@@ -25,15 +25,13 @@ export const registerCompany = async (req, res) => {
     } = req.body;
 
     // Check if a company already exists with this email
-    const existingCompany = await Company.findOne({ email });
-    if (existingCompany) {
+    let company = await Company.findOne({ email });
+    if (company) {
       return res.status(400).json({
         message: "A company with this email already exists.",
         success: false,
       });
     }
-
-    
 
     // Check if a recruiter exists with this email
     let recruiter = await Recruiter.findOne({ email: userEmail });
@@ -43,20 +41,11 @@ export const registerCompany = async (req, res) => {
         success: false,
       });
     }
-    // Check if userEmail exists in any company's userId array
-    const userAlreadyLinked = await Company.findOne({
-      "userId.user": recruiter._id, 
-    });
 
-    if (userAlreadyLinked) {
-      return res.status(400).json({
-        message: "This email is already in use for a company.",
-        success: false,
-      });
-    }
     // Update recruiter's position and phone number
     recruiter.phoneNumber = recruiterPhone;
     recruiter.position = recruiterPosition;
+    recruiter.isCompanyCreated = true;
     await recruiter.save();
 
     let cloudResponse;
@@ -68,42 +57,26 @@ export const registerCompany = async (req, res) => {
       // Upload to Cloudinary
       cloudResponse = await cloudinary.uploader.upload(fileUri.content);
     }
-
-    // Check if the company already exists
-    let company = await Company.findOne({ companyName });
-
-    if (company) {
-      // Check if the recruiter is already in the userId array
-      const isRecruiterLinked = company.userId.some(
-        (userObj) => userObj.user.toString() === recruiter._id.toString()
-      );
-
-      if (!isRecruiterLinked) {
-        // Add the recruiter to the userId array with `isVerified: false`
-        company.userId.push({ user: recruiter._id, isVerified: false });
-        await company.save();
-      }
-    } else {
-      // Create a new company if it doesn't exist
-      company = await Company.create({
-        companyName,
-        companyWebsite,
-        industry,
-        email,
-        phone,
-        taxId,
-        userId: [{ user: recruiter._id, isVerified: false }], // Add recruiter with `isVerified: false`
-        address: {
-          streetAddress,
-          city,
-          state,
-          country,
-          postalCode,
-        },
-        businessFile: cloudResponse ? cloudResponse.secure_url : undefined,
-        bussinessFileName: file ? file.originalname : undefined,
-      });
-    }
+    // Create a new company if it doesn't exist
+    company = await Company.create({
+      companyName,
+      companyWebsite,
+      industry,
+      email,
+      adminEmail: userEmail,
+      phone,
+      taxId,
+      userId: [{ user: recruiter._id, isVerified: 0 }], // Add recruiter with `isVerified: false`
+      address: {
+        streetAddress,
+        city,
+        state,
+        country,
+        postalCode,
+      },
+      businessFile: cloudResponse ? cloudResponse.secure_url : undefined,
+      bussinessFileName: file ? file.originalname : undefined,
+    });
 
     // Generate a verification token
     const verificationToken = jwt.sign(
@@ -176,8 +149,6 @@ export const getCompanyList = async (req, res) => {
     console.log(error);
   }
 };
-
-export const recruiterVerficationConfirmation = async (req, res) => {};
 
 //get  company by id ...
 export const getCompanyById = async (req, res) => {

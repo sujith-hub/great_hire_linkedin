@@ -9,10 +9,13 @@ import {
   RECRUITER_API_END_POINT,
 } from "@/utils/ApiEndPoint";
 import { toast } from "react-hot-toast";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { setRecruiterVerification } from "@/redux/authSlice";
+
 
 const VerifyRecruiter = () => {
   const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(0);
   const [status, setStatus] = useState("loading");
   const { token } = useParams();
@@ -81,6 +84,7 @@ const VerifyRecruiter = () => {
       // Check if the response is successful
       if (response.data.success) {
         toast.success("Response sent to Great Hire!");
+        dispatch(setRecruiterVerification(status));
       } else {
         // Handle unexpected success=false case
         toast.error(response.data.message || "Something went wrong!");
@@ -116,7 +120,7 @@ const VerifyRecruiter = () => {
                   <img
                     src={companyData.businessFile}
                     alt="Business File"
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-full"
                   />
                 </div>
                 <p>
