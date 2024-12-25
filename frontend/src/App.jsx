@@ -24,6 +24,7 @@ import CreateCompany from "./pages/recruiter/CreateCompany";
 import VerifyRecruiter from "./pages/recruiter/VerifyRecruiter";
 import PostJob from "./pages/recruiter/PostJob";
 import RecruiterDashboard from "./pages/recruiter/RecruiterDashboard";
+import RecruiterProfile from "./pages/recruiter/RecruiterProfile";
 
 const appRouter = createBrowserRouter([
   {
@@ -109,6 +110,10 @@ const appRouter = createBrowserRouter([
   {
     path:"/recruiter/dashboard",
     element:<RecruiterDashboard />
+  },
+  {
+    path:"/recruiter/profile",
+    element:<RecruiterProfile />
   },
   {
     path:"/verify-recruiter/:token",

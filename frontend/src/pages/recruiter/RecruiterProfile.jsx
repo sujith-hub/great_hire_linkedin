@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import Navbar from "@/components/shared/Navbar";
-import { Avatar, AvatarImage } from "../components/ui/avatar";
+import { Avatar, AvatarImage } from "../../components/ui/avatar";
 import { Contact, Mail, Pen } from "lucide-react";
-import { Button } from "../components/ui/button";
+import { Button } from "../../components/ui/button";
 
 const RecruiterProfile = () => {
     const [subscriptionStatus, setSubscriptionStatus] = useState("No");
