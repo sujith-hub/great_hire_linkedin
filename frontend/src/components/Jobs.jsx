@@ -13,16 +13,15 @@ const Jobs = () => {
   return (
     <div>
       <Navbar />
-      <div className="max-w-7xl mt-5">
-        <div className="flex gap-3">
-          <div className="w-35">
-            <FilterCard />
-          </div>
+      <div>
+        <div className=" flex gap-3">
+          <FilterCard />
+          
           {jobsArray.length <= 0 ? (
             <span>Job not found</span>
           ) : (
-            <div className="flex-1 pb-5">
-              <div className="grid grid-cols-3 gap-4">
+            <div className="flex-1 pb-5 m-2">
+              <div className="grid sm:grid-cols-1 md:grid-cols-3 gap-4">
                 {jobsArray.map((item, index) => (
                   <div>
                     <Job/>
