@@ -9,7 +9,7 @@ import Jobs from "./components/Jobs";
 import PrivacyPolicy from "./pages/policies/PrivacyPolicy";
 import RefundAndReturnPolicy from "./pages/policies/RefundAndReturnPolicy";
 import TermsAndConditions from "./pages/policies/TermsAndConditions";
-import Profile from "./pages/Profile";
+import UserProfile from "./pages/UserProfile";
 import OurService from "./pages/OurService";
 import { JobDetailsProvider } from "./context/JobDetailsContext";
 
@@ -64,7 +64,7 @@ const appRouter = createBrowserRouter([
   },
   {
     path: "/profile",
-    element: <Profile />,
+    element: <UserProfile />,
   },
   {
     path: "/policy/privacy-policy",

@@ -7,7 +7,6 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 
-
 const Navbar = () => {
   const { user } = useSelector((state) => state.auth);
   const isRecruiter = user?.role?.includes("recruiter");
@@ -191,6 +190,44 @@ const Navbar = () => {
                   </button>
                 </>
               ) : (
+                // <div ref={profileMenuRef} className="relative">
+                //   <button
+                //     onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                //     className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                //     aria-expanded={isProfileMenuOpen}
+                //     aria-haspopup="true"
+                //   >
+                //     <img
+                //       src={
+                //         user?.profile?.profilePhoto ||
+                //         "https://github.com/shadcn.png"
+                //       }
+                //       alt={`${user.fullname || "User"}'s avatar`}
+                //       className="h-10 w-10 rounded-full border object-cover"
+                //     />
+                //     <span className="font-medium">
+                //       {user.fullname || "User"}
+                //     </span>
+                //   </button>
+                //   {isProfileMenuOpen && (
+                //     <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border p-1 z-20">
+                //       <Link
+                //         to="/profile"
+                //         className="block px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+                //         onClick={() => setIsProfileMenuOpen(false)}
+                //       >
+                //         View Profile
+                //       </Link>
+                //       <button
+                //         onClick={handleLogout}
+                //         className="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors text-red-600"
+                //       >
+                //         Logout
+                //       </button>
+                //     </div>
+                //   )}
+                // </div>
+
                 <div ref={profileMenuRef} className="relative">
                   <button
                     onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
@@ -207,17 +244,17 @@ const Navbar = () => {
                       className="h-10 w-10 rounded-full border object-cover"
                     />
                     <span className="font-medium">
-                      {user.fullname || "User"}
+                      {isRecruiter ? "Recruiter Profile" : "User Profile"}
                     </span>
                   </button>
                   {isProfileMenuOpen && (
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border p-1 z-20">
                       <Link
-                        to="/profile"
+                        to={isRecruiter ? "/recruiter/profile" : "/profile"}
                         className="block px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
                         onClick={() => setIsProfileMenuOpen(false)}
                       >
-                        View Profile
+                         {isRecruiter ? "Recruiter" : "User"} Profile
                       </Link>
                       <button
                         onClick={handleLogout}
