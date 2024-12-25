@@ -5,6 +5,7 @@ import { logOut } from "@/redux/authSlice";
 import { removeCompany } from "@/redux/companySlice";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 
 const Navbar = () => {
   const { user } = useSelector((state) => state.auth);
@@ -65,7 +66,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8000/api/v1/user/logout"
+        `${USER_API_END_POINT}/logout`
       );
       if (response.data.success) {
         dispatch(logOut());

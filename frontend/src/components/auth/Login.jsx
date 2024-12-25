@@ -11,10 +11,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { setUser } from "@/redux/authSlice";
 import { toast } from "react-hot-toast";
 import Loading from "../Loading";
+import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 
 const Login = () => {
-  const { user } = useSelector((state) => state.auth);
-  console.log(user);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -39,9 +38,12 @@ const Login = () => {
     setLoading(true); // Set loading to true
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/v1/user/login",
+        `${USER_API_END_POINT}/login`,
         {
           data: formData,
+        },
+        {
+          withCredentials: true,
         }
       );
       if (response.data.success) {
@@ -85,7 +87,7 @@ const Login = () => {
             </p>
             {/* Google Login Button */}
             <GoogleOAuthProvider clientId={google_client_id}>
-              <GoogleLogin text="Login" role={null} route="user"/>
+              <GoogleLogin text="Login" role={null} route="user" />
             </GoogleOAuthProvider>
             <p className="text-sm font-semibold text-gray-400 text-center">
               ---- or Login with email ----

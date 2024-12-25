@@ -20,9 +20,10 @@ import ResetPassword from "./pages/ResetPassword";
 import Success from "./pages/Success";
 import PageNotFound from "./pages/PageNotFound";
 import JobServicePlans from "./pages/JobServicePlans";
-import CreateCompany from "./pages/CreateCompany";
-import RecruiterProfile from "./pages/RecruiterProfile";
-import Dashboard from "./components/admin/Dashboard";
+import CreateCompany from "./pages/recruiter/CreateCompany";
+import VerifyRecruiter from "./pages/recruiter/VerifyRecruiter";
+import PostJob from "./pages/recruiter/PostJob";
+import RecruiterDashboard from "./pages/recruiter/RecruiterDashboard";
 
 const appRouter = createBrowserRouter([
   {
@@ -102,12 +103,16 @@ const appRouter = createBrowserRouter([
     element:<CreateCompany />
   },
   {
-    path: "/recruiter/profile",
-    element: <RecruiterProfile />,
+    path:"/recruiter/post-job",
+    element:<PostJob />
   },
   {
-    path: "/admin/dashboard",
-    element: <Dashboard />,
+    path:"/recruiter/dashboard",
+    element:<RecruiterDashboard />
+  },
+  {
+    path:"/verify-recruiter/:token",
+    element:<VerifyRecruiter />
   },
   {
     path: "*",
