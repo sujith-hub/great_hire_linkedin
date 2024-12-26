@@ -259,20 +259,26 @@ export const logout = async (req, res) => {
 export const updateProfile = async (req, res) => {
   try {
     const { fullname, email, phoneNumber, bio, skills } = req.body;
-    const file = req.file;
+    const file = req.file; // PDF file uploaded in the request
     let cloudResponse;
+
     if (file) {
       // Convert file to a URI
       const fileUri = getDataUri(file);
 
-      // Upload to Cloudinary
-      cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+      // Upload the PDF to Cloudinary as a "raw" resource type
+      cloudResponse = await cloudinary.uploader.upload(fileUri.content, {
+        resource_type: "raw", // Ensure "raw" type for PDF files
+        folder: "resumes", // Optional: Specify a folder in Cloudinary
+        public_id: file.originalname.split(".")[0], // Use the file name (without extension) as public ID
+        overwrite: true, // Optional: Overwrite existing file with the same public ID
+      });
     }
 
     // Convert skills to an array if provided
     let skillsArray;
     if (skills) {
-      skillsArray = skills.split(",");
+      skillsArray = skills.split(",").map((skill) => skill.trim());
     }
 
     // Retrieve user ID from middleware
@@ -281,6 +287,13 @@ export const updateProfile = async (req, res) => {
 
     if (!user) {
       user = await Recruiter.findById(userId);
+    }
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found.",
+        success: false,
+      });
     }
 
     // Update user fields
@@ -292,15 +305,14 @@ export const updateProfile = async (req, res) => {
 
     // Update resume fields if a file was uploaded
     if (cloudResponse) {
-      user.profile.resume = cloudResponse.secure_url;
-      user.profile.resumeOriginalName = file.originalname;
+      user.profile.resume = cloudResponse.secure_url; // Cloudinary URL
+      user.profile.resumeOriginalName = file.originalname; // Original file name
     }
-    console.log(cloudResponse);
 
     // Save the updated user to the database
     await user.save();
 
-    // Return the updated user (excluding sensitive fields like passwords)
+    // Prepare updated user response, excluding sensitive fields like passwords
     const updatedUser = {
       _id: user._id,
       fullname: user.fullname,
