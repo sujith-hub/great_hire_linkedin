@@ -86,6 +86,9 @@ export const googleLogin = async (req, res) => {
 
     // Check if user already exists
     let user = await Recruiter.findOne({ email: googleUser.email });
+    if(!user){
+      user = await Recruiter.findOne({ email: googleUser.email });
+    }
 
     if (user) {
       if (role && role !== user.role) {
