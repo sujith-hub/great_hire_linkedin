@@ -173,6 +173,7 @@ const ContactSection = () => {
                   placeholder="Your Message"
                   onChange={handleChange}
                   required
+                  value={formData.message}
                 ></textarea>
               </div>
               <button
