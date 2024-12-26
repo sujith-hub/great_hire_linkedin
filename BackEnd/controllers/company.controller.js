@@ -171,15 +171,16 @@ export const getCompanyById = async (req, res) => {
   }
 };
 
-export const getCompanyByUserId = async (req, res) => {
+export const companyByUserId = async (req, res) => {
   const { userId } = req.body;
 
   try {
+    // Validate userId
     if (!userId) {
       return res.status(400).json({ message: "User ID is required." });
     }
 
-    // Query to find the company where the userId matches in the userId array
+    // Query the company where userId matches
     const company = await Company.findOne({
       userId: { $elemMatch: { user: new mongoose.Types.ObjectId(userId) } },
     });
@@ -198,6 +199,7 @@ export const getCompanyByUserId = async (req, res) => {
       .json({ success: false, message: "Internal server error." });
   }
 };
+
 
 //update company
 export const updateCompany = async (req, res) => {

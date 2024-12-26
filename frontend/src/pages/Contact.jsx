@@ -116,7 +116,7 @@ const ContactSection = () => {
                   name="fullname"
                   className="w-full p-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   placeholder="Your Name"
-                  value={user ? user.fullname : ""}
+                  value={formData.fullname}
                   onChange={handleChange}
                   required
                 />
@@ -134,7 +134,7 @@ const ContactSection = () => {
                   id="email"
                   className="w-full p-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   placeholder="Your Email"
-                  value={user ? user.email : ""}
+                  value={formData.email}
                   onChange={handleChange}
                   required
                 />
@@ -152,7 +152,7 @@ const ContactSection = () => {
                   id="email"
                   className="w-full p-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   placeholder="Phone Number"
-                  value={user ? user.phoneNumber : ""}
+                  value={formData.phoneNumber}
                   onChange={handleChange}
                   required
                 />

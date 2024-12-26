@@ -19,7 +19,7 @@ const persistConfig = {
 // Combine reducers
 const rootReducer = combineReducers({
     auth: authSlice,
-    companies:companySlice,
+    company:companySlice,
     // Uncomment these when the slices are ready
     // job: jobSlice,
     // company: companySlice,

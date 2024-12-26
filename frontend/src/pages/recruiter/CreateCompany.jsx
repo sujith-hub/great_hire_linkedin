@@ -290,7 +290,7 @@ const CreateCompany = () => {
                 </div>
                 <div className="mt-4">
                   <label className="block text-gray-600">
-                    Upload Business License
+                    Upload Business Registration Certificate
                   </label>
                   <div
                     {...getRootProps()}
