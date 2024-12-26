@@ -26,6 +26,12 @@ const companySchema = new mongoose.Schema(
       unique: true,
       match: [/.+@.+\..+/, "Please enter a valid email address"],
     },
+    adminEmail: {
+      type: String,
+      required: true,
+      unique: true,
+      match: [/.+@.+\..+/, "Please enter a valid email address"],
+    },
     phone: {
       type: String,
     },
@@ -35,11 +41,18 @@ const companySchema = new mongoose.Schema(
     businessFile: {
       type: String, // Store the file path or URL
     },
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
+    bussinessFileName: {
+      type: String,
     },
+    userId: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+      },
+    ],
   },
   { timestamps: true }
 );

@@ -29,7 +29,9 @@ export const register = async (req, res) => {
     }
 
     // Check if user already exists
-    const userExists = await User.findOne({ email });
+    let userExists = await User.findOne({ email });
+    if (!userExists) userExists = await Recruiter.findOne({ email });
+
     if (userExists) {
       return res.status(200).json({
         message: "Account already exists.",
@@ -97,6 +99,11 @@ export const login = async (req, res) => {
     const token = await jwt.sign(tokenData, process.env.SECRET_KEY, {
       expiresIn: "1d",
     });
+    let isVerify = 0;
+    let isCompanyCreated = false;
+    if (user.isVerify) isVerify = user.isVerify;
+    if (user.isCompanyCreated) isCompanyCreated = user.isCompanyCreated;
+
     //return user
     user = {
       _id: user._id,
@@ -105,6 +112,8 @@ export const login = async (req, res) => {
       phoneNumber: user.phoneNumber,
       role: user.role,
       profile: user.profile,
+      isVerify,
+      isCompanyCreated,
     };
     // cookies strict used...
     return res
@@ -258,7 +267,6 @@ export const updateProfile = async (req, res) => {
 
       // Upload to Cloudinary
       cloudResponse = await cloudinary.uploader.upload(fileUri.content);
-      console.log("Cloudinary Response:", cloudResponse);
     }
 
     // Convert skills to an array if provided
@@ -433,24 +441,7 @@ export const forgotPassword = async (req, res) => {
 
 export const resetPassword = async (req, res) => {
   try {
-    const { token, newPassword } = req.body;
-
-    // Verify token
-    let decoded;
-    try {
-      decoded = jwt.verify(token, process.env.SECRET_KEY);
-    } catch (err) {
-      if (err.name === "TokenExpiredError") {
-        return res.status(401).json({
-          message: "Token has expired.",
-          success: false,
-        });
-      }
-      return res.status(400).json({
-        message: "Invalid token.",
-        success: false,
-      });
-    }
+    const { decoded, newPassword } = req.body;
 
     // Check if user exists
     let user = await User.findById(decoded.userId);

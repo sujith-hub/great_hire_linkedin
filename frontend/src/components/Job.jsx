@@ -4,54 +4,78 @@ import { Avatar, AvatarImage } from "./ui/avatar";
 import { Bookmark } from "lucide-react";
 import { Badge } from "./ui/badge";
 import { useNavigate } from "react-router-dom";
-import JobsForYou from "@/pages/JobsForYou";
+import { IoIosStar } from "react-icons/io";
+import { AiOutlineThunderbolt } from "react-icons/ai";
+import { FaHeart } from "react-icons/fa";
+import { IoMdSend } from "react-icons/io";
 
 const Job = () => {
   const navigate = useNavigate();
-  const jobId = "asdfghjkl";
   return (
-    <div className="p-5 rounded-md shadow-xl bg-white border border-grey-100">
-      <div className="flex items-center justify-between">
-        <p>2 days Ago</p>
-        <Button variant="outline" className="rounded-full" size="icon">
-          <Bookmark />
-        </Button>
-      </div>
-      <div className="flex items-center gap-2 my-2">
-        <Button className="p-6" variant="outline" size="icon">
-          <Avatar>
-            <AvatarImage src="" />
-          </Avatar>
-        </Button>
-        <div>
-          <h1>Company Name</h1>
-          <p>India</p>
+    <div className="flex flex-col space-y-2 p-5 rounded-md bg-white border border-grey-100">
+      <div className="flex justify-between items-center mb-2 ">
+        <p className="text-sm bg-violet-100 rounded-md p-1 text-[#0233f8] font-bold">
+          Urgent Hiring
+        </p>
+        <div className="flex items-center justify-between">
+          <Button variant="outline" className="rounded-full" size="icon">
+            <Bookmark />
+          </Button>
         </div>
       </div>
+      <h3 className="text-lg font-semibold">Software Developer</h3>
+      <div className="flex items-center justify-between gap-2 my-2">
       <div>
-        <h1 className="font-bold text-lg my-2">title</h1>
-        <p className="text-sm text-gray-600">description</p>
+          Google - rating 4.5 <IoIosStar className="inline text-yellow-500" />
+        </div>
+        <div>
+          <p className="text-sm text-gray-500">Hyderabad</p>
+        </div>
       </div>
-      <div className="flex items-center gap-2 mt-4">
-        <Badge className={"text-blue-700 font-bold"} variant="ghost">
-          {" "}
-          Positions
-        </Badge>
-        <Badge className={"text-[#F83002] font-bold"} variant="ghost">
-          jobType
-        </Badge>
-        <Badge className={"text-[#7209b7] font-bold"} variant="ghost">
-          salaryLPA
-        </Badge>
+      <div className="p-1 flex items-center w-full text-sm bg-blue-100 justify-center  text-blue-800  rounded-md">
+        <div className="flex items-center gap-1">
+          <AiOutlineThunderbolt  />
+          <span>Typically responded in 1 day</span>
+        </div>
       </div>
-      <div className="flex items-center gap-4 mt-4">
+      <div className="text-sm flex flex-col space-y-2">
+        <div className="flex gap-2 justify-between items-center">
+          <div className="flex w-1/2">
+            <p className="p-1 text-center w-full font-semibold text-gray-700 rounded-md bg-gray-200 ">
+              20000-35000
+            </p>
+          </div>
+          <div className="flex  w-1/2">
+            <p className="p-1 w-full  font-semibold text-green-700 rounded-md bg-green-100 flex items-center justify-center gap-1 ">
+              Full Time <FaHeart /> +1
+            </p>
+          </div>
+        </div>
+        <div className="w-full">
+          <p className="p-1 text-center font-semibold text-gray-700 rounded-md bg-gray-200">
+            Monday to Friday +1
+          </p>
+        </div>
+      </div>
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm text-gray-500">Active 2 days ago </p>
+        </div>
+        <div className="flex items-center text-sm text-blue-700 gap-2 cursor-pointer">
+          <span className="text-black">Easy Apply</span>
+          <IoMdSend  size={20} />
+        </div>
+      </div>
+
+      <div className="flex w-full items-center justify-between gap-4 ">
         <Button
           onClick={() => navigate("/description/${jobId}")}
           variant="outline"
+          className="w-full text-white bg-blue-700 hover:bg-blue-600 hover:text-white  "
         >
           Details
         </Button>
-        <Button className="bg-[#7209b7]">Save For Later</Button>
+        
       </div>
     </div>
   );

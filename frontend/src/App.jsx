@@ -9,7 +9,7 @@ import Jobs from "./components/Jobs";
 import PrivacyPolicy from "./pages/policies/PrivacyPolicy";
 import RefundAndReturnPolicy from "./pages/policies/RefundAndReturnPolicy";
 import TermsAndConditions from "./pages/policies/TermsAndConditions";
-import Profile from "./pages/Profile";
+import UserProfile from "./pages/UserProfile";
 import OurService from "./pages/OurService";
 import { JobDetailsProvider } from "./context/JobDetailsContext";
 
@@ -20,7 +20,11 @@ import ResetPassword from "./pages/ResetPassword";
 import Success from "./pages/Success";
 import PageNotFound from "./pages/PageNotFound";
 import JobServicePlans from "./pages/JobServicePlans";
-import CreateCompany from "./pages/CreateCompany";
+import CreateCompany from "./pages/recruiter/CreateCompany";
+import VerifyRecruiter from "./pages/recruiter/VerifyRecruiter";
+import PostJob from "./pages/recruiter/PostJob";
+import RecruiterDashboard from "./pages/recruiter/RecruiterDashboard";
+import RecruiterProfile from "./pages/recruiter/RecruiterProfile";
 
 const appRouter = createBrowserRouter([
   {
@@ -61,7 +65,7 @@ const appRouter = createBrowserRouter([
   },
   {
     path: "/profile",
-    element: <Profile />,
+    element: <UserProfile />,
   },
   {
     path: "/policy/privacy-policy",
@@ -101,6 +105,22 @@ const appRouter = createBrowserRouter([
   },
  
 
+  {
+    path:"/recruiter/post-job",
+    element:<PostJob />
+  },
+  {
+    path:"/recruiter/dashboard",
+    element:<RecruiterDashboard />
+  },
+  {
+    path:"/recruiter/profile",
+    element:<RecruiterProfile />
+  },
+  {
+    path:"/verify-recruiter/:token",
+    element:<VerifyRecruiter />
+  },
   {
     path: "*",
     element: <PageNotFound />,
