@@ -12,6 +12,10 @@ const Profile = () => {
   const [open, setOpen] = useState(false);
   const { user } = useSelector((store) => store.auth);
 
+  // Determine the profile photo URL
+  const profilePhoto =
+    user?.profile?.profilePhoto || user?.picture || "/default-profile.jpg";
+
   return (
     <div className="bg-gray-100 min-h-screen pb-10">
       <Navbar />
@@ -19,10 +23,7 @@ const Profile = () => {
         {/* User Info Section */}
         <div className="flex flex-col items-center text-center border-b pb-8">
           <Avatar className="h-24 w-24">
-            <AvatarImage 
-              src={user?.profile?.profilePhoto || "/default-profile.jpg"} 
-              alt="Profile Photo" 
-            />
+            <AvatarImage src={profilePhoto} alt="Profile Photo" />
           </Avatar>
           <h1 className="mt-4 text-2xl font-bold">{user?.fullname || "User Name"}</h1>
           <p className="text-gray-600">{user?.profile?.bio || "No bio available"}</p>
@@ -38,7 +39,9 @@ const Profile = () => {
 
         {/* Contact Information Section */}
         <div className="mt-6">
-          <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">Contact Information</h2>
+          <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
+            Contact Information
+          </h2>
           <div className="mt-4 space-y-2">
             <div className="flex items-center gap-3">
               <Mail className="text-gray-500" />
