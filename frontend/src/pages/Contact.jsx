@@ -5,6 +5,7 @@ import Footer from "../components/shared/Footer";
 import { useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import axios from "axios";
+import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 
 const ContactSection = () => {
   const [disable, setDisable] = useState(false);
@@ -26,7 +27,7 @@ const ContactSection = () => {
     setDisable(true);
     try {
       const { data } = await axios.post(
-        "http://localhost:8000/api/v1/user/sendMessage",
+        `${USER_API_END_POINT}/sendMessage`,
         {
           formData,
         }
@@ -130,7 +131,7 @@ const ContactSection = () => {
                 </label>
                 <input
                   type="email"
-                  name="text"
+                  name="email"
                   id="email"
                   className="w-full p-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   placeholder="Your Email"
@@ -147,9 +148,9 @@ const ContactSection = () => {
                   Phone Number
                 </label>
                 <input
-                  type="email"
+                  type="text"
                   name="phoneNumber"
-                  id="email"
+                  id="phoneNumber"
                   className="w-full p-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   placeholder="Phone Number"
                   value={formData.phoneNumber}
