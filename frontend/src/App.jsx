@@ -105,6 +105,8 @@ const appRouter = createBrowserRouter([
     path:"/recruiter/create-company",
     element:<CreateCompany />
   },
+ 
+
   {
     path:"/recruiter/post-job",
     element:<PostJob />
