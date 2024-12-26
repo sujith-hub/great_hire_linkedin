@@ -8,7 +8,7 @@ import axios from "axios";
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 
 const ContactSection = () => {
-  const [disable, setDisable] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { user } = useSelector((state) => state.auth);
   const [formData, setFormData] = useState({
     fullname: user ? user.fullname : "",
@@ -24,14 +24,11 @@ const ContactSection = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setDisable(true);
+    setLoading(true);
     try {
-      const { data } = await axios.post(
-        `${USER_API_END_POINT}/sendMessage`,
-        {
-          formData,
-        }
-      );
+      const { data } = await axios.post(`${USER_API_END_POINT}/sendMessage`, {
+        formData,
+      });
       // use data.message
       if (data.success) {
         toast.success(data.message);
@@ -44,10 +41,11 @@ const ContactSection = () => {
       } else {
         toast.error(data.message);
       }
-      setDisable(false);
     } catch (err) {
       console.log(`error in sending message ${err}`);
-      setDisable(false);
+      toast.error(err);
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -179,11 +177,11 @@ const ContactSection = () => {
               <button
                 type="submit"
                 className={`w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 ${
-                  disable && "bg-blue-300"
+                  loading && "bg-blue-300 cursor-not-allowed"
                 }`}
-                disabled={disable}
+                disabled={loading}
               >
-                Send
+                {loading ? "Sending..." : "Send"}
               </button>
             </form>
           </div>
