@@ -130,7 +130,7 @@ const ContactSection = () => {
                 </label>
                 <input
                   type="email"
-                  name="email"
+                  name="text"
                   id="email"
                   className="w-full p-4 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   placeholder="Your Email"
