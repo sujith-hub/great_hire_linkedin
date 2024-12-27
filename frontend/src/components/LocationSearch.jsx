@@ -91,11 +91,7 @@ const LocationSearch = ({ onSelectLocation }) => {
     Nagaland: ["Kohima, Nagaland", "Dimapur, Nagaland", "Mokokchung, Nagaland"],
     Odisha: ["Bhubaneswar, Odisha", "Cuttack, Odisha", "Rourkela, Odisha"],
     Punjab: ["Ludhiana, Punjab", "Amritsar, Punjab", "Jalandhar, Punjab"],
-    Rajasthan: [
-      "Alwar, Rajasthan",
-      "Jaipur, Rajasthan",
-      "Udaipur, Rajasthan",
-    ],
+    Rajasthan: ["Alwar, Rajasthan", "Jaipur, Rajasthan", "Udaipur, Rajasthan"],
     Sikkim: ["Gangtok, Sikkim", "Namchi, Sikkim", "Gyalshing, Sikkim"],
     "Tamil Nadu": [
       "Chennai, Tamil Nadu",
@@ -140,7 +136,6 @@ const LocationSearch = ({ onSelectLocation }) => {
   const handleInputChange = (e) => {
     const value = e.target.value;
     setInputValue(value);
-    
 
     const allLocationsArray = Object.values(allLocations).flat();
     const filtered = allLocationsArray.filter((location) =>
