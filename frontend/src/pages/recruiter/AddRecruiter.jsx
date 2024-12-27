@@ -35,7 +35,6 @@ const AddRecruiter = () => {
         `${RECRUITER_API_END_POINT}/add-recruiter`,
         {
           ...formData,
-          userEmail: user?.email,
           companyId: company?._id,
         },
         { withCredentials: true }
@@ -51,7 +50,6 @@ const AddRecruiter = () => {
         password: "",
       });
 
-      navigate("/login");
     } catch (err) {
       console.error(err);
       const errorMessage =

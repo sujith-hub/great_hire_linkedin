@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import img2 from "../../assets/img2.png";
 import { useNavigate } from "react-router-dom";
 import { GoogleOAuthProvider } from "@react-oauth/google";
@@ -14,7 +14,7 @@ import Loading from "../Loading";
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 
 const Login = () => {
-
+  const {user} = useSelector((state)=> state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -23,6 +23,14 @@ const Login = () => {
   });
   const [loading, setLoading] = useState(false); // Add loading state
 
+  useEffect(()=>{
+    if(user){
+      if(user.role === 'recruiter')
+        navigate('/recruiter/dashboard');
+      else
+        navigate('/');
+    }
+  }, [user])
   // Update state when input fields change
   const handleChange = (e) => {
     const { name, value } = e.target;

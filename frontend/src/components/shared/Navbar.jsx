@@ -65,9 +65,9 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await axios.get(
-        `${USER_API_END_POINT}/logout`
-      );
+      const response = await axios.get(`${USER_API_END_POINT}/logout`, {
+        withCredentials: true,
+      });
       if (response.data.success) {
         dispatch(logOut());
         dispatch(removeCompany());
@@ -254,7 +254,7 @@ const Navbar = () => {
                         className="block px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
                         onClick={() => setIsProfileMenuOpen(false)}
                       >
-                         {isRecruiter ? "Recruiter" : "User"} Profile
+                        {isRecruiter ? "Recruiter" : "User"} Profile
                       </Link>
                       <button
                         onClick={handleLogout}

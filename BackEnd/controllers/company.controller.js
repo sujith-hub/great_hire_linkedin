@@ -99,16 +99,38 @@ export const registerCompany = async (req, res) => {
     const mailOptions = {
       from: `"GreatHire Support" <${process.env.EMAIL_USER}>`,
       to: email,
-      subject: "Recruiter/Employer Verification",
+      subject: "Verify Your Recruiter/Employer Account",
       html: `
-        <h3>Verify Your Recruiter/Employer</h3>
-        <p>Click the link below to verify your company and recruiter details:</p>
-        <a href="${process.env.FRONTEND_URL}/verify-recruiter/${verificationToken}">
-          Verify Recruiter
-        </a>
-        <p>This link expires after 24 hours.</p>
-        <br/>
-        <h3>Thanks, Great Hire. </h3>
+        <div style="font-family: Arial, sans-serif; background-color: #f4f7fc; padding: 30px; max-width: 600px; margin: auto; border-radius: 10px; border: 1px solid #ddd;">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <h2 style="color: #1e90ff;">GreatHire</h2>
+            <p style="color: #555;">Connecting Skills with Opportunity - Your Next Great Hire Awaits!</p>
+          </div>
+          <h3 style="color: #333;">Hi there,</h3>
+          <p style="color: #555;">Thank you for signing up with GreatHire! We’re excited to have you onboard.</p>
+          <p style="color: #555;">To complete your Company registration, verify your recruiter/employer details, click the link below:</p>
+    
+          <div style="text-align: center; margin: 20px 0;">
+            <a href="${
+              process.env.FRONTEND_URL
+            }/verify-recruiter/${verificationToken}" style="background-color: #1e90ff; color: #fff; padding: 12px 25px; border-radius: 5px; text-decoration: none; font-size: 16px;">
+              Verify Recruiter
+            </a>
+          </div>
+    
+          <p style="color: #555;">
+            Please note: This link will expire in 24 hours.
+          </p>
+    
+          <div style="border-top: 1px solid #ddd; margin-top: 30px; padding-top: 20px; text-align: center;">
+            <p style="font-size: 14px; color: #888;">If you didn’t request this verification, please disregard this email.</p>
+            <p style="font-size: 14px; color: #888;">For any questions or support, feel free to reach out to us.</p>
+          </div>
+    
+          <div style="text-align: center; margin-top: 20px;">
+            <p style="font-size: 14px; color: #aaa;">© ${new Date().getFullYear()} GreatHire. All rights reserved.</p>
+          </div>
+        </div>
       `,
     };
 
@@ -188,9 +210,10 @@ export const companyByUserId = async (req, res) => {
     if (company) {
       return res.status(200).json({ success: true, company });
     } else {
-      return res
-        .status(404)
-        .json({ success: false, message: "Company not found for the given user ID." });
+      return res.status(404).json({
+        success: false,
+        message: "Company not found for the given user ID.",
+      });
     }
   } catch (err) {
     console.error(`Error in fetching company by user ID: ${err}`);
@@ -199,7 +222,6 @@ export const companyByUserId = async (req, res) => {
       .json({ success: false, message: "Internal server error." });
   }
 };
-
 
 //update company
 export const updateCompany = async (req, res) => {

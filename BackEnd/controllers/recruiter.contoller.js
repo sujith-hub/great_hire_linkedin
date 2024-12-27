@@ -5,6 +5,7 @@ import { User } from "../models/user.model.js";
 import { oauth2Client } from "../utils/googleConfig.js";
 import { Company } from "../models/company.model.js";
 import axios from "axios";
+import nodemailer from "nodemailer";
 
 export const register = async (req, res) => {
   try {
@@ -27,8 +28,7 @@ export const register = async (req, res) => {
 
     // Check if user already exists
     let userExists = await Recruiter.findOne({ email });
-    if(!userExists)
-      userExists = await User.findOne({ email });
+    if (!userExists) userExists = await User.findOne({ email });
 
     if (userExists) {
       return res.status(200).json({
@@ -86,7 +86,7 @@ export const googleLogin = async (req, res) => {
 
     // Check if user already exists
     let user = await Recruiter.findOne({ email: googleUser.email });
-    if(!user){
+    if (!user) {
       user = await User.findOne({ email: googleUser.email });
     }
 
@@ -164,7 +164,7 @@ export const googleLogin = async (req, res) => {
 // recruiter details by id
 export const getRecruiterById = async (req, res) => {
   try {
-    const {recruiterId} = req.body;
+    const { recruiterId } = req.body;
     const recruiter = await Recruiter.findById(recruiterId);
     if (!recruiter) {
       return res.status(404).json({
@@ -181,14 +181,16 @@ export const getRecruiterById = async (req, res) => {
   }
 };
 
-
 export const addRecruiterToCompany = async (req, res) => {
-  const { fullName, email, phoneNumber, password, position, companyId } = req.body;
+  const { fullName, email, phoneNumber, password, position, companyId } =
+    req.body;
 
   try {
     // Validate required fields
     if (!fullName || !email || !companyId || !password) {
-      return res.status(400).json({ success: false, message: "All fields are required." });
+      return res
+        .status(400)
+        .json({ success: false, message: "All fields are required." });
     }
 
     // Validate password length
@@ -199,13 +201,13 @@ export const addRecruiterToCompany = async (req, res) => {
       });
     }
 
-
     // Check if recruiter email already exists
     const existingRecruiter = await Recruiter.findOne({ email });
     if (existingRecruiter) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Recruiter with this email already exists." });
+      return res.status(400).json({
+        success: false,
+        message: "Recruiter with this email already exists.",
+      });
     }
 
     // Hash the password
@@ -227,12 +229,98 @@ export const addRecruiterToCompany = async (req, res) => {
     company.userId.push({ user: recruiter._id });
     await company.save();
 
-    return res
-      .status(201)
-      .json({ success: true, message: "Recruiter added successfully.", recruiterId: recruiter._id });
+    // Setup nodemailer
+    const transporter = nodemailer.createTransport({
+      service: "Gmail", // or your email service provider
+      auth: {
+        user: process.env.EMAIL_USER, // Your email
+        pass: process.env.EMAIL_PASS, // Your email password
+      },
+    });
+
+    const mailOptions = {
+      from: `"GreatHire Support" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "Your Recruiter Account Has Been Created",
+      html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+              <div style="text-align: center; margin-bottom: 20px;">
+                <h2>Great<span style="color: #1D4ED8;">Hire</span></h2>
+                <p style="color: #555;">Building Smart and Powerful Recruiter Teams</p>
+              </div>
+        
+              <h3 style="color: #333;">Welcome to Great<span style="color: #1D4ED8;">Hire</span>, ${fullName}!</h3>
+              <p style="color: #555;">
+                We are excited to inform you that you have been added as a recruiter by your company admin. Below are your account details:
+              </p>
+              
+              <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+                <tr>
+                  <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Full Name:</td>
+                  <td style="padding: 10px; border: 1px solid #ddd;">${fullName}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Email:</td>
+                  <td style="padding: 10px; border: 1px solid #ddd;">${email}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Phone Number:</td>
+                  <td style="padding: 10px; border: 1px solid #ddd;">${phoneNumber}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Position:</td>
+                  <td style="padding: 10px; border: 1px solid #ddd;">${position}</td>
+                </tr>
+              </table>
+        
+              <h4 style="color: #1e90ff;">Your Login Credentials:</h4>
+              <p style="font-weight: bold; color: #333;">Email: ${email}</p>
+              <p style="font-weight: bold; color: #333;">Password: ${password}</p>
+              
+              <p style="color: #555;">
+                Please log in to your account using the credentials above at the following link:
+                <a href="${
+                  process.env.FRONTEND_URL
+                }/login" style="color: #1e90ff; text-decoration: none;">GreatHire Login</a>
+              </p>
+        
+              <p style="color: #555;">
+                Make sure to update your password after logging in for the first time for security purposes.
+              </p>
+        
+              <div style="margin-top: 20px; text-align: center;">
+                <p style="font-size: 14px; color: #aaa;">This is an automated email, please do not reply.</p>
+                <p style="font-size: 14px; color: #aaa;">© ${new Date().getFullYear()} GreatHire. All rights reserved.</p>
+              </div>
+            </div>
+          `,
+    };
+
+    // Send email
+    let mailResponse = await transporter.sendMail(mailOptions);
+
+    return res.status(201).json({
+      success: true,
+      message: "Recruiter added. credentials send to recruiter mail. ",
+      recruiterId: recruiter._id,
+    });
   } catch (err) {
     console.error("Error adding recruiter:", err);
-    return res.status(500).json({ success: false, message: "Internal server error." });
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error." });
   }
 };
 
+export const deleteAccount = async (req, res) => {
+  const {userId, userEmail, companyId} = req.body;
+  try{
+    if(userEmail === company.adminEmail){
+
+    }else{
+      
+    }
+  }catch(err){
+    
+  }
+}

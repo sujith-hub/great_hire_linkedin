@@ -112,7 +112,7 @@ const ResetPassword = () => {
                     name="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter new password"
+                    placeholder="Enter new password (min length 8)"
                     className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     required
                   />

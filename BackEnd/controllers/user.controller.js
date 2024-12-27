@@ -259,35 +259,31 @@ export const logout = async (req, res) => {
 export const updateProfile = async (req, res) => {
   try {
     const { fullname, email, phoneNumber, bio, skills } = req.body;
-    const file = req.file; // PDF file uploaded in the request
+    const file = req.file;
     let cloudResponse;
 
     if (file) {
       // Convert file to a URI
       const fileUri = getDataUri(file);
 
-      // Upload the PDF to Cloudinary as a "raw" resource type
-      cloudResponse = await cloudinary.uploader.upload(fileUri.content, {
-        resource_type: "raw", // Ensure "raw" type for PDF files
-        folder: "resumes", // Optional: Specify a folder in Cloudinary
-        public_id: file.originalname.split(".")[0], // Use the file name (without extension) as public ID
-        overwrite: true, // Optional: Overwrite existing file with the same public ID
+      // Upload to Cloudinary
+      cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+    }
+
+    const skillsArray = Array.isArray(skills)
+      ? skills
+      : skills?.split(",").map((skill) => skill.trim()) || [];
+
+    const userId = req.id;
+    if (!userId) {
+      return res.status(400).json({
+        message: "User ID is missing in the request.",
+        success: false,
       });
     }
 
-    // Convert skills to an array if provided
-    let skillsArray;
-    if (skills) {
-      skillsArray = skills.split(",").map((skill) => skill.trim());
-    }
-
-    // Retrieve user ID from middleware
-    const userId = req.id; // Ensure middleware sets req.id
-    let user = await User.findById(userId);
-
-    if (!user) {
-      user = await Recruiter.findById(userId);
-    }
+    let user =
+      (await User.findById(userId)) || (await Recruiter.findById(userId));
 
     if (!user) {
       return res.status(404).json({
@@ -296,23 +292,19 @@ export const updateProfile = async (req, res) => {
       });
     }
 
-    // Update user fields
     if (fullname) user.fullname = fullname;
     if (email) user.email = email;
     if (phoneNumber) user.phoneNumber = phoneNumber;
     if (bio) user.profile.bio = bio;
-    if (skillsArray) user.profile.skills = skillsArray;
+    if (skillsArray.length) user.profile.skills = skillsArray;
 
-    // Update resume fields if a file was uploaded
     if (cloudResponse) {
-      user.profile.resume = cloudResponse.secure_url; // Cloudinary URL
-      user.profile.resumeOriginalName = file.originalname; // Original file name
+      user.profile.resume = cloudResponse.secure_url;
+      user.profile.resumeOriginalName = file.originalname;
     }
 
-    // Save the updated user to the database
     await user.save();
 
-    // Prepare updated user response, excluding sensitive fields like passwords
     const updatedUser = {
       _id: user._id,
       fullname: user.fullname,
@@ -328,7 +320,7 @@ export const updateProfile = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.error("Error in updateProfile:", error);
+    console.error("Full Error in updateProfile:", error);
     return res.status(500).json({
       message: "An error occurred while updating the profile.",
       error: error.message,
@@ -425,16 +417,38 @@ export const forgotPassword = async (req, res) => {
       },
     });
 
-    // Email options
     const mailOptions = {
       from: `"GreatHire Support" <${process.env.SUPPORT_EMAIL}>`,
       to: email,
-      subject: "Reset Password",
+      subject: "Reset Your Password",
       html: `
-        <p>Hi ${user.fullname},</p>
-        <p>You requested to reset your password. Click the link below to reset it:</p>
-        <a href="${resetURL}" target="_blank">${resetURL}</a>
-        <p>This link will expire in 5 minutes.</p>
+        <div style="font-family: Arial, sans-serif; background-color: #f4f7fc; padding: 30px; max-width: 600px; margin: auto; border-radius: 10px; border: 1px solid #ddd;">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <h2>Great<span style="color: #1D4ED8;">Hire</span></h2>
+            <p style="color: #555;">Connecting Skills with Opportunity - Your Next Great Hire Awaits!</p>
+          </div>
+    
+          <h3 style="color: #333;">Hi ${user.fullname},</h3>
+          <p style="color: #555;">We received a request to reset your password. If you made this request, please click the button below to reset your password:</p>
+    
+          <div style="text-align: center; margin: 20px 0;">
+            <a href="${resetURL}" target="_blank" style="background-color: #1D4ED8; color: #fff; padding: 12px 25px; border-radius: 5px; text-decoration: none; font-size: 16px;">
+              Reset Password
+            </a>
+          </div>
+    
+          <p style="color: #555;">
+            Please note: This link will expire in 5 minutes. If you didn’t request this reset, you can ignore this email.
+          </p>
+    
+          <div style="border-top: 1px solid #ddd; margin-top: 30px; padding-top: 20px; text-align: center;">
+            <p style="font-size: 14px; color: #888;">If you need help, feel free to reach out to our support team.</p>
+          </div>
+    
+          <div style="text-align: center; margin-top: 20px;">
+            <p style="font-size: 14px; color: #aaa;">© ${new Date().getFullYear()} GreatHire. All rights reserved.</p>
+          </div>
+        </div>
       `,
     };
 
@@ -467,6 +481,13 @@ export const resetPassword = async (req, res) => {
       });
     }
 
+    // Validate password length
+    if (newPassword.length < 8) {
+      return res.status(200).json({
+        message: "Password must be at least 8 characters long.",
+        success: false,
+      });
+    }
     // Hash new password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
@@ -482,6 +503,47 @@ export const resetPassword = async (req, res) => {
     console.error("Error resetting password:", error);
     return res.status(500).json({
       message: "Internal Server Error",
+      success: false,
+    });
+  }
+};
+
+export const deleteAccount = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    // Validate that the email is provided
+    if (!email) {
+      return res.status(400).json({
+        message: "Email is required to delete an account.",
+        success: false,
+      });
+    }
+
+    // Check if the user exists
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found. Unable to delete account.",
+        success: false,
+      });
+    }
+
+    // Delete the user
+    await User.findOneAndDelete({ email });
+
+    // Respond with success
+    return res.status(200).json({
+      message: "Account deleted successfully.",
+      success: true,
+    });
+  } catch (err) {
+    console.error("Error in deleteAccount:", err);
+
+    // Handle server errors
+    return res.status(500).json({
+      message: "An error occurred while deleting the account.",
+      error: err.message,
       success: false,
     });
   }
