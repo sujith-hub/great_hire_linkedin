@@ -9,6 +9,7 @@ import LatestJobs from "./LatestJobs";
 const Home = () => {
   const [titleKeyword, setTitleKeyword] = useState("");
   const [location, setLocation] = useState("");
+  console.log(titleKeyword, location)
   return (
     <div>
       <Navbar />

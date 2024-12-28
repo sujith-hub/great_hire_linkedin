@@ -63,42 +63,64 @@ export const sendVerificationStatus = async (req, res) => {
 
     // Email to Great Hire
     const mailOptionsForGreatHire = {
-      from: ` "GreatHire Support" <${process.env.EMAIL_USER}>`,
+      from: `"GreatHire Support" <${process.env.EMAIL_USER}>`,
       to: process.env.EMAIL_USER,
       subject: `Recruiter Verification Status by ${companyData.companyName}`,
       html: `
-        <h3>Recruiter Verification Status</h3>
-        <p><strong>Company Name:</strong> ${companyData.companyName}</p>
-        <p><strong>Recruiter Name:</strong> ${recruiterData.fullname}</p>
-        <p><strong>Recruiter Email:</strong> ${recruiterData.email}</p>
-        <p><strong>Status:</strong> ${
-          status === 1 ? "Verified" : "Not Verified"
-        }</p>
-        <p>${message}</p>
-        <br/>
-        <p>Thanks</p>
+        <div style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px; max-width: 600px; margin: auto; border-radius: 10px; border: 1px solid #ddd;">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <h2 style="color: #1e90ff;">GreatHire</h2>
+            <p style="color: #555;">Recruiter Verification Status</p>
+          </div>
+          <p><strong style="color: #333;">Company Name:</strong> ${
+            companyData.companyName
+          }</p>
+          <p><strong style="color: #333;">Recruiter Name:</strong> ${
+            recruiterData.fullname
+          }</p>
+          <p><strong style="color: #333;">Recruiter Email:</strong> ${
+            recruiterData.email
+          }</p>
+          <p><strong style="color: #333;">Status:</strong> ${
+            status === 1 ? "Verified" : "Not Verified"
+          }</p>
+          <p style="color: #555;">${message}</p>
+          <br />
+          <p style="text-align: center;">Thanks, <br /> GreatHire Support</p>
+        </div>
       `,
     };
+
     // Email to Recruiter
     const mailOptionsForRecrutier = {
-      from: ` "GreatHire Support" <${process.env.EMAIL_USER}>`,
+      from: `"GreatHire Support" <${process.env.EMAIL_USER}>`,
       to: recruiterData.email,
       subject: `Recruiter Verification Status by ${companyData.companyName}`,
       html: `
-        <h3>Recruiter Verification Status</h3>
-        <p><strong>Company Name:</strong> ${companyData.companyName}</p>
-        <p><strong>Recruiter Name:</strong> ${recruiterData.fullname}</p>
-        <p><strong>Recruiter Email:</strong> ${recruiterData.email}</p>
-        <p><strong>Status:</strong> ${
-          status === 1 ? "Verified" : "Not Verified"
-        }</p>
-        <p>${message}</p>
-        <p><strong>Now you ${
-          status === 1 ? "can" : "can't"
-        } post job and add user to company </strong></p>
-        <br/>
-        <p>Thanks,</p>
-        <p>Great Hire</p>
+        <div style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px; max-width: 600px; margin: auto; border-radius: 10px; border: 1px solid #ddd;">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <h2 style="color: #1e90ff;">GreatHire</h2>
+            <p style="color: #555;">Recruiter Verification Status</p>
+          </div>
+          <p><strong style="color: #333;">Company Name:</strong> ${
+            companyData.companyName
+          }</p>
+          <p><strong style="color: #333;">Recruiter Name:</strong> ${
+            recruiterData.fullname
+          }</p>
+          <p><strong style="color: #333;">Recruiter Email:</strong> ${
+            recruiterData.email
+          }</p>
+          <p><strong style="color: #333;">Status:</strong> ${
+            status === 1 ? "Verified" : "Not Verified"
+          }</p>
+          <p style="color: #555;">${message}</p>
+          <p style="font-weight: bold; color: #333;">Now you ${
+            status === 1 ? "can" : "can't"
+          } post jobs and add users to the company.</p>
+          <br />
+          <p style="text-align: center;">Thanks, <br /> GreatHire Team</p>
+        </div>
       `,
     };
 
@@ -108,11 +130,16 @@ export const sendVerificationStatus = async (req, res) => {
       to: companyData.email,
       subject: `Verification Response`,
       html: `
-        <h3>Recruiter Verification Status</h3>
-        <p>Your verification response for recruiter <strong>${recruiterData.fullname}</strong> has been recorded. We will update the recruiter’s status shortly.</p>
-        <br/>
-        <p>Thanks,</p>
-        <p>Great Hire</p>
+        <div style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px; max-width: 600px; margin: auto; border-radius: 10px; border: 1px solid #ddd;">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <h2 style="color: #1e90ff;">GreatHire</h2>
+            <p style="color: #555;">Recruiter Verification Status</p>
+          </div>
+          <p><strong style="color: #333;">Your verification response for recruiter:</strong> <strong>${recruiterData.fullname}</strong></p>
+          <p style="color: #555;">We will update the recruiter’s status shortly.</p>
+          <br />
+          <p style="text-align: center;">Thanks, <br /> GreatHire Team</p>
+        </div>
       `,
     };
 

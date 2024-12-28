@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { FaLocationDot } from "react-icons/fa6";
 import { MdClear } from "react-icons/md";
 import { useJobDetails } from "@/context/JobDetailsContext";
-import axios from "axios";
 
 const Locations = ({ locations, onSelectLocation }) => {
   return (
@@ -27,12 +26,7 @@ const Locations = ({ locations, onSelectLocation }) => {
   );
 };
 
-const LocationSearch = ({ onSelectLocation, handleLocationSelect }) => {
-  const [inputValue, setInputValue] = useState("");
-  const [showLocations, setShowLocations] = useState(false);
-  const [filteredLocations, setFilteredLocations] = useState([]);
-  const { resetFilter } = useJobDetails();
-
+const LocationSearch = ({ onSelectLocation }) => {
   const allLocations = {
     "Andhra Pradesh": [
       "Visakhapatnam, Andhra Pradesh",
@@ -97,11 +91,7 @@ const LocationSearch = ({ onSelectLocation, handleLocationSelect }) => {
     Nagaland: ["Kohima, Nagaland", "Dimapur, Nagaland", "Mokokchung, Nagaland"],
     Odisha: ["Bhubaneswar, Odisha", "Cuttack, Odisha", "Rourkela, Odisha"],
     Punjab: ["Ludhiana, Punjab", "Amritsar, Punjab", "Jalandhar, Punjab"],
-    Rajasthan: [
-      "Alwar, Rajasthan",
-      "Jaipur, Rajasthan",
-      "Udaipur, Rajasthan",
-    ],
+    Rajasthan: ["Alwar, Rajasthan", "Jaipur, Rajasthan", "Udaipur, Rajasthan"],
     Sikkim: ["Gangtok, Sikkim", "Namchi, Sikkim", "Gyalshing, Sikkim"],
     "Tamil Nadu": [
       "Chennai, Tamil Nadu",
@@ -131,46 +121,22 @@ const LocationSearch = ({ onSelectLocation, handleLocationSelect }) => {
     ],
   };
 
+  const [inputValue, setInputValue] = useState("");
+  const [showLocations, setShowLocations] = useState(false);
+  const [filteredLocations, setFilteredLocations] = useState([]);
+  const { resetFilter } = useJobDetails();
+
   const handleFocus = () => {
     setShowLocations(true);
-    setFilteredLocations(Object.values(allLocations).flat()); // Show all locations
+    setFilteredLocations(Object.values(allLocations).flat());
   };
 
   const handleBlur = () => setTimeout(() => setShowLocations(false), 150);
 
-  const handleInputChange = async (e) => {
+  const handleInputChange = (e) => {
     const value = e.target.value;
     setInputValue(value);
-    if (value.length < 3) {
-      setFilteredLocations([]);``
-      return;
-    }
 
-    try {
-      const response = await axios.get(
-        `https://us1.locationiq.com/v1/search.php`,
-        {
-          params: {
-            key: apiKey,
-            q: value,
-            format: "json",
-            countrycodes: "IN",
-            addressdetails: 1,
-            language: "en",
-          },
-        }
-      );
-
-      const formattedSuggestions = response.data.map((item) => {
-        return {
-          description: `${item.address.station || ""} ${item.address.city || ""} ${item.address.state || ""} ${item.address.country || ""}`,
-        };
-      });
-
-      setFilteredLocations(formattedSuggestions);
-    } catch (error) {
-      console.error("Error fetching location suggestions:", error);
-    }
     const allLocationsArray = Object.values(allLocations).flat();
     const filtered = allLocationsArray.filter((location) =>
       location.toLowerCase().includes(value.toLowerCase())
@@ -179,15 +145,22 @@ const LocationSearch = ({ onSelectLocation, handleLocationSelect }) => {
     setShowLocations(true);
   };
 
+  const handleLocationSelect = (location) => {
+    setInputValue(location); // Update the input with the selected location
+    setShowLocations(false); // Close the dropdown
+    onSelectLocation(location); // Notify the parent
+  };
+
   const clearInput = () => {
     setInputValue("");
     setFilteredLocations(Object.values(allLocations).flat());
+    onSelectLocation("");
     resetFilter();
   };
 
   return (
     <div className="relative flex flex-col items-center w-full md:w-96 mx-auto">
-      <div className="relative flex items-center w-full border-l-0 md:border-l-2 border-t-2 md:border-t-0 border-gray-300 overflow-hidden  bg-white ">
+      <div className="relative flex items-center w-full border-l-0 md:border-l-2 border-t-2 md:border-t-0 border-gray-300 overflow-hidden bg-white">
         <FaLocationDot size={25} className="text-gray-500 ml-3" />
         <input
           type="text"

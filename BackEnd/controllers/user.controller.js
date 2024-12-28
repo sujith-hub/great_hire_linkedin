@@ -29,8 +29,8 @@ export const register = async (req, res) => {
     }
 
     // Check if user already exists
-    let userExists = await User.findOne({ email });
-    if (!userExists) userExists = await Recruiter.findOne({ email });
+    let userExists =
+      (await User.findOne({ email })) || (await Recruiter.findOne({ email }));
 
     if (userExists) {
       return res.status(200).json({
@@ -75,10 +75,9 @@ export const login = async (req, res) => {
       });
     }
     //check mail is correct or not...
-    let user = await User.findOne({ email });
-    if (!user) {
-      user = await Recruiter.findOne({ email });
-    }
+    let user =
+      (await User.findOne({ email })) || (await Recruiter.findOne({ email }));
+
     if (!user) {
       return res.status(200).json({
         message: "Account Not found.",
@@ -258,9 +257,11 @@ export const logout = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
   try {
-    const { fullname, email, phoneNumber, bio, skills } = req.body;
+    const { fullname, email, phoneNumber, bio, skills, experience } =
+      req.body;
     const file = req.file;
     let cloudResponse;
+
     if (file) {
       // Convert file to a URI
       const fileUri = getDataUri(file);
@@ -269,38 +270,47 @@ export const updateProfile = async (req, res) => {
       cloudResponse = await cloudinary.uploader.upload(fileUri.content);
     }
 
-    // Convert skills to an array if provided
-    let skillsArray;
-    if (skills) {
-      skillsArray = skills.split(",");
+    const skillsArray = Array.isArray(skills)
+      ? skills
+      : skills?.split(",").map((skill) => skill.trim()) || [];
+
+    const userId = req.id;
+    if (!userId) {
+      return res.status(400).json({
+        message: "User ID is missing in the request.",
+        success: false,
+      });
     }
 
-    // Retrieve user ID from middleware
-    const userId = req.id; // Ensure middleware sets req.id
-    let user = await User.findById(userId);
+    let user =
+      (await User.findById(userId)) || (await Recruiter.findById(userId));
 
     if (!user) {
-      user = await Recruiter.findById(userId);
+      return res.status(404).json({
+        message: "User not found.",
+        success: false,
+      });
     }
 
-    // Update user fields
     if (fullname) user.fullname = fullname;
     if (email) user.email = email;
     if (phoneNumber) user.phoneNumber = phoneNumber;
     if (bio) user.profile.bio = bio;
-    if (skillsArray) user.profile.skills = skillsArray;
+    if (experience){
+      user.profile.experience = {
+        ...user.profile.experience,
+        duration: experience,
+      };
+    }
+    if (skillsArray.length) user.profile.skills = skillsArray;
 
-    // Update resume fields if a file was uploaded
     if (cloudResponse) {
       user.profile.resume = cloudResponse.secure_url;
       user.profile.resumeOriginalName = file.originalname;
     }
-    console.log(cloudResponse);
 
-    // Save the updated user to the database
     await user.save();
 
-    // Return the updated user (excluding sensitive fields like passwords)
     const updatedUser = {
       _id: user._id,
       fullname: user.fullname,
@@ -316,7 +326,7 @@ export const updateProfile = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.error("Error in updateProfile:", error);
+    console.error("Full Error in updateProfile:", error);
     return res.status(500).json({
       message: "An error occurred while updating the profile.",
       error: error.message,
@@ -384,11 +394,9 @@ export const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
 
-    // Check if email exists
-    let user = await User.findOne({ email });
-    if (!user) {
-      user = await Recruiter.findOne({ email });
-    }
+    let user =
+      (await User.findOne({ email })) || (await Recruiter.findOne({ email }));
+
     if (!user) {
       return res.status(200).json({
         message: "User not found with this email.",
@@ -413,16 +421,38 @@ export const forgotPassword = async (req, res) => {
       },
     });
 
-    // Email options
     const mailOptions = {
       from: `"GreatHire Support" <${process.env.SUPPORT_EMAIL}>`,
       to: email,
-      subject: "Reset Password",
+      subject: "Reset Your Password",
       html: `
-        <p>Hi ${user.fullname},</p>
-        <p>You requested to reset your password. Click the link below to reset it:</p>
-        <a href="${resetURL}" target="_blank">${resetURL}</a>
-        <p>This link will expire in 5 minutes.</p>
+        <div style="font-family: Arial, sans-serif; background-color: #f4f7fc; padding: 30px; max-width: 600px; margin: auto; border-radius: 10px; border: 1px solid #ddd;">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <h2>Great<span style="color: #1D4ED8;">Hire</span></h2>
+            <p style="color: #555;">Connecting Skills with Opportunity - Your Next Great Hire Awaits!</p>
+          </div>
+    
+          <h3 style="color: #333;">Hi ${user.fullname},</h3>
+          <p style="color: #555;">We received a request to reset your password. If you made this request, please click the button below to reset your password:</p>
+    
+          <div style="text-align: center; margin: 20px 0;">
+            <a href="${resetURL}" target="_blank" style="background-color: #1D4ED8; color: #fff; padding: 12px 25px; border-radius: 5px; text-decoration: none; font-size: 16px;">
+              Reset Password
+            </a>
+          </div>
+    
+          <p style="color: #555;">
+            Please note: This link will expire in 5 minutes. If you didn’t request this reset, you can ignore this email.
+          </p>
+    
+          <div style="border-top: 1px solid #ddd; margin-top: 30px; padding-top: 20px; text-align: center;">
+            <p style="font-size: 14px; color: #888;">If you need help, feel free to reach out to our support team.</p>
+          </div>
+    
+          <div style="text-align: center; margin-top: 20px;">
+            <p style="font-size: 14px; color: #aaa;">© ${new Date().getFullYear()} GreatHire. All rights reserved.</p>
+          </div>
+        </div>
       `,
     };
 
@@ -443,11 +473,10 @@ export const resetPassword = async (req, res) => {
   try {
     const { decoded, newPassword } = req.body;
 
-    // Check if user exists
-    let user = await User.findById(decoded.userId);
-    if (!user) {
-      user = await Recruiter.findById(decoded.userId);
-    }
+    let user =
+      (await User.findById(decoded.userId)) ||
+      (await Recruiter.findById(decoded.userId));
+
     if (!user) {
       return res.status(404).json({
         message: "User not found.",
@@ -455,6 +484,13 @@ export const resetPassword = async (req, res) => {
       });
     }
 
+    // Validate password length
+    if (newPassword.length < 8) {
+      return res.status(200).json({
+        message: "Password must be at least 8 characters long.",
+        success: false,
+      });
+    }
     // Hash new password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
@@ -470,6 +506,47 @@ export const resetPassword = async (req, res) => {
     console.error("Error resetting password:", error);
     return res.status(500).json({
       message: "Internal Server Error",
+      success: false,
+    });
+  }
+};
+
+export const deleteAccount = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    // Validate that the email is provided
+    if (!email) {
+      return res.status(400).json({
+        message: "Email is required to delete an account.",
+        success: false,
+      });
+    }
+
+    // Check if the user exists
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found. Unable to delete account.",
+        success: false,
+      });
+    }
+
+    // Delete the user
+    await User.findOneAndDelete({ email });
+
+    // Respond with success
+    return res.status(200).json({
+      message: "Account deleted successfully.",
+      success: true,
+    });
+  } catch (err) {
+    console.error("Error in deleteAccount:", err);
+
+    // Handle server errors
+    return res.status(500).json({
+      message: "An error occurred while deleting the account.",
+      error: err.message,
       success: false,
     });
   }

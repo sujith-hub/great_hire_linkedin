@@ -4,7 +4,7 @@ const companySlice = createSlice({
   name: "company",
   initialState: {
     loading: false,
-    company: [], // Initial state is an empty array
+    company: null, // Initial state is an empty array
     searchedQuery: "", // Added searchedQuery field
   },
   reducers: {
@@ -14,10 +14,10 @@ const companySlice = createSlice({
     },
     // Updated addCompany to handle array state
     addCompany: (state, action) => {
-      state.company = [...state.company, ...action.payload];
+      state.company = action.payload;
     },
     removeCompany: (state) => {
-      state.company = [];
+      state.company = null;
     },
     // New action for searchedQuery
     setSearchedQuery: (state, action) => {
