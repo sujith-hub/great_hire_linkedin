@@ -27,8 +27,8 @@ export const register = async (req, res) => {
     }
 
     // Check if user already exists
-    let userExists = await Recruiter.findOne({ email });
-    if (!userExists) userExists = await User.findOne({ email });
+    let userExists =
+      (await Recruiter.findOne({ email })) || (await User.findOne({ email }));
 
     if (userExists) {
       return res.status(200).json({
@@ -85,10 +85,9 @@ export const googleLogin = async (req, res) => {
     const googleUser = userRes.data;
 
     // Check if user already exists
-    let user = await Recruiter.findOne({ email: googleUser.email });
-    if (!user) {
-      user = await User.findOne({ email: googleUser.email });
-    }
+    let user =
+      (await Recruiter.findOne({ email: googleUser.email })) ||
+      (await User.findOne({ email: googleUser.email }));
 
     if (user) {
       if (role && role !== user.role) {
@@ -202,11 +201,12 @@ export const addRecruiterToCompany = async (req, res) => {
     }
 
     // Check if recruiter email already exists
-    const existingRecruiter = await Recruiter.findOne({ email });
+    const existingRecruiter =
+      (await Recruiter.findOne({ email })) || (await User.findOne({ email }));
     if (existingRecruiter) {
       return res.status(400).json({
         success: false,
-        message: "Recruiter with this email already exists.",
+        message: "Account already exists.",
       });
     }
 
@@ -313,14 +313,10 @@ export const addRecruiterToCompany = async (req, res) => {
 };
 
 export const deleteAccount = async (req, res) => {
-  const {userId, userEmail, companyId} = req.body;
-  try{
-    if(userEmail === company.adminEmail){
-
-    }else{
-      
+  const { userId, userEmail, companyId } = req.body;
+  try {
+    if (userEmail === company.adminEmail) {
+    } else {
     }
-  }catch(err){
-    
-  }
-}
+  } catch (err) {}
+};

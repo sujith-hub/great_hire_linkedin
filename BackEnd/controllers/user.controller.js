@@ -29,8 +29,8 @@ export const register = async (req, res) => {
     }
 
     // Check if user already exists
-    let userExists = await User.findOne({ email });
-    if (!userExists) userExists = await Recruiter.findOne({ email });
+    let userExists =
+      (await User.findOne({ email })) || (await Recruiter.findOne({ email }));
 
     if (userExists) {
       return res.status(200).json({
@@ -75,10 +75,9 @@ export const login = async (req, res) => {
       });
     }
     //check mail is correct or not...
-    let user = await User.findOne({ email });
-    if (!user) {
-      user = await Recruiter.findOne({ email });
-    }
+    let user =
+      (await User.findOne({ email })) || (await Recruiter.findOne({ email }));
+
     if (!user) {
       return res.status(200).json({
         message: "Account Not found.",
@@ -258,7 +257,8 @@ export const logout = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
   try {
-    const { fullname, email, phoneNumber, bio, skills } = req.body;
+    const { fullname, email, phoneNumber, bio, skills, experience } =
+      req.body;
     const file = req.file;
     let cloudResponse;
 
@@ -296,6 +296,7 @@ export const updateProfile = async (req, res) => {
     if (email) user.email = email;
     if (phoneNumber) user.phoneNumber = phoneNumber;
     if (bio) user.profile.bio = bio;
+    if (experience) user.profile.experience = experience;
     if (skillsArray.length) user.profile.skills = skillsArray;
 
     if (cloudResponse) {
@@ -388,11 +389,9 @@ export const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
 
-    // Check if email exists
-    let user = await User.findOne({ email });
-    if (!user) {
-      user = await Recruiter.findOne({ email });
-    }
+    let user =
+      (await User.findOne({ email })) || (await Recruiter.findOne({ email }));
+
     if (!user) {
       return res.status(200).json({
         message: "User not found with this email.",
@@ -469,11 +468,10 @@ export const resetPassword = async (req, res) => {
   try {
     const { decoded, newPassword } = req.body;
 
-    // Check if user exists
-    let user = await User.findById(decoded.userId);
-    if (!user) {
-      user = await Recruiter.findById(decoded.userId);
-    }
+    let user =
+      (await User.findById(decoded.userId)) ||
+      (await Recruiter.findById(decoded.userId));
+
     if (!user) {
       return res.status(404).json({
         message: "User not found.",

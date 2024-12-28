@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { setUser } from "@/redux/authSlice";
-import { toast } from "sonner";
+import { toast } from "react-hot-toast";
 
 const UserUpdateProfile = ({ open, setOpen }) => {
   const [loading, setLoading] = useState(false);
@@ -18,6 +18,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     email: user?.email || "",
     phoneNumber: user?.phoneNumber || "",
     bio: user?.profile?.bio || "",
+    experience:user?.profile?.experience || "",
     skills: user?.profile?.skills?.join(", ") || "",
     file: user?.profile?.resume || "",
   });
@@ -43,6 +44,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     formData.append("email", input.email);
     formData.append("phoneNumber", input.phoneNumber);
     formData.append("bio", input.bio);
+    formData.append("experience", input.experience);
     formData.append("skills", input.skills);
     if (input.file) {
       formData.append("file", input.file);
@@ -148,6 +150,19 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                 onChange={changeEventHandler}
                 className="col-span-3"
                 placeholder="Write a short bio"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="experience" className="text-right">
+                Experience
+              </Label>
+              <Input
+                id="experience"
+                name="experience"
+                value={input.experience}
+                onChange={changeEventHandler}
+                className="col-span-3"
+                placeholder="Experience"
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
