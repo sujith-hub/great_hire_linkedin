@@ -296,7 +296,12 @@ export const updateProfile = async (req, res) => {
     if (email) user.email = email;
     if (phoneNumber) user.phoneNumber = phoneNumber;
     if (bio) user.profile.bio = bio;
-    if (experience) user.profile.experience = experience;
+    if (experience){
+      user.profile.experience = {
+        ...user.profile.experience,
+        duration: experience,
+      };
+    }
     if (skillsArray.length) user.profile.skills = skillsArray;
 
     if (cloudResponse) {
