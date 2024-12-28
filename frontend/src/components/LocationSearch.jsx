@@ -219,3 +219,4 @@ const LocationSearch = ({ onSelectLocation, handleLocationSelect }) => {
 };
 
 export default LocationSearch;
+
