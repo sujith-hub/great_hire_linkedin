@@ -7,6 +7,11 @@ import { Button } from "../components/ui/button";
 import AppliedJobTable from "../components/AppliedJobTable";
 import UserUpdateProfile from "./UserUpdateProfile";
 import { useSelector } from "react-redux";
+import { MdContacts } from "react-icons/md";
+import { GiSkills } from "react-icons/gi";
+import { FiFileText } from "react-icons/fi";
+import { MdOutlineWork } from "react-icons/md";
+
 
 const UserProfile = () => {
   const [open, setOpen] = useState(false);
@@ -20,7 +25,7 @@ const UserProfile = () => {
         <div className="flex flex-col items-center text-center border-b pb-8">
           <Avatar className="h-24 w-24">
             <AvatarImage
-              src={user?.profile?.profilePhoto || "/default-profile.jpg"}
+              src={user?.profile?.profilePhoto || "https://github.com/shadcn.png"}
               alt="Profile Photo"
             />
           </Avatar>
@@ -42,15 +47,15 @@ const UserProfile = () => {
             variant="outline"
             className="mt-4 flex items-center gap-2"
           >
-            <Pen className="h-4 w-4" />
+            <Pen className="h-4 w-4 " />
             Edit Profile
           </Button>
         </div>
 
         {/* Contact Information Section */}
         <div className="mt-6">
-          <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
-            Contact Information
+          <h2 className="flex gap-2 items-center text-lg font-semibold text-gray-800 border-b pb-2">
+          <MdContacts size={23} color="red"/> <span>Contact Information </span> 
           </h2>
           <div className="mt-4 space-y-2">
             <div className="flex items-center gap-3">
@@ -70,8 +75,8 @@ const UserProfile = () => {
 
         {/* Skills Section */}
         <div className="mt-6">
-          <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
-            Skills
+          <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-800 border-b pb-2">
+          <GiSkills size={25} color={"red"}/> <span>Skills</span> 
           </h2>
           <div className="mt-4 flex flex-wrap gap-3">
             {user?.profile?.skills?.length > 0 ? (
@@ -88,8 +93,8 @@ const UserProfile = () => {
 
         {/* Resume Section */}
         <div className="mt-6">
-          <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
-            Resume
+          <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-800 border-b pb-2">
+          <FiFileText size={24} color="red"/> <span>Resume</span> 
           </h2>
           <div className="mt-4">
             {user?.profile?.resume ? (
@@ -110,8 +115,8 @@ const UserProfile = () => {
 
       {/* Applied Jobs Section */}
       <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-lg mt-8 p-8">
-        <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
-          Applied Jobs
+        <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-800 border-b pb-2">
+          <MdOutlineWork size={25} color="red"/> <span>Applied Jobs</span> 
         </h2>
         <div className="mt-4">
           <AppliedJobTable />
