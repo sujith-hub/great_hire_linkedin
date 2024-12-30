@@ -278,7 +278,7 @@ export const verifyOTP = async (req, res) => {
   try {
     // Check if the OTP matches and is still valid
     if (decodedOTP !== otp) {
-      return res.status(401).json({
+      return res.status(200).json({
         success: false,
         message: "Invalid OTP.",
       });
