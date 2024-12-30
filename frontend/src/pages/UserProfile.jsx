@@ -50,7 +50,6 @@ const UserProfile = () => {
         <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-lg mt-10 p-8">
           {/* User Info Section */}
           <div className="flex flex-col items-center text-center border-b pb-8">
-<<<<<<< HEAD
             <div className="relative">
               <Avatar className="h-24 w-24">
                 <AvatarImage src={profilePhoto} alt="Profile Photo" />
@@ -69,22 +68,6 @@ const UserProfile = () => {
             )}
             <h1 className="mt-4 text-2xl font-bold">{user?.fullname || "User Name"}</h1>
             <p className="text-gray-600">{user?.profile?.bio || "No bio available"}</p>
-=======
-            <Avatar className="h-24 w-24">
-              <AvatarImage
-                src={
-                  user?.profile?.profilePhoto || "https://github.com/shadcn.png"
-                }
-                alt="Profile Photo"
-              />
-            </Avatar>
-            <h1 className="mt-4 text-2xl font-bold">
-              {user?.fullname || "User Name"}
-            </h1>
-            <p className="text-gray-600">
-              {user?.profile?.bio || "No bio available"}
-            </p>
->>>>>>> b596969e366d4910b2403d351cd7d99a247ec105
             <Button
               onClick={() => setOpen(true)}
               variant="outline"
