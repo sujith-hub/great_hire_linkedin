@@ -6,6 +6,7 @@ import { removeCompany } from "@/redux/companySlice";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
+import RequestOTP from "../VerifyOTP";
 
 const Navbar = () => {
   const { user } = useSelector((state) => state.auth);
@@ -84,7 +85,9 @@ const Navbar = () => {
   };
 
   const handleSignupOption = (type) => {
-    navigate(type === "job" ? "/signup" : "/recruiter/signup");
+    navigate(
+      type === "job" ? navigate("/signup") : navigate("/recruiter/signup")
+    );
     setIsSignupModalOpen(false);
     setIsMenuOpen(false);
   };
@@ -204,7 +207,6 @@ const Navbar = () => {
                   </button>
                 </>
               ) : (
-
                 <div ref={profileMenuRef} className="relative">
                   <button
                     onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
@@ -221,7 +223,7 @@ const Navbar = () => {
                       className="h-10 w-10 rounded-full border object-cover"
                     />
                     <span className="font-medium">
-                      {isRecruiter ? user?.fullname  : user?.fullname}
+                      {isRecruiter ? user?.fullname : user?.fullname}
                     </span>
                   </button>
                   {isProfileMenuOpen && (

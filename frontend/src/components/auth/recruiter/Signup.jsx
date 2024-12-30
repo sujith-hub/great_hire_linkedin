@@ -111,7 +111,6 @@ const Signup = () => {
             <h1 className="text-md font-semibold text-gray-500 text-center">
               Where the best startups find their teams
             </h1>
-            {/* Google Sign-Up Button */}
             {/* Google Sign up Button */}
             <GoogleOAuthProvider clientId={google_client_id}>
               <GoogleLogin text="Sign up" role="recruiter" route="recruiter" />

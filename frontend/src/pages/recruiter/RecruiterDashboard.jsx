@@ -1,15 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import Navbar from '@/components/shared/Navbar';
-import Footer from '@/components/shared/Footer';
-import { COMPANY_API_END_POINT } from '@/utils/ApiEndPoint';
-import axios from 'axios';
-import { addCompany } from '@/redux/companySlice';
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import Navbar from "@/components/shared/Navbar";
+import Footer from "@/components/shared/Footer";
+import { COMPANY_API_END_POINT } from "@/utils/ApiEndPoint";
+import axios from "axios";
+import { addCompany } from "@/redux/companySlice";
 
 const RecruiterDashboard = () => {
   const { user } = useSelector((state) => state.auth);
+  const { company } = useSelector((state) => state.company);
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
+
+  
 
   useEffect(() => {
     const fetchCompanyByUserId = async () => {
