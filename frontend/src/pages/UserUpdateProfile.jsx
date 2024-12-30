@@ -22,6 +22,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     skills: user?.profile?.skills?.join(", ") || "",
     file: user?.profile?.resume || "",
   });
+  
   const dispatch = useDispatch();
 
   const changeEventHandler = (e) => {
@@ -46,6 +47,8 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     formData.append("bio", input.bio);
     formData.append("experience", input.experience);
     formData.append("skills", input.skills);
+
+    console.log(formData);
     if (input.file) {
       formData.append("file", input.file);
     }

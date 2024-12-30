@@ -26,6 +26,10 @@ import PostJob from "./pages/recruiter/PostJob";
 import RecruiterDashboard from "./pages/recruiter/RecruiterDashboard";
 import RecruiterProfile from "./pages/recruiter/RecruiterProfile";
 import AddRecruiter from "./pages/recruiter/AddRecruiter";
+import { logOut } from "./redux/authSlice";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react"; 
+
 
 const appRouter = createBrowserRouter([
   {
@@ -134,6 +138,25 @@ const appRouter = createBrowserRouter([
 ]);
 
 function App() {
+  // const dispatch = useDispatch();
+  // dispatch(logOut());
+
+  // useEffect(() => {
+  //   const getCookie = (name) => {
+  //     const value = document.cookie; // Get all cookies as a string
+  //     const parts = value.split("; ").find((cookie) => cookie.startsWith(`${name}=`));
+  //     if (parts) {
+  //       return parts.split("=")[1]; // Return the cookie value
+  //     }
+  //     return null; // Return null if the cookie does not exist
+  //   };
+
+  //   const token = getCookie("token");
+  //   if (!token) {
+  //     dispatch(logOut());
+  //   }
+  // }, []);
+
   return (
     <div>
       <JobDetailsProvider>

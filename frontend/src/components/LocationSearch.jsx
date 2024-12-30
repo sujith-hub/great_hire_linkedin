@@ -119,6 +119,72 @@ const LocationSearch = ({ onSelectLocation }) => {
       "Darjeeling, West Bengal",
       "Siliguri, West Bengal",
     ],
+
+    // USA major cities locations
+    Arizona: [
+      "Phoenix, Arizona",
+      "Tucson, Arizona",
+      "Mesa, Arizona",
+      "Scottsdale, Arizona",
+      "Chandler, Arizona",
+    ],
+    California: [
+      "Los Angeles, California",
+      "San Francisco, California",
+      "San Diego, California",
+      "Sacramento, California",
+      "San Jose, California",
+    ],
+    Florida: [
+      "Miami, Florida",
+      "Orlando, Florida",
+      "Tampa, Florida",
+      "Jacksonville, Florida",
+      "St. Petersburg, Florida",
+    ],
+    Illinois: [
+      "Chicago, Illinois",
+      "Aurora, Illinois",
+      "Naperville, Illinois",
+      "Springfield, Illinois",
+      "Rockford, Illinois",
+    ],
+    "New York": [
+      "New York City, New York",
+      "Buffalo, New York",
+      "Rochester, New York",
+      "Albany, New York",
+      "Syracuse, New York",
+    ],
+    "North Carolina": [
+      "Charlotte, North Carolina",
+      "Raleigh, North Carolina",
+      "Greensboro, North Carolina",
+      "Durham, North Carolina",
+      "Winston-Salem, North Carolina",
+    ],
+    Ohio: [
+      "Columbus, Ohio",
+      "Cleveland, Ohio",
+      "Cincinnati, Ohio",
+      "Toledo, Ohio",
+      "Akron, Ohio",
+    ],
+    Pennsylvania: [
+      "Philadelphia, Pennsylvania",
+      "Pittsburgh, Pennsylvania",
+      "Allentown, Pennsylvania",
+      "Harrisburg, Pennsylvania",
+      "Erie, Pennsylvania",
+    ],
+    Texas: [
+      "Houston, Texas",
+      "Dallas, Texas",
+      "Austin, Texas",
+      "San Antonio, Texas",
+      "Fort Worth, Texas",
+    ],
+    remote:["Remote"]
   };
 
   const [inputValue, setInputValue] = useState("");
@@ -131,7 +197,12 @@ const LocationSearch = ({ onSelectLocation }) => {
     setFilteredLocations(Object.values(allLocations).flat());
   };
 
-  const handleBlur = () => setTimeout(() => setShowLocations(false), 150);
+  const handleBlur = (e) => {
+    // Prevent closing the dropdown if clicking inside it
+    if (!e.currentTarget.contains(e.relatedTarget)) {
+      setTimeout(() => setShowLocations(false), 150);
+    }
+  };
 
   const handleInputChange = (e) => {
     const value = e.target.value;
@@ -159,7 +230,10 @@ const LocationSearch = ({ onSelectLocation }) => {
   };
 
   return (
-    <div className="relative flex flex-col items-center w-full md:w-96 mx-auto">
+    <div
+      className="relative flex flex-col items-center w-full md:w-96 mx-auto"
+      onBlur={handleBlur}
+    >
       <div className="relative flex items-center w-full border-l-0 md:border-l-2 border-t-2 md:border-t-0 border-gray-300 overflow-hidden bg-white">
         <FaLocationDot size={25} className="text-gray-500 ml-3" />
         <input
@@ -168,7 +242,6 @@ const LocationSearch = ({ onSelectLocation }) => {
           className="py-3 px-4 outline-none flex-1 text-sm sm:text-base text-gray-700 bg-transparent"
           value={inputValue}
           onFocus={handleFocus}
-          onBlur={handleBlur}
           onChange={handleInputChange}
         />
         {inputValue && (
@@ -182,14 +255,30 @@ const LocationSearch = ({ onSelectLocation }) => {
         )}
       </div>
       {showLocations && (
-        <Locations
-          locations={filteredLocations}
-          onSelectLocation={handleLocationSelect}
-        />
+        <div
+          className="absolute top-16 left-0 bg-white border border-gray-300 rounded-lg shadow-lg w-full max-h-64 overflow-auto z-50"
+          tabIndex="-1" // Allow focus for onBlur handling
+        >
+          {filteredLocations.length > 0 ? (
+            filteredLocations.map((location, index) => (
+              <div
+                key={index}
+                className="flex items-center space-x-3 px-4 py-2 hover:bg-blue-50 cursor-pointer"
+                onClick={() => handleLocationSelect(location)}
+              >
+                <FaLocationDot size={18} className="text-blue-500" />
+                <span className="text-gray-700 text-sm md:text-base">
+                  {location}
+                </span>
+              </div>
+            ))
+          ) : (
+            <div className="px-4 py-2 text-gray-500">No locations found</div>
+          )}
+        </div>
       )}
     </div>
   );
 };
 
 export default LocationSearch;
-

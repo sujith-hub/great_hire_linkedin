@@ -9,16 +9,35 @@ import UserUpdateProfile from "./UserUpdateProfile";
 import { useSelector } from "react-redux";
 import Footer from "@/components/shared/Footer";
 
+
 const UserProfile = () => {
   const [open, setOpen] = useState(false);
   const { user } = useSelector((store) => store.auth);
+  const [profilePhoto, setProfilePhoto] = useState(user?.profile?.profilePhoto || "https://github.com/shadcn.png");
+  const [successMessage, setSuccessMessage] = useState(""); // State to handle success message
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setProfilePhoto(reader.result); // Set the new image URL
+        // Show success message
+        setSuccessMessage("Profile photo updated successfully!");
+        // Clear the success message after 3 seconds
+        setTimeout(() => setSuccessMessage(""), 3000);
+
+        // Here, you can also upload this image to your server if needed
+        console.log("Uploaded image:", file);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleDeleteAccount = () => {
     const confirmDelete = window.confirm("Are you sure you want to delete this account?");
     if (confirmDelete) {
-      // Add your account deletion logic here
       console.log("Account deleted");
-      // For example, you might call an API to delete the user account
     }
   };
 
@@ -29,12 +48,22 @@ const UserProfile = () => {
         <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-lg mt-10 p-8">
           {/* User Info Section */}
           <div className="flex flex-col items-center text-center border-b pb-8">
-            <Avatar className="h-24 w-24">
-              <AvatarImage
-                src={user?.profile?.profilePhoto || "/default-profile.jpg"}
-                alt="Profile Photo"
+            <div className="relative">
+              <Avatar className="h-24 w-24">
+                <AvatarImage src={profilePhoto} alt="Profile Photo" />
+              </Avatar>
+              <input
+                type="file"
+                accept="image/*"
+                className="absolute inset-0 opacity-0 cursor-pointer"
+                onChange={handleImageUpload}
+                title="Click to upload a new profile photo"
               />
-            </Avatar>
+            </div>
+            {/* Success Message */}
+            {successMessage && (
+              <p className="mt-2 text-green-600 text-sm">{successMessage}</p>
+            )}
             <h1 className="mt-4 text-2xl font-bold">{user?.fullname || "User Name"}</h1>
             <p className="text-gray-600">{user?.profile?.bio || "No bio available"}</p>
             <Button
