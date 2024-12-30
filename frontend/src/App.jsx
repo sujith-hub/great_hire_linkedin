@@ -26,6 +26,10 @@ import PostJob from "./pages/recruiter/PostJob";
 import RecruiterDashboard from "./pages/recruiter/RecruiterDashboard";
 import RecruiterProfile from "./pages/recruiter/RecruiterProfile";
 import AddRecruiter from "./pages/recruiter/AddRecruiter";
+import VerifyOTP from "./components/VerifyOTP";
+import { useEffect } from "react";
+import { logOut } from "./redux/authSlice.js";
+import { useDispatch } from "react-redux";
 
 const appRouter = createBrowserRouter([
   {
@@ -40,7 +44,7 @@ const appRouter = createBrowserRouter([
     path: "/signup",
     element: <Signup />,
   },
-  
+
   {
     path: "/forgot-password",
     element: <ForgotPassword />,
@@ -48,6 +52,10 @@ const appRouter = createBrowserRouter([
   {
     path: "/reset-password/:token",
     element: <ResetPassword />,
+  },
+  {
+    path: "/verify-otp",
+    element: <VerifyOTP />,
   },
   {
     path: "/jobs",
@@ -102,30 +110,29 @@ const appRouter = createBrowserRouter([
     element: <RecrutierSignup />,
   },
   {
-    path:"/recruiter/create-company",
-    element:<CreateCompany />
+    path: "/recruiter/create-company",
+    element: <CreateCompany />,
   },
- 
 
   {
-    path:"/recruiter/post-job",
-    element:<PostJob />
+    path: "/recruiter/post-job",
+    element: <PostJob />,
   },
   {
-    path:"/recruiter/dashboard",
-    element:<RecruiterDashboard />
+    path: "/recruiter/dashboard",
+    element: <RecruiterDashboard />,
   },
   {
-    path:"/recruiter/profile",
-    element:<RecruiterProfile />
+    path: "/recruiter/profile",
+    element: <RecruiterProfile />,
   },
   {
     path: "/recruiter/add-user",
     element: <AddRecruiter />,
   },
   {
-    path:"/verify-recruiter/:token",
-    element:<VerifyRecruiter />
+    path: "/verify-recruiter/:token",
+    element: <VerifyRecruiter />,
   },
   {
     path: "*",
@@ -134,6 +141,22 @@ const appRouter = createBrowserRouter([
 ]);
 
 function App() {
+  const dispatch = useDispatch();
+  // this code run for check token in cookies
+  useEffect(() => {
+    const getCookie = (name) => {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) {
+        return parts.pop().split(";").shift();
+      }
+      return null; // Return null if cookie does not exist
+    };
+    const token = getCookie("token");
+    if (!token) {
+      dispatch(logOut());
+    }
+  }, []);
   return (
     <div>
       <JobDetailsProvider>

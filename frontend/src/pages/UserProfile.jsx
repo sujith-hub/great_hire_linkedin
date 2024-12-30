@@ -14,7 +14,9 @@ const UserProfile = () => {
   const { user } = useSelector((store) => store.auth);
 
   const handleDeleteAccount = () => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this account?");
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this account?"
+    );
     if (confirmDelete) {
       // Add your account deletion logic here
       console.log("Account deleted");
@@ -31,12 +33,18 @@ const UserProfile = () => {
           <div className="flex flex-col items-center text-center border-b pb-8">
             <Avatar className="h-24 w-24">
               <AvatarImage
-                src={user?.profile?.profilePhoto || "/default-profile.jpg"}
+                src={
+                  user?.profile?.profilePhoto || "https://github.com/shadcn.png"
+                }
                 alt="Profile Photo"
               />
             </Avatar>
-            <h1 className="mt-4 text-2xl font-bold">{user?.fullname || "User Name"}</h1>
-            <p className="text-gray-600">{user?.profile?.bio || "No bio available"}</p>
+            <h1 className="mt-4 text-2xl font-bold">
+              {user?.fullname || "User Name"}
+            </h1>
+            <p className="text-gray-600">
+              {user?.profile?.bio || "No bio available"}
+            </p>
             <Button
               onClick={() => setOpen(true)}
               variant="outline"
@@ -55,22 +63,31 @@ const UserProfile = () => {
             <div className="mt-4 space-y-2">
               <div className="flex items-center gap-3">
                 <Mail className="text-gray-500" />
-                <span className="text-gray-700">{user?.email || "Not Provided"}</span>
+                <span className="text-gray-700">
+                  {user?.email || "Not Provided"}
+                </span>
               </div>
               <div className="flex items-center gap-3">
                 <Contact className="text-gray-500" />
-                <span className="text-gray-700">{user?.phoneNumber || "Not Provided"}</span>
+                <span className="text-gray-700">
+                  {user?.phoneNumber || "Not Provided"}
+                </span>
               </div>
             </div>
           </div>
 
           {/* Skills Section */}
           <div className="mt-6">
-            <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">Skills</h2>
+            <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
+              Skills
+            </h2>
             <div className="mt-4 flex flex-wrap gap-3">
               {user?.profile?.skills?.length > 0 ? (
                 user.profile.skills.map((skill, index) => (
-                  <Badge key={index} className="bg-gray-100 text-gray-700 border">
+                  <Badge
+                    key={index}
+                    className="bg-gray-100 text-gray-700 border"
+                  >
                     {skill}
                   </Badge>
                 ))
@@ -82,7 +99,9 @@ const UserProfile = () => {
 
           {/* Resume Section */}
           <div className="mt-6">
-            <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">Resume</h2>
+            <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
+              Resume
+            </h2>
             <div className="mt-4">
               {user?.profile?.resume ? (
                 <a
@@ -113,7 +132,9 @@ const UserProfile = () => {
 
         {/* Applied Jobs Section */}
         <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-lg mt-8 p-8">
-          <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">Applied Jobs</h2>
+          <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
+            Applied Jobs
+          </h2>
           <div className="mt-4">
             <AppliedJobTable />
           </div>

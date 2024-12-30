@@ -4,12 +4,11 @@ import Footer from "@/components/shared/Footer";
 import HeroSection from "../components/HeroSection";
 //import CategoryCarousel from './CategoryCarousel';
 import LatestJobs from "./LatestJobs";
-// This is really osm
 
 const Home = () => {
   const [titleKeyword, setTitleKeyword] = useState("");
   const [location, setLocation] = useState("");
-  console.log(titleKeyword, location)
+
   return (
     <div>
       <Navbar />

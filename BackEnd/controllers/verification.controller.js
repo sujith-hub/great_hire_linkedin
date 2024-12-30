@@ -1,8 +1,22 @@
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import { Recruiter } from "../models/recruiter.model.js";
+import { User } from "../models/user.model.js";
 import { Company } from "../models/company.model.js";
 import mongoose from "mongoose";
+import randomstring from "randomstring";
+
+// Setup nodemailer
+const transporter = nodemailer.createTransport({
+  service: "Gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
+// OTP Secret
+const OTP_SECRET = process.env.SECRET_KEY;
 
 export const verifyToken = async (req, res) => {
   const { token } = req.body;
@@ -51,15 +65,6 @@ export const sendVerificationStatus = async (req, res) => {
         success: false,
       });
     }
-
-    // Setup nodemailer
-    const transporter = nodemailer.createTransport({
-      service: "Gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
 
     // Email to Great Hire
     const mailOptionsForGreatHire = {
@@ -187,6 +192,107 @@ export const sendVerificationStatus = async (req, res) => {
       message: "Failed to send verification emails.",
       success: false,
       error: err.message,
+    });
+  }
+};
+
+export const requestOTP = async (req, res) => {
+  const formData = req.body;
+  try {
+    // Check if user already exists
+    let user =
+      (await User.findOne({ email: formData.email })) ||
+      (await Recruiter.findOne({ email: formData.email }));
+    if (user) {
+      return res.status(401).json({
+        message: "User already exists!",
+        success: false,
+      });
+    }
+
+    // Generate OTP
+    const otp = randomstring.generate({
+      length: 6,
+      charset: "numeric",
+    });
+
+    const token = jwt.sign({ otp, formData }, OTP_SECRET, {
+      expiresIn: "30s",
+    });
+
+    // Send OTP via email
+    await transporter.sendMail({
+      from: `"GreatHire Support" <${process.env.EMAIL_USER}>`,
+      to: formData.email,
+      subject: "Your GreatHire OTP Code",
+      html: `
+        <div style="font-family: Arial, sans-serif; line-height: 1.6; max-width: 600px; margin: 0 auto; color: #333; border: 1px solid #eaeaea; padding: 20px; border-radius: 8px; background-color: #f9f9f9;">
+          <h2 style="color: #1d4ed8; text-align: center;">GreatHire OTP Verification</h2>
+          <p style="font-size: 16px; color: #555;">Hello,</p>
+          <p style="font-size: 16px; color: #555;">
+            Thank you for using <strong>GreatHire</strong>! Please use the OTP below to complete your verification:
+          </p>
+          <div style="text-align: center; margin: 20px 0;">
+            <span style="display: inline-block; font-size: 24px; color: #1d4ed8; font-weight: bold; border: 2px dashed #1d4ed8; padding: 10px 20px; border-radius: 8px;">${otp}</span>
+          </div>
+          <p style="font-size: 16px; color: #555;">
+            This OTP is valid for <strong>30 seconds</strong>. Please do not share it with anyone for security reasons.
+          </p>
+          <p style="font-size: 16px; color: #555;">
+            If you did not request this OTP, please ignore this email or contact our support team.
+          </p>
+          <hr style="margin: 20px 0; border: none; border-top: 1px solid #eaeaea;" />
+          <p style="font-size: 14px; color: #999; text-align: center;">
+            © ${new Date().getFullYear()} GreatHire. All rights reserved.
+          </p>
+        </div>
+      `,
+    });
+
+    res.status(200).json({
+      message: "OTP sent successfully!",
+      success: true,
+      token,
+    });
+  } catch (err) {
+    console.error(`Error in sending OTP: ${err}`);
+    res.status(500).json({
+      message: "Failed to send OTP. Please try again.",
+      success: false,
+    });
+  }
+};
+
+// Verify OTP Controller
+export const verifyOTP = async (req, res) => {
+  const { decodedOTP, otp } = req.body;
+
+  // Check if token and OTP are provided
+  if (!otp) {
+    return res.status(400).json({
+      success: false,
+      message: "OTP required.",
+    });
+  }
+
+  try {
+    // Check if the OTP matches and is still valid
+    if (decodedOTP !== otp) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid OTP.",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "OTP verified successfully.",
+    });
+  } catch (err) {
+    console.error("Error verifying OTP:", err);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to verify OTP. Please try again.",
     });
   }
 };

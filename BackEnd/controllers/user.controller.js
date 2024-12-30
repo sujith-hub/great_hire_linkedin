@@ -262,17 +262,7 @@ export const updateProfile = async (req, res) => {
     const file = req.file;
     let cloudResponse;
 
-    if (file) {
-      // Convert file to a URI
-      const fileUri = getDataUri(file);
-
-      // Upload to Cloudinary
-      cloudResponse = await cloudinary.uploader.upload(fileUri.content);
-    }
-
-    const skillsArray = Array.isArray(skills)
-      ? skills
-      : skills?.split(",").map((skill) => skill.trim()) || [];
+    
 
     const userId = req.id;
     if (!userId) {
@@ -291,6 +281,18 @@ export const updateProfile = async (req, res) => {
         success: false,
       });
     }
+
+    if (file) {
+      // Convert file to a URI
+      const fileUri = getDataUri(file);
+
+      // Upload to Cloudinary
+      cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+    }
+
+    const skillsArray = Array.isArray(skills)
+      ? skills
+      : skills?.split(",").map((skill) => skill.trim()) || [];
 
     if (fullname) user.fullname = fullname;
     if (email) user.email = email;

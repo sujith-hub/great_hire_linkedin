@@ -14,7 +14,7 @@ import Loading from "../Loading";
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 
 const Login = () => {
-  const {user} = useSelector((state)=> state.auth);
+  const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -23,14 +23,12 @@ const Login = () => {
   });
   const [loading, setLoading] = useState(false); // Add loading state
 
-  useEffect(()=>{
-    if(user){
-      if(user.role === 'recruiter')
-        navigate('/recruiter/dashboard');
-      else
-        navigate('/');
+  useEffect(() => {
+    if (user) {
+      if (user.role === "recruiter") navigate("/recruiter/dashboard");
+      else navigate("/");
     }
-  }, [user])
+  }, [user]);
   // Update state when input fields change
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -153,7 +151,7 @@ const Login = () => {
         </div>
 
         {/* Right Section - Background Image */}
-        <div className="relative w-full md:w-1/2  h-60 md:h-full">
+        <div className="relative w-full md:w-1/2 md:h-full ">
           <img
             src={img2}
             alt="Background"
