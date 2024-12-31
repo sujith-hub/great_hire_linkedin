@@ -18,6 +18,14 @@ export const register = async (req, res) => {
       });
     }
 
+    // Validate fullname length
+    if (fullname.length < 3) {
+      return res.status(200).json({
+        message: "Fullname must be at least 3 characters long.",
+        success: false,
+      });
+    }
+
     // Validate password length
     if (password.length < 8) {
       return res.status(200).json({

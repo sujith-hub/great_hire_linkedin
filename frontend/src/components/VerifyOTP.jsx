@@ -7,8 +7,9 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { FaArrowLeftLong } from "react-icons/fa6";
 
-const VerifyOTP = ({ token, setToken }) => {
+const VerifyOTP = ({ token, setToken, formData, setFormData }) => {
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
 
@@ -84,7 +85,7 @@ const VerifyOTP = ({ token, setToken }) => {
   return (
     <>
       {token && (
-        <div className="flex items-center justify-center p-6 w-full md:w-1/3">
+        <div className="flex flex-col space-y-3 justify-center p-6 w-full md:w-1/3">
           <div className="w-full">
             <h1 className="text-3xl font-bold text-center mb-6">
               Great<span className="text-blue-700">Hire</span>
@@ -114,9 +115,16 @@ const VerifyOTP = ({ token, setToken }) => {
                   : "bg-blue-700 hover:bg-blue-800"
               } focus:outline-none focus:ring-2 focus:ring-blue-500`}
             >
-              {loading ? "Verifying..." : `Verify OTP (${timer}s)`} {/* Timer */}
+              {loading ? "Verifying..." : `Verify OTP (${timer}s)`}{" "}
+              {/* Timer */}
             </button>
           </div>
+          {timer === 0 && (
+            <p className="flex items-center gap-2 text-blue-600 hover:text-blue-800 cursor-pointer" onClick={() => {setToken(null); setFormData(formData);}}>
+              <FaArrowLeftLong />
+              <span>Resend OTP</span>
+            </p>
+          )}
         </div>
       )}
     </>

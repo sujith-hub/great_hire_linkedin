@@ -20,6 +20,13 @@ export const register = async (req, res) => {
       });
     }
 
+    // Validate fullname length
+    if (fullname.length < 3) {
+      return res.status(200).json({
+        message: "Fullname must be at least 3 characters long.",
+        success: false,
+      });
+    }
     // Validate password length
     if (password.length < 8) {
       return res.status(200).json({
@@ -257,12 +264,9 @@ export const logout = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
   try {
-    const { fullname, email, phoneNumber, bio, skills, experience } =
-      req.body;
+    const { fullname, email, phoneNumber, bio, skills, experience } = req.body;
     const file = req.file;
     let cloudResponse;
-
-    
 
     const userId = req.id;
     if (!userId) {
@@ -298,7 +302,7 @@ export const updateProfile = async (req, res) => {
     if (email) user.email = email;
     if (phoneNumber) user.phoneNumber = phoneNumber;
     if (bio) user.profile.bio = bio;
-    if (experience){
+    if (experience) {
       user.profile.experience = {
         ...user.profile.experience,
         duration: experience,
