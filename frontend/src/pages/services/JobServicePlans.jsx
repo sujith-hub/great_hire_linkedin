@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
-import { useSelector } from "react-redux";
+import CollectUserDetails from "./CollectUserDetails";
+import { jobPlans } from '../../utils/jobPlans.js';
 
 const JobServicePlans = () => {
   const [exchangeRate, setExchangeRate] = useState(null);
-  console.log(exchangeRate);
   const [country, setCountry] = useState("In");
-  const { jobPlans } = useSelector((state) => state.jobPlans);
-
+  const [selectedPlan, setSelectedPlan] = useState(null);
   useEffect(() => {
     const fetchExchangeRate = async () => {
       try {
@@ -33,7 +32,7 @@ const JobServicePlans = () => {
   return (
     <>
       <Navbar />
-      <div className="bg-gray-100 py-10">
+      {!selectedPlan ? (<div className="bg-gray-100 py-10">
         <h2 className="text-3xl font-bold text-center mb-2">
           Choose a plan that fits your needs
         </h2>
@@ -85,7 +84,7 @@ const JobServicePlans = () => {
                       )}
                     </div>
                     <div className="w-44 flex items-center justify-center mb-3">
-                      <button className=" w-full py-3 px-4 font-bold text-indigo-600 border-2 border-gray-400  rounded hover:bg-indigo-100 transition">
+                      <button className=" w-full py-3 px-4 font-bold text-indigo-600 border-2 border-gray-400  rounded hover:bg-indigo-100 transition" onClick={() => setSelectedPlan(plan)}>
                         Select
                       </button>
                     </div>
@@ -97,7 +96,7 @@ const JobServicePlans = () => {
                     }`}
                   >
                     <ul className="flex flex-col gap-2">
-                      {plan.detalisList.map((detail, idx) => (
+                      {plan?.detailsList.map((detail, idx) => (
                         <li
                           key={idx}
                           className="flex items-start text-sm text-gray-600"
@@ -113,7 +112,7 @@ const JobServicePlans = () => {
             ))}
           </div>
         </div>
-      </div>
+      </div>):(<CollectUserDetails selectedPlan={selectedPlan}/>)}
       <Footer />
     </>
   );

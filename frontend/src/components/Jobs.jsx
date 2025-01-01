@@ -10,10 +10,10 @@ const Jobs = () => {
   return (
     <div>
       <Navbar />
-      <div className="max-w-7xl mx-auto mt-5">
+      <div className="w-full mx-auto mt-5">
         <div className="flex gap-2">
           {/* Filter Section */}
-          <div className="w-1/6">
+          <div className="w-40 md:w-60 xl:md-80 px-4">
             <div className="sticky top-20"> {/* Makes the filter section sticky */}
               <FilterCard />
             </div>
@@ -24,7 +24,7 @@ const Jobs = () => {
             {jobsArray.length <= 0 ? (
               <span>Job not found</span>
             ) : (
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3  gap-4">
                 {jobsArray.map((item, index) => (
                   <div key={index}>
                     <Job />

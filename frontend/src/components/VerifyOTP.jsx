@@ -63,6 +63,7 @@ const VerifyOTP = ({ token, setToken, formData, setFormData }) => {
             if (response?.data?.success) {
               toast.success(response.data.message);
               setToken(null);
+              setFormData({});
               navigate("/login");
             } else {
               toast.error(response.data.message);
@@ -120,7 +121,13 @@ const VerifyOTP = ({ token, setToken, formData, setFormData }) => {
             </button>
           </div>
           {timer === 0 && (
-            <p className="flex items-center gap-2 text-blue-600 hover:text-blue-800 cursor-pointer" onClick={() => {setToken(null); setFormData(formData);}}>
+            <p
+              className="flex items-center gap-2 text-blue-600 hover:text-blue-800 cursor-pointer"
+              onClick={() => {
+                setToken(null);
+                setFormData(formData);
+              }}
+            >
               <FaArrowLeftLong />
               <span>Resend OTP</span>
             </p>

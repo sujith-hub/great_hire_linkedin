@@ -10,7 +10,7 @@ import PrivacyPolicy from "./pages/policies/PrivacyPolicy";
 import RefundAndReturnPolicy from "./pages/policies/RefundAndReturnPolicy";
 import TermsAndConditions from "./pages/policies/TermsAndConditions";
 import UserProfile from "./pages/UserProfile";
-import OurService from "./pages/OurService";
+import OurService from "./pages/services/OurService";
 import { JobDetailsProvider } from "./context/JobDetailsContext";
 
 import MainApply from "./components/ApplyJobs/MainApply";
@@ -19,14 +19,13 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Success from "./pages/Success";
 import PageNotFound from "./pages/PageNotFound";
-import JobServicePlans from "./pages/JobServicePlans";
+import JobServicePlans from "./pages/services/JobServicePlans";
 import CreateCompany from "./pages/recruiter/CreateCompany";
 import VerifyRecruiter from "./pages/recruiter/VerifyRecruiter";
 import PostJob from "./pages/recruiter/PostJob";
 import RecruiterDashboard from "./pages/recruiter/RecruiterDashboard";
 import RecruiterProfile from "./pages/recruiter/RecruiterProfile";
 import AddRecruiter from "./pages/recruiter/AddRecruiter";
-import VerifyOTP from "./components/VerifyOTP";
 import { useEffect } from "react";
 import { logOut } from "./redux/authSlice.js";
 import { useDispatch } from "react-redux";
@@ -52,10 +51,6 @@ const appRouter = createBrowserRouter([
   {
     path: "/reset-password/:token",
     element: <ResetPassword />,
-  },
-  {
-    path: "/verify-otp",
-    element: <VerifyOTP />,
   },
   {
     path: "/jobs",
