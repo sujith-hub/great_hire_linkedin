@@ -7,8 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { RECRUITER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { setUser } from "@/redux/authSlice";
-import { toast } from "sonner";
-
+import { toast } from "react-hot-toast";
 const RecruiterUpdateProfile = ({ open, setOpen }) => {
   const [loading, setLoading] = useState(false);
   const { user } = useSelector((store) => store.auth);
@@ -45,7 +44,6 @@ const RecruiterUpdateProfile = ({ open, setOpen }) => {
     e.preventDefault();
     const formData = new FormData();
     formData.append("fullname", input.fullname);
-    formData.append("email", input.email);
     formData.append("phoneNumber", input.phoneNumber);
     formData.append("position", input.position);
 
@@ -55,7 +53,7 @@ const RecruiterUpdateProfile = ({ open, setOpen }) => {
 
     try {
       setLoading(true);
-      const res = await axios.post(
+      const res = await axios.put(
         `${RECRUITER_API_END_POINT}/profile/update`,
         formData,
         {
@@ -65,14 +63,15 @@ const RecruiterUpdateProfile = ({ open, setOpen }) => {
           withCredentials: true,
         }
       );
+      console.log(res.data.user);
       if (res.data.success) {
         dispatch(setUser(res.data.user));
-        toast.success("Profile updated successfully!");
         setOpen(false);
       }
+      toast.success(res.data.message);
     } catch (error) {
       console.log(error);
-      toast.error(error.response?.data?.message || "Something went wrong!");
+      toast.error(response?.data?.message || "Something went wrong!");
     } finally {
       setLoading(false);
     }

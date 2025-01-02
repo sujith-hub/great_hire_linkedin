@@ -6,6 +6,8 @@ import { oauth2Client } from "../utils/googleConfig.js";
 import { Company } from "../models/company.model.js";
 import axios from "axios";
 import nodemailer from "nodemailer";
+import getDataUri from "../utils/dataUri.js";
+import cloudinary from "../utils/cloudinary.js";
 
 export const register = async (req, res) => {
   try {
@@ -317,6 +319,65 @@ export const addRecruiterToCompany = async (req, res) => {
     return res
       .status(500)
       .json({ success: false, message: "Internal server error." });
+  }
+};
+
+export const updateProfile = async (req, res) => {
+  try {
+    const { fullname, phoneNumber, position } = req.body;
+    const { profilePhoto } = req.files; // Access files from req.files
+    const userId = req.id;
+
+    if (!userId) {
+      return res.status(400).json({
+        message: "User ID is missing in the request.",
+        success: false,
+      });
+    }
+
+    if (fullname && fullname.length < 3) {
+      return res.status(200).json({
+        message: "Fullname must be at least 3 characters long.",
+        success: false,
+      });
+    }
+
+    let user = await Recruiter.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found.",
+        success: false,
+      });
+    }
+
+    // Upload profile photo if provided
+    if (profilePhoto && profilePhoto.length > 0) {
+      const fileUri = getDataUri(profilePhoto[0]);
+      const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+      user.profile.profilePhoto = cloudResponse.secure_url;
+    }
+
+
+    if (fullname) user.fullname = fullname;
+    if (phoneNumber) user.phoneNumber = phoneNumber;
+    if(position) user.position = position;
+    await user.save();
+
+    const updatedUser = await Recruiter.findById(userId);
+
+    return res.status(200).json({
+      message: "Profile updated successfully.",
+      user: updatedUser,
+      success: true,
+    });
+  } catch (error) {
+    console.error("Error in updateProfile:", error);
+    return res.status(500).json({
+      message: "An error occurred while updating the profile.",
+      error: error.message,
+      success: false,
+    });
   }
 };
 

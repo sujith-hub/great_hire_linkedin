@@ -46,12 +46,12 @@ const RecruiterProfile = () => {
         <div className="flex flex-col items-center text-center border-b pb-8">
           <Avatar className="h-24 w-24">
             <AvatarImage
-              src={"https://github.com/shadcn.png"}
+              src={user?.profile?.profilePhoto || "https://github.com/shadcn.png"}
               alt="Profile Photo"
             />
           </Avatar>
           <h1 className="mt-4 text-2xl font-bold">{user?.fullname || "User"}</h1>
-          <p className="text-gray-600">HR Manager</p>
+          <p className="text-gray-600">{user?.position}</p>
           <Button
             onClick={() => setOpen(true)}
             variant="outline"

@@ -21,7 +21,7 @@ router.route("/googleLogin").post(googleLogin);
 
 router
   .route("/profile/update")
-  .post(isAuthenticated, singleUpload, updateProfile);
+  .put(isAuthenticated, singleUpload, updateProfile);
 
 router.route("/sendMessage").post(sendMessage);
 router.route("/forgot-password").post(forgotPassword);

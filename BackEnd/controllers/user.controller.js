@@ -282,8 +282,7 @@ export const updateProfile = async (req, res) => {
       });
     }
 
-    let user =
-      (await User.findById(userId)) || (await Recruiter.findById(userId));
+    let user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).json({
@@ -325,14 +324,7 @@ export const updateProfile = async (req, res) => {
 
     await user.save();
 
-    const updatedUser = {
-      _id: user._id,
-      fullname: user.fullname,
-      email: user.email,
-      phoneNumber: user.phoneNumber,
-      role: user.role,
-      profile: user.profile,
-    };
+    const updatedUser = await User.findById(userId);
 
     return res.status(200).json({
       message: "Profile updated successfully.",
