@@ -7,7 +7,7 @@ const DashboardNavigations = () => {
     `block px-4 py-2 rounded-lg ${isActive ? "bg-blue-600 text-white" : "hover:bg-blue-100 text-gray-700"}`;
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] w-52 bg-gray-100 p-4 justify-between fixed top-16 overflow-y-auto shadow-md">
+    <div className="flex flex-col h-[calc(100vh-4rem)] w-52 bg-gray-100 p-4 justify-between fixed top-16 overflow-y-auto shadow-md ">
       {/* Main Navigation Section */}
       <section>
         <h2 className="text-lg font-semibold text-gray-700 mb-4">Dashboard</h2>

@@ -364,8 +364,8 @@ export const updateProfile = async (req, res) => {
     if(position) user.position = position;
     await user.save();
 
-    const updatedUser = await Recruiter.findById(userId);
-
+    const updatedUser = await Recruiter.findById(userId).select("-password");
+    
     return res.status(200).json({
       message: "Profile updated successfully.",
       user: updatedUser,
