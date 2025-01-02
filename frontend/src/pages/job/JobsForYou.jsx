@@ -11,7 +11,7 @@ import { RiShareBoxFill } from "react-icons/ri";
 import { BsFlagFill } from "react-icons/bs";
 import JobMajorDetails from "./JobMajorDetails";
 import { useNavigate } from "react-router-dom";
-import { useJobDetails } from "../context/JobDetailsContext";
+import { useJobDetails } from "@/context/JobDetailsContext";
 
 const JobsForYou = () => {
   const {

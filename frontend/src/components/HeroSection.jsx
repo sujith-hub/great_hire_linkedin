@@ -1,6 +1,6 @@
 // src/components/HeroSection.jsx
 import React, { useState } from "react";
-import JobSearch from "./JobSearch";
+import JobSearch from "@/pages/job/JobSearch";
 import { useDispatch } from "react-redux";
 import { setSearchedQuery } from "@/redux/authSlice"; // Corrected import
 import { useNavigate } from "react-router-dom";

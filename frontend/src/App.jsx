@@ -2,24 +2,25 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Login from "./components/auth/Login";
 import Signup from "./components/auth/user/Signup.jsx";
 import RecrutierSignup from "./components/auth/recruiter/Signup.jsx";
-import Contact from "./pages/Contact";
+import Contact from "./pages/services/Contact";
 import Home from "./pages/Home";
-import JobDescription from "./pages/JobDescription";
-import Jobs from "./components/Jobs";
+import JobDescription from "./pages/job/JobDescription";
+import Jobs from "./pages/job/Jobs";
 import PrivacyPolicy from "./pages/policies/PrivacyPolicy";
 import RefundAndReturnPolicy from "./pages/policies/RefundAndReturnPolicy";
 import TermsAndConditions from "./pages/policies/TermsAndConditions";
-import UserProfile from "./pages/UserProfile";
+import UserProfile from "./pages/user/UserProfile";
 import OurService from "./pages/services/OurService";
 import { JobDetailsProvider } from "./context/JobDetailsContext";
 
 import MainApply from "./components/ApplyJobs/MainApply";
-import ReportJob from "./pages/ReportJob";
+import ReportJob from "./pages/job/ReportJob";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Success from "./pages/Success";
 import PageNotFound from "./pages/PageNotFound";
 import JobServicePlans from "./pages/services/JobServicePlans";
+import CreateCompany from "./pages/recruiter/CreateCompany";
 import VerifyRecruiter from "./pages/recruiter/VerifyRecruiter";
 
 // Recruiter Routes
@@ -146,22 +147,25 @@ const appRouter = createBrowserRouter([
 ]);
 
 function App() {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
+  // dispatch(logOut());
+
+  
   // this code run for check token in cookies
-  useEffect(() => {
-    const getCookie = (name) => {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) {
-        return parts.pop().split(";").shift();
-      }
-      return null; // Return null if cookie does not exist
-    };
-    const token = getCookie("token");
-    if (!token) {
-      dispatch(logOut());
-    }
-  }, []);
+  // useEffect(() => {
+  //   const getCookie = (name) => {
+  //     const value = `; ${document.cookie}`;
+  //     const parts = value.split(`; ${name}=`);
+  //     if (parts.length === 2) {
+  //       return parts.pop().split(";").shift();
+  //     }
+  //     return null; // Return null if cookie does not exist
+  //   };
+  //   const token = getCookie("token");
+  //   if (!token) {
+  //     dispatch(logOut());
+  //   }
+  // }, []);
   return (
     <div>
       <JobDetailsProvider>
