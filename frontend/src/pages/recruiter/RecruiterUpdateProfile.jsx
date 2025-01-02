@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -18,22 +18,27 @@ const RecruiterUpdateProfile = ({ open, setOpen }) => {
     email: user?.email || "",
     phoneNumber: user?.phoneNumber || "",
     position: user?.profile?.position || "",
-    skills: user?.profile?.skills?.join(", ") || "",
-    file: user?.profile?.resume || "",
+    profilePhoto: user?.profile?.profilePhoto || "",
   });
+
+  const [previewImage, setPreviewImage] = useState(
+    user?.profile?.profilePhoto || ""
+  );
+
   const dispatch = useDispatch();
 
   const changeEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
   };
 
-  const fileChangeHandler = (e) => {
+  const handleImageChange = (e) => {
     const file = e.target.files?.[0];
-    setInput({ ...input, file });
-  };
-
-  const removeFileHandler = () => {
-    setInput({ ...input, file: "" });
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => setPreviewImage(reader.result);
+      reader.readAsDataURL(file);
+      setInput((prev) => ({ ...prev, profilePhoto: file }));
+    }
   };
 
   const submitHandler = async (e) => {
@@ -43,10 +48,11 @@ const RecruiterUpdateProfile = ({ open, setOpen }) => {
     formData.append("email", input.email);
     formData.append("phoneNumber", input.phoneNumber);
     formData.append("position", input.position);
-    formData.append("skills", input.skills);
-    if (input.file) {
-      formData.append("file", input.file);
+
+    if (input.profilePhoto) {
+      formData.append("profilePhoto", input.profilePhoto);
     }
+
     try {
       setLoading(true);
       const res = await axios.post(
@@ -61,7 +67,8 @@ const RecruiterUpdateProfile = ({ open, setOpen }) => {
       );
       if (res.data.success) {
         dispatch(setUser(res.data.user));
-        toast.success(res.data.message);
+        toast.success("Profile updated successfully!");
+        setOpen(false);
       }
     } catch (error) {
       console.log(error);
@@ -95,7 +102,30 @@ const RecruiterUpdateProfile = ({ open, setOpen }) => {
           </button>
         </div>
         <form onSubmit={submitHandler} className="space-y-4 mt-4">
-          <div className="grid gap-4 py-4">
+          <div className="grid gap-2 py-2">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="profilePhoto" className="text-right">
+                Profile Image
+              </Label>
+              <div className="col-span-3 space-y-2">
+                {previewImage ? (
+                  <img
+                    src={previewImage}
+                    alt="Preview"
+                    className="w-20 h-20 rounded-full object-cover border"
+                  />
+                ) : (
+                  <p>No image uploaded</p>
+                )}
+                <Input
+                  id="profilePhoto"
+                  name="profilePhoto"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+              </div>
+            </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="fullname" className="text-right">
                 Name
@@ -150,42 +180,6 @@ const RecruiterUpdateProfile = ({ open, setOpen }) => {
                 className="col-span-3"
                 placeholder="Enter Your Position"
               />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="skills" className="text-right">
-                Skills
-              </Label>
-              <Input
-                id="skills"
-                name="skills"
-                value={input.skills}
-                onChange={changeEventHandler}
-                className="col-span-3"
-                placeholder="Enter your skills, separated by commas"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="file" className="text-right">
-                Resume
-              </Label>
-              <div className="col-span-3 flex items-center space-x-2">
-                <Input
-                  id="file"
-                  name="file"
-                  type="file"
-                  accept="application/pdf"
-                  onChange={fileChangeHandler}
-                />
-                {input.file && (
-                  <button
-                    type="button"
-                    onClick={removeFileHandler}
-                    className="text-red-500 hover:text-red-700 text-sm"
-                  >
-                    Remove
-                  </button>
-                )}
-              </div>
             </div>
           </div>
           <div>
