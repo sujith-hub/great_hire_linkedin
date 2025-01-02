@@ -46,21 +46,7 @@ const recruiterSchema = new mongoose.Schema(
       default: false,
     },
     profile: {
-      bio: { type: String },
-      experience: {
-        companyName: {
-          type :String
-        },
-        jobProfile: {
-          type: String
-        },
-        duration:{
-          type: String
-        }
-      },
-      skills: [{ type: String }],
-      resume: { type: String }, // URL for the resume
-      resumeOriginalName: { type: String },
+      
       profilePhoto: {
         type: String,
         default: "",

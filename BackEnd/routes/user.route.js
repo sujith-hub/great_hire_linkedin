@@ -28,6 +28,6 @@ router.route("/forgot-password").post(forgotPassword);
 router.route("/reset-password").post(resetPassword);
 
 router.route("/logout").get(isAuthenticated, logout);
-router.route("/delete").get(isAuthenticated, deleteAccount);
+router.route("/delete").delete(isAuthenticated, deleteAccount);
 
 export default router;

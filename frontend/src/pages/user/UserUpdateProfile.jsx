@@ -19,7 +19,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     email: user?.email || "",
     phoneNumber: user?.phoneNumber || "",
     bio: user?.profile?.bio || "",
-    experience: user?.profile?.experience || "",
+    experience: user?.profile?.experience?.duration || "",
     skills: user?.profile?.skills?.join(", ") || "",
     resume: user?.profile?.resume || "",
     profilePhoto: user?.profile?.profilePhoto || "",
@@ -69,7 +69,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     if (input.profilePhoto) {
       formData.append("profilePhoto", input.profilePhoto);
     }
-
+    
     try {
       setLoading(true);
       const response = await axios.post(

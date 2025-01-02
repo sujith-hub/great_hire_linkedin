@@ -95,16 +95,6 @@ const Navbar = () => {
     setIsMenuOpen(false);
   };
 
-  // const navLinks = [
-  //   ...(isRecruiter
-  //     ? [
-  //         { to: "/recruiter/dashboard", label: "Dashboard" },
-  //       ]
-  //     : [{ to: "/", label: "Home" }]),
-  //   { to: "/jobs", label: "Jobs" },
-  //   { to: "/great-hire/services", label: "Our Services" },
-  //   { to: "/contact", label: "Contact Us" },
-  // ];
 
   const navLinks = [
     // Always include the Home link
