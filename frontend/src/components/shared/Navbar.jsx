@@ -112,7 +112,7 @@ const Navbar = () => {
   
     // Add Dashboard for recruiters, Jobs for others
     ...(isRecruiter
-      ? [{ to: "/recruiter/dashboard", label: "Dashboard" }]
+      ? [{ to: "/recruiter/dashboard/home", label: "Dashboard" }]
       : [{ to: "/jobs", label: "Jobs" }]),
   
     // Common links

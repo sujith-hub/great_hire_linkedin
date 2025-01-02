@@ -1,12 +1,13 @@
+import mongoose from "mongoose";
 const orderSchema = new mongoose.Schema(
   {
     userDetails: {
       name: { type: String, required: true },
       email: { type: String, required: true },
-      mobile: { type: String, required: true },
+      phone: { type: String, required: true },
     },
     planDetails: {
-      planId: { type: Number, required: true }, // Matches the plan ID from Redux
+      planId: { type: Number, required: true },
       planHead: { type: String },
       planSubHead: { type: String },
       amount: { type: Number, required: true },

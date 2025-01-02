@@ -8,6 +8,7 @@ import jobRoute from "./routes/job.route.js";
 import userRoute from "./routes/user.route.js";
 import recruiterRoute from './routes/recruiter.route.js';
 import verificationRoute from './routes/verification.route.js';
+import orderRoute from './routes/order.route.js';
 import connectDB from "./utils/db.js";
 
 dotenv.config({});
@@ -34,11 +35,7 @@ app.use("/api/v1/verification", verificationRoute);
 app.use("/api/v1/company", companyRoute);
 app.use("/api/v1/job", jobRoute);
 app.use("/api/v1/application", applicationRoute);
-/*
-"http://localhost:8000/api/v1/user/register"
-"http://localhost:8000/api/v1/user/login"
-"http://localhost:8000/api/v1/user/profile/update"
-*/
+app.use("/api/v1/order", orderRoute);
 
 app.listen(PORT, () => {
     connectDB();

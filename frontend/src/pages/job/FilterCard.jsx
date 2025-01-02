@@ -39,7 +39,7 @@ const FilterCard = () => {
     };
 
     return (
-        <div className="w-full bg-white p-3 sticky top-0 rounded-md">
+        <div className="w-full sticky top-0 rounded-md">
             <h1 className="font-bold text-lg">Filter Jobs</h1>
             <hr className="mt-3" />
             <RadioGroup>

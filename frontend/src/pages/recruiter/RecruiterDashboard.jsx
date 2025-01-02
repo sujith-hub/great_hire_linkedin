@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { Outlet } from "react-router-dom"; // Use Outlet for nested routing
 import Navbar from "@/components/shared/Navbar";
-import Footer from "@/components/shared/Footer";
 import { COMPANY_API_END_POINT } from "@/utils/ApiEndPoint";
 import axios from "axios";
 import { addCompany } from "@/redux/companySlice";
+import DashboardNavigations from "./DashboardNavigations";
 
 const RecruiterDashboard = () => {
   const { user } = useSelector((state) => state.auth);
-  const { company } = useSelector((state) => state.company);
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-
-  
 
   useEffect(() => {
     const fetchCompanyByUserId = async () => {
@@ -23,7 +21,6 @@ const RecruiterDashboard = () => {
           { userId: user?._id },
           { withCredentials: true }
         );
-
         if (response.data.success) {
           dispatch(addCompany(response.data.company));
         }
@@ -40,25 +37,21 @@ const RecruiterDashboard = () => {
   }, [user, dispatch]);
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-gray-50">
       {/* Navbar */}
       <Navbar />
 
       {/* Main Content */}
-      <div className="flex-1 p-4">
-        {loading ? (
-          <p>Loading...</p>
-        ) : user?.isVerify === 1 ? (
-          "Dashboard"
-        ) : user?.isVerify === -1 ? (
-          "Your organization denied your verification. Cannot create company or job."
-        ) : (
-          "Still not verified by your company. Great Hire has sent a link to your organization to verify you."
-        )}
+      <div className="flex">
+        <DashboardNavigations />
+        <div className="ml-52 w-full p-4"> {/* Adjust margin for sidebar */}
+          {loading ? (
+            <div className="text-center text-gray-500">Loading...</div>
+          ) : (
+            <Outlet /> // Render nested routes
+          )}
+        </div>
       </div>
-
-      {/* Footer */}
-      <Footer />
     </div>
   );
 };

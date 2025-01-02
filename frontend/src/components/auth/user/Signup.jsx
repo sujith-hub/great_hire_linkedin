@@ -42,16 +42,8 @@ const Signup = () => {
 
       if (response?.data?.success) {
         // Show success message
-        setToken(response.data.token)
+        setToken(response.data.token);
         toast.success(response.data.message);
-
-        // Reset form fields
-        setFormData({
-          fullname: "",
-          email: "",
-          phoneNumber: "",
-          password: "",
-        });
       } else {
         toast.error(response.data.message);
       }
@@ -110,7 +102,7 @@ const Signup = () => {
                   type="text"
                   name="fullname"
                   placeholder="Full Name"
-                  value={formData.fullName}
+                  value={formData.fullname}
                   onChange={handleChange}
                   className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                   required
@@ -130,7 +122,7 @@ const Signup = () => {
                   type="text"
                   name="phoneNumber"
                   placeholder="Contact number"
-                  value={formData.mobileNumber}
+                  value={formData.phoneNumber}
                   onChange={handleChange}
                   className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                   required
@@ -140,7 +132,6 @@ const Signup = () => {
                   type="password"
                   name="password"
                   placeholder="min 8 characters"
-                  value={formData.password}
                   onChange={handleChange}
                   className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                   required
@@ -163,7 +154,14 @@ const Signup = () => {
               </p>
             </form>
           </div>
-        ):<VerifyOTP token={token} setToken={setToken}/>}
+        ) : (
+          <VerifyOTP
+            token={token}
+            setToken={setToken}
+            formData={formData}
+            setFormData={setFormData}
+          />
+        )}
       </div>
     </>
   );

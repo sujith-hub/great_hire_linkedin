@@ -3,7 +3,6 @@ import img from "../../assets/img7.png";
 import { useDropzone } from "react-dropzone";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import Navbar from "@/components/shared/Navbar";
-import Footer from "@/components/shared/Footer";
 import "react-circular-progressbar/dist/styles.css";
 import { useSelector, useDispatch } from "react-redux";
 import { COMPANY_API_END_POINT } from "@/utils/ApiEndPoint";
@@ -408,7 +407,6 @@ const CreateCompany = () => {
           <p className="font-bold text-2xl">Loading...</p>
         </div>
       )}
-      <Footer />
     </>
   );
 };
