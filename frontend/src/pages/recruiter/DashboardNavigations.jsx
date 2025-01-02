@@ -19,7 +19,7 @@ const DashboardNavigations = () => {
             <span className="block px-4 py-2 cursor-pointer rounded-lg text-gray-700 hover:bg-blue-100">
               Create New
             </span>
-            <ul className="absolute  left-5 hidden group-hover:block bg-white shadow-lg rounded-lg py-2 w-full">
+            <ul className="absolute  left-5 hidden group-hover:block bg-gray-50 shadow-lg rounded-lg py-2 w-full">
               <NavLink to="/recruiter/dashboard/create-company" className={navLinkClass}>
                 Company
               </NavLink>
