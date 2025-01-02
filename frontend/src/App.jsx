@@ -20,7 +20,6 @@ import ResetPassword from "./pages/ResetPassword";
 import Success from "./pages/Success";
 import PageNotFound from "./pages/PageNotFound";
 import JobServicePlans from "./pages/services/JobServicePlans";
-import CreateCompany from "./pages/recruiter/CreateCompany";
 import VerifyRecruiter from "./pages/recruiter/VerifyRecruiter";
 
 // Recruiter Routes

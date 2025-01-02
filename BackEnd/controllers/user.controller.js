@@ -265,13 +265,19 @@ export const logout = async (req, res) => {
 export const updateProfile = async (req, res) => {
   try {
     const { fullname, email, phoneNumber, bio, skills, experience } = req.body;
-    const file = req.file;
-    let cloudResponse;
-
+    const { profilePhoto, resume } = req.files; // Access files from req.files
     const userId = req.id;
+
     if (!userId) {
       return res.status(400).json({
         message: "User ID is missing in the request.",
+        success: false,
+      });
+    }
+
+    if (fullname && fullname.length < 3) {
+      return res.status(200).json({
+        message: "Fullname must be at least 3 characters long.",
         success: false,
       });
     }
@@ -286,12 +292,19 @@ export const updateProfile = async (req, res) => {
       });
     }
 
-    if (file) {
-      // Convert file to a URI
-      const fileUri = getDataUri(file);
+    // Upload profile photo if provided
+    if (profilePhoto && profilePhoto.length > 0) {
+      const fileUri = getDataUri(profilePhoto[0]);
+      const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+      user.profile.profilePhoto = cloudResponse.secure_url;
+    }
 
-      // Upload to Cloudinary
-      cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+    // Upload resume if provided
+    if (resume && resume.length > 0) {
+      const fileUri = getDataUri(resume[0]);
+      const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+      user.profile.resume = cloudResponse.secure_url;
+      user.profile.resumeOriginalName = resume[0].originalname;
     }
 
     const skillsArray = Array.isArray(skills)
@@ -310,11 +323,6 @@ export const updateProfile = async (req, res) => {
     }
     if (skillsArray.length) user.profile.skills = skillsArray;
 
-    if (cloudResponse) {
-      user.profile.resume = cloudResponse.secure_url;
-      user.profile.resumeOriginalName = file.originalname;
-    }
-
     await user.save();
 
     const updatedUser = {
@@ -332,7 +340,7 @@ export const updateProfile = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.error("Full Error in updateProfile:", error);
+    console.error("Error in updateProfile:", error);
     return res.status(500).json({
       message: "An error occurred while updating the profile.",
       error: error.message,
@@ -530,10 +538,11 @@ export const deleteAccount = async (req, res) => {
     }
 
     // Check if the user exists
-    const user = await User.findOne({ email });
+    const user =
+      (await User.findOne({ email })) || (await Recruiter.findOne({ email }));
     if (!user) {
       return res.status(404).json({
-        message: "User not found. Unable to delete account.",
+        message: "User not found.",
         success: false,
       });
     }
@@ -541,11 +550,17 @@ export const deleteAccount = async (req, res) => {
     // Delete the user
     await User.findOneAndDelete({ email });
 
-    // Respond with success
-    return res.status(200).json({
-      message: "Account deleted successfully.",
-      success: true,
-    });
+    return res
+      .status(200)
+      .cookie("token", "", {
+        maxAge: 0,
+        httpOnly: true,
+        sameSite: "strict",
+      })
+      .json({
+        message: "Account deleted successfully.",
+        success: true,
+      });
   } catch (err) {
     console.error("Error in deleteAccount:", err);
 
