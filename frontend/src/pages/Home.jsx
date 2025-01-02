@@ -3,7 +3,7 @@ import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
 import HeroSection from "../components/HeroSection";
 //import CategoryCarousel from './CategoryCarousel';
-import LatestJobs from "./LatestJobs";
+import LatestJobs from "./job/LatestJobs";
 
 const Home = () => {
   const [titleKeyword, setTitleKeyword] = useState("");

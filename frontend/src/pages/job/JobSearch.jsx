@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { IoIosSearch } from "react-icons/io";
-import LocationSearch from "./LocationSearch";
+import LocationSearch from "@/pages/job/LocationSearch";
 import { useJobDetails } from "@/context/JobDetailsContext";
 
 const JobSearch = ({ searchInfo }) => {
