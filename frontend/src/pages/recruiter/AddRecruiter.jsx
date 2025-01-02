@@ -64,7 +64,7 @@ const AddRecruiter = () => {
     <>
       <Navbar />
       <div className="mt-4 flex items-center justify-center bg-gradient-to-r">
-        <form className="w-1/3 space-y-4" onSubmit={handleSubmit}>
+        <form className="w-1/2 space-y-4" onSubmit={handleSubmit}>
           <h1 className="text-3xl font-bold text-center text-blue-600">
             {company?.companyName}
           </h1>
