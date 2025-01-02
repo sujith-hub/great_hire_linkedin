@@ -29,7 +29,7 @@ export const registerCompany = async (req, res) => {
     let company = await Company.findOne({ email });
     if (company) {
       return res.status(400).json({
-        message: "A company with this email already exists.",
+        message: "Company already exists.",
         success: false,
       });
     }

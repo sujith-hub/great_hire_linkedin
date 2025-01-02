@@ -66,7 +66,7 @@ const AddRecruiter = () => {
       <div className="mt-4 flex items-center justify-center bg-gradient-to-r">
         <form className="w-1/3 space-y-4" onSubmit={handleSubmit}>
           <h1 className="text-3xl font-bold text-center text-blue-600">
-            {company.companyName}
+            {company?.companyName}
           </h1>
           <h1 className="text-3xl font-bold text-center">
             Give Recruiter Details

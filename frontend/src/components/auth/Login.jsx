@@ -62,8 +62,8 @@ const Login = () => {
         const userRole = response.data.user.role;
         if (userRole.includes("student")) navigate("/");
         else if (userRole.includes("recruiter"))
-          navigate("/recruiter/create-company");
-        else if (userRole.includes("admin")) navigate("/admin/dashboard");
+          navigate("/recruiter/dashboard/home");
+        else if (userRole.includes("admin")) navigate("/admin/dashboard/home");
       } else {
         toast.error(response.data.message);
       }
