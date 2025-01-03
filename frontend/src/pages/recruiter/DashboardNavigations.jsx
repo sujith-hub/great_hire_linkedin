@@ -11,9 +11,12 @@ import { BsPersonPlus } from "react-icons/bs";
 import { MdPostAdd } from "react-icons/md";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { IoSettingsOutline } from "react-icons/io5";
-
+import { useSelector } from "react-redux";
 
 const DashboardNavigations = () => {
+  const { user } = useSelector((state) => state.auth);
+  const { company } = useSelector((state) => state.company);
+
   const navLinkClass = ({ isActive }) =>
     `flex items-center gap-2 px-2 py-2 rounded-lg w-full ${
       isActive ? "bg-blue-600 text-white" : "hover:bg-blue-100 text-gray-700"
@@ -37,27 +40,35 @@ const DashboardNavigations = () => {
               <span>Create New</span>
             </span>
             <ul className="absolute  left-5 hidden group-hover:block bg-gray-50 shadow-lg rounded-lg py-2 w-full">
-              <NavLink
-                to="/recruiter/dashboard/create-company"
-                className={navLinkClass}
-              >
-                <PiBuildingOfficeLight size={25} />
-                <span>Company</span>
-              </NavLink>
-              <NavLink
-                to="/recruiter/dashboard/add-recruiter"
-                className={navLinkClass}
-              >
-                <BsPersonPlus size={25} />
-                <span>Add Recruiter</span>
-              </NavLink>
-              <NavLink
-                to="/recruiter/dashboard/post-job"
-                className={navLinkClass}
-              >
-                <MdPostAdd size={25} />
-                <span>Post Job</span>
-              </NavLink>
+              {!user?.isCompanyCreated && (
+                <NavLink
+                  to="/recruiter/dashboard/create-company"
+                  className={navLinkClass}
+                >
+                  <PiBuildingOfficeLight size={25} />
+                  <span>Company</span>
+                </NavLink>
+              )}
+              {user?.isVerify === 1 &&
+                user?.isCompanyCreated &&
+                user?.email === company?.adminEmail && (
+                  <NavLink
+                    to="/recruiter/dashboard/add-recruiter"
+                    className={navLinkClass}
+                  >
+                    <BsPersonPlus size={25} />
+                    <span>Add Recruiter</span>
+                  </NavLink>
+                )}
+              {user?.isVerify === 1 && user?.isCompanyCreated && (
+                <NavLink
+                  to="/recruiter/dashboard/post-job"
+                  className={navLinkClass}
+                >
+                  <MdPostAdd size={25} />
+                  <span>Post Job</span>
+                </NavLink>
+              )}
             </ul>
           </li>
           <NavLink to="/recruiter/dashboard/jobs" className={navLinkClass}>

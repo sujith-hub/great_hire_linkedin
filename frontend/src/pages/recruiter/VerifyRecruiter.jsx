@@ -10,8 +10,10 @@ import {
 } from "@/utils/ApiEndPoint";
 import { toast } from "react-hot-toast";
 import { useSelector, useDispatch } from "react-redux";
-import { setRecruiterVerification } from "@/redux/authSlice";
-
+import {
+  setRecruiterVerification,
+  setRecruiterIsCompanyCreated,
+} from "@/redux/authSlice";
 
 const VerifyRecruiter = () => {
   const { user } = useSelector((state) => state.auth);
@@ -85,6 +87,7 @@ const VerifyRecruiter = () => {
       if (response.data.success) {
         toast.success("Response sent to Great Hire!");
         dispatch(setRecruiterVerification(status));
+        if (status === -1) dispatch(setRecruiterIsCompanyCreated(false));
       } else {
         // Handle unexpected success=false case
         toast.error(response.data.message || "Something went wrong!");

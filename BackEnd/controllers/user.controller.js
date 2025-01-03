@@ -125,10 +125,9 @@ export const login = async (req, res) => {
       expiresIn: "1d",
     });
 
-    let isVerify = 0;
-    let isCompanyCreated = false;
-    if (user.isVerify) isVerify = user.isVerify;
-    if (user.isCompanyCreated) isCompanyCreated = user.isCompanyCreated;
+    const isVerify = user.isVerify || 0;
+    const isCompanyCreated = user.isCompanyCreated || false;
+    const position = user.position || "";
 
     //return user
     user = {
@@ -140,6 +139,7 @@ export const login = async (req, res) => {
       profile: user.profile,
       isVerify,
       isCompanyCreated,
+      position,
     };
 
     // cookies strict used...

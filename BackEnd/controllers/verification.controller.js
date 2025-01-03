@@ -5,7 +5,7 @@ import { User } from "../models/user.model.js";
 import { Company } from "../models/company.model.js";
 import mongoose from "mongoose";
 import randomstring from "randomstring";
-import { Order } from "../models/order.model.js"; 
+import { Order } from "../models/order.model.js";
 import { hmac } from "fast-sha256";
 import { TextEncoder, TextDecoder } from "util";
 
@@ -143,7 +143,7 @@ export const sendVerificationStatus = async (req, res) => {
             <h2 style="color: #1e90ff;">GreatHire</h2>
             <p style="color: #555;">Recruiter Verification Status</p>
           </div>
-          <p><strong style="color: #333;">Your verification response for recruiter:</strong> <strong>${recruiterData.fullname}</strong></p>
+          <p><strong style="color: #333;">Your verification response for recruiter:</strong> <strong>${recruiterData.fullname}</strong> Recorded.</p>
           <p style="color: #555;">We will update the recruiter’s status shortly.</p>
           <br />
           <p style="text-align: center;">Thanks, <br /> GreatHire Team</p>
@@ -151,30 +151,17 @@ export const sendVerificationStatus = async (req, res) => {
       `,
     };
 
-    if (status === 1) {
-      await Recruiter.updateOne({
-        email: recruiterData.email,
-        isVerify: status,
-      });
-    } else if (status === -1) {
-      if (companyData.adminEmail === recruiterData.email) {
-        await Company.deleteOne({ email: companyData.email });
-      } else {
-        // step 1: remove particular email id
-        await Company.updateOne(
-          { email: companyData.email },
-          {
-            $pull: {
-              userId: { user: new mongoose.Types.ObjectId(recruiterData._id) },
-            },
-          }
-        );
-      }
-      // Step 2: Set isCompanyCreated to false in Recruiter model
-      await Recruiter.updateOne({
-        email: recruiterData.email,
-        isVerify: status,
-      });
+    if (status === -1) {
+      await Company.deleteOne({ email: companyData.email });
+      await Recruiter.updateOne(
+        { email: recruiterData.email }, // Filter to find the document
+        { $set: { isVerify: status, isCompanyCreated: false } } // Combine updates in one $set
+      );
+    } else {
+      await Recruiter.updateOne(
+        { email: recruiterData.email }, // Filter to find the document
+        { $set: { isVerify: status } } // Update only the isVerify field
+      );
     }
 
     // Send emails concurrently
@@ -187,6 +174,7 @@ export const sendVerificationStatus = async (req, res) => {
     // Return success response
     return res.status(200).json({
       message: "Verification emails sent successfully.",
+      
       success: true,
     });
   } catch (err) {
@@ -303,7 +291,8 @@ export const verifyOTP = async (req, res) => {
 // Verify Payment Controller
 export const verifyPayment = async (req, res) => {
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
+      req.body;
 
     // Secret key and data for HMAC
     const secret = process.env.RAZORPAY_KEY_SECRET;
@@ -313,7 +302,9 @@ export const verifyPayment = async (req, res) => {
     const encoder = new TextEncoder();
     const secretKey = encoder.encode(secret);
     const message = encoder.encode(data);
-    const generatedSignature = Buffer.from(hmac(secretKey, message)).toString("hex");
+    const generatedSignature = Buffer.from(hmac(secretKey, message)).toString(
+      "hex"
+    );
 
     // Compare the generated signature with Razorpay's signature
     if (generatedSignature === razorpay_signature) {
@@ -329,9 +320,13 @@ export const verifyPayment = async (req, res) => {
         }
       );
 
-      res.status(200).json({ success: true, message: "Payment verified successfully" });
+      res
+        .status(200)
+        .json({ success: true, message: "Payment verified successfully" });
     } else {
-      res.status(400).json({ success: false, message: "Payment verification failed" });
+      res
+        .status(400)
+        .json({ success: false, message: "Payment verification failed" });
     }
   } catch (error) {
     console.error(error);

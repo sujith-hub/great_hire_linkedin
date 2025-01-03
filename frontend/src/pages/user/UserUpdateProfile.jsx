@@ -82,7 +82,6 @@ const UserUpdateProfile = ({ open, setOpen }) => {
       );
 
       if (response.data.success) {
-        console.log(response.data.user);
         dispatch(setUser(response.data.user));
         toast.success("Profile updated successfully!");
         setOpen(false);
