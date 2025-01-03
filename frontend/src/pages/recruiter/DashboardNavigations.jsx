@@ -15,7 +15,7 @@ import { IoSettingsOutline } from "react-icons/io5";
 
 const DashboardNavigations = () => {
   const navLinkClass = ({ isActive }) =>
-    `flex items-center gap-2 px-4 py-2 rounded-lg w-full ${
+    `flex items-center gap-2 px-2 py-2 rounded-lg w-full ${
       isActive ? "bg-blue-600 text-white" : "hover:bg-blue-100 text-gray-700"
     }`;
 
@@ -32,7 +32,7 @@ const DashboardNavigations = () => {
             <span>Home</span>
           </NavLink>
           <li className="relative group">
-            <span className="flex gap-2 px-4 py-2 cursor-pointer rounded-lg text-gray-700 hover:bg-blue-100">
+            <span className="flex gap-2 px-2 py-2 cursor-pointer rounded-lg text-gray-700 hover:bg-blue-100">
               <IoCreateOutline size={25} />
               <span>Create New</span>
             </span>
