@@ -51,13 +51,13 @@ export const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create new user
-    const newUser = await Recruiter.create({
+    let newUser = await Recruiter.create({
       fullname,
       email,
       phoneNumber,
       password: hashedPassword,
     });
-
+    newUser = await Recruiter.findById(newUser._id).select("-password");
     // Send success response
     return res.status(201).json({
       message: "Account created successfully.",
@@ -358,14 +358,13 @@ export const updateProfile = async (req, res) => {
       user.profile.profilePhoto = cloudResponse.secure_url;
     }
 
-
     if (fullname) user.fullname = fullname;
     if (phoneNumber) user.phoneNumber = phoneNumber;
-    if(position) user.position = position;
+    if (position) user.position = position;
     await user.save();
 
     const updatedUser = await Recruiter.findById(userId).select("-password");
-    
+
     return res.status(200).json({
       message: "Profile updated successfully.",
       user: updatedUser,

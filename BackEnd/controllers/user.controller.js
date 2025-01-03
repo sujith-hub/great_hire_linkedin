@@ -50,12 +50,14 @@ export const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create new user
-    const newUser = await User.create({
+    let newUser = await User.create({
       fullname,
       email,
       phoneNumber,
       password: hashedPassword,
     });
+
+    newUser = await Recruiter.findById(newUser._id).select("-password");
 
     // Send success response
     return res.status(201).json({
@@ -162,13 +164,17 @@ export const googleLogin = async (req, res) => {
     const googleUser = userRes.data;
 
     // Check if user already exists
-    let user = await User.findOne({ email: googleUser.email });
-    if (!user) user = await Recruiter.findOne({ email: googleUser.email });
+
+    let user =
+      (await User.findOne({ email: googleUser.email }).select("-password")) ||
+      (await Recruiter.findOne({ email: googleUser.email }).select(
+        "-password"
+      ));
 
     if (user) {
       if (role && role !== user.role) {
         res.status(200).json({
-          message: "Account already exist use another!",
+          message: "Account already exist!",
           success: false,
         });
       }
