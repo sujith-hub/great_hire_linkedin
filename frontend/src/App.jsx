@@ -36,7 +36,6 @@ import RecruiterPlans from "./pages/recruiter/RecruiterPlans";
 import { useEffect } from "react";
 import { logOut } from "./redux/authSlice.js";
 import { useDispatch } from "react-redux";
-import { Recruiter } from '../../BackEnd/models/recruiter.model';
 
 const appRouter = createBrowserRouter([
   {
@@ -146,25 +145,24 @@ const appRouter = createBrowserRouter([
 ]);
 
 function App() {
-  // const dispatch = useDispatch();
-  // dispatch(logOut());
-
+  const dispatch = useDispatch();
   
   // this code run for check token in cookies
-  // useEffect(() => {
-  //   const getCookie = (name) => {
-  //     const value = `; ${document.cookie}`;
-  //     const parts = value.split(`; ${name}=`);
-  //     if (parts.length === 2) {
-  //       return parts.pop().split(";").shift();
-  //     }
-  //     return null; // Return null if cookie does not exist
-  //   };
-  //   const token = getCookie("token");
-  //   if (!token) {
-  //     dispatch(logOut());
-  //   }
-  // }, []);
+  useEffect(() => {
+    const getCookie = (name) => {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) {
+        return parts.pop().split(";").shift();
+      }
+      return null; // Return null if cookie does not exist
+    };
+    const token = getCookie("token");
+    
+    if (!token) {
+      dispatch(logOut());
+    }
+  }, []);
   return (
     <div>
       <JobDetailsProvider>

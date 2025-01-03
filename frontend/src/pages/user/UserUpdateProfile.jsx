@@ -82,6 +82,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
       );
 
       if (response.data.success) {
+        console.log(response.data.user);
         dispatch(setUser(response.data.user));
         toast.success("Profile updated successfully!");
         setOpen(false);
@@ -210,7 +211,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                 value={input.experience}
                 onChange={handleChange}
                 className="col-span-3"
-                placeholder="Experience"
+                placeholder="Experience in years (1, 2, 3..)"
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">

@@ -57,14 +57,31 @@ export const register = async (req, res) => {
       password: hashedPassword,
     });
 
-    newUser = await Recruiter.findById(newUser._id).select("-password");
+    // Remove sensitive information before sending the response
+    const userWithoutPassword = await User.findById(newUser._id).select(
+      "-password"
+    );
 
-    // Send success response
-    return res.status(201).json({
-      message: "Account created successfully.",
-      success: true,
-      user: newUser,
+    const tokenData = {
+      userId: userWithoutPassword._id,
+    };
+    const token = await jwt.sign(tokenData, process.env.SECRET_KEY, {
+      expiresIn: "1d",
     });
+
+    // cookies strict used...
+    return res
+      .status(200)
+      .cookie("token", token, {
+        maxAge: 1 * 24 * 60 * 60 * 1000,
+        httpsOnly: true,
+        sameSite: "strict",
+      })
+      .json({
+        message: "Account created successfully.",
+        success: true,
+        user: userWithoutPassword,
+      });
   } catch (error) {
     console.error("Error during registration:", error);
     return res.status(500).json({
@@ -107,6 +124,7 @@ export const login = async (req, res) => {
     const token = await jwt.sign(tokenData, process.env.SECRET_KEY, {
       expiresIn: "1d",
     });
+
     let isVerify = 0;
     let isCompanyCreated = false;
     if (user.isVerify) isVerify = user.isVerify;
@@ -123,6 +141,7 @@ export const login = async (req, res) => {
       isVerify,
       isCompanyCreated,
     };
+
     // cookies strict used...
     return res
       .status(200)
@@ -330,8 +349,7 @@ export const updateProfile = async (req, res) => {
 
     await user.save();
 
-    const updatedUser = await Recruiter.findById(userId).select("-password");
-
+    const updatedUser = await User.findById(userId).select("-password");
     return res.status(200).json({
       message: "Profile updated successfully.",
       user: updatedUser,

@@ -57,13 +57,33 @@ export const register = async (req, res) => {
       phoneNumber,
       password: hashedPassword,
     });
-    newUser = await Recruiter.findById(newUser._id).select("-password");
-    // Send success response
-    return res.status(201).json({
-      message: "Account created successfully.",
-      success: true,
-      user: newUser,
+
+    // Remove sensitive information before sending the response
+    const userWithoutPassword = await Recruiter.findById(newUser._id).select(
+      "-password"
+    );
+
+    const tokenData = {
+      userId: userWithoutPassword._id,
+    };
+
+    const token = await jwt.sign(tokenData, process.env.SECRET_KEY, {
+      expiresIn: "1d",
     });
+
+    // cookies strict used...
+    return res
+      .status(200)
+      .cookie("token", token, {
+        maxAge: 1 * 24 * 60 * 60 * 1000,
+        httpsOnly: true,
+        sameSite: "strict",
+      })
+      .json({
+        message: "Account created successfully.",
+        success: true,
+        user: userWithoutPassword,
+      });
   } catch (error) {
     console.error("Error during registration:", error);
     return res.status(500).json({
