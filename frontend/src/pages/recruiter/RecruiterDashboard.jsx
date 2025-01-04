@@ -44,7 +44,7 @@ const RecruiterDashboard = () => {
       {/* Main Content */}
       <div className="flex">
         <DashboardNavigations />
-        <div className="ml-52 w-full p-4"> {/* Adjust margin for sidebar */}
+        <div className="ml-52 w-full p-4 "> {/* Adjust margin for sidebar */}
           {loading ? (
             <div className="text-center text-gray-500">Loading...</div>
           ) : (

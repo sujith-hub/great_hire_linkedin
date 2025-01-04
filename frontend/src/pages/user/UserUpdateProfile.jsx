@@ -210,7 +210,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                 value={input.experience}
                 onChange={handleChange}
                 className="col-span-3"
-                placeholder="Experience"
+                placeholder="Experience in years (1, 2, 3..)"
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">

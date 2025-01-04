@@ -50,19 +50,38 @@ export const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create new user
-    const newUser = await User.create({
+    let newUser = await User.create({
       fullname,
       email,
       phoneNumber,
       password: hashedPassword,
     });
 
-    // Send success response
-    return res.status(201).json({
-      message: "Account created successfully.",
-      success: true,
-      user: newUser,
+    // Remove sensitive information before sending the response
+    const userWithoutPassword = await User.findById(newUser._id).select(
+      "-password"
+    );
+
+    const tokenData = {
+      userId: userWithoutPassword._id,
+    };
+    const token = await jwt.sign(tokenData, process.env.SECRET_KEY, {
+      expiresIn: "1d",
     });
+
+    // cookies strict used...
+    return res
+      .status(200)
+      .cookie("token", token, {
+        maxAge: 1 * 24 * 60 * 60 * 1000,
+        httpsOnly: true,
+        sameSite: "strict",
+      })
+      .json({
+        message: "Account created successfully.",
+        success: true,
+        user: userWithoutPassword,
+      });
   } catch (error) {
     console.error("Error during registration:", error);
     return res.status(500).json({
@@ -105,10 +124,10 @@ export const login = async (req, res) => {
     const token = await jwt.sign(tokenData, process.env.SECRET_KEY, {
       expiresIn: "1d",
     });
-    let isVerify = 0;
-    let isCompanyCreated = false;
-    if (user.isVerify) isVerify = user.isVerify;
-    if (user.isCompanyCreated) isCompanyCreated = user.isCompanyCreated;
+
+    const isVerify = user.isVerify || 0;
+    const isCompanyCreated = user.isCompanyCreated || false;
+    const position = user.position || "";
 
     //return user
     user = {
@@ -120,7 +139,9 @@ export const login = async (req, res) => {
       profile: user.profile,
       isVerify,
       isCompanyCreated,
+      position,
     };
+
     // cookies strict used...
     return res
       .status(200)
@@ -162,13 +183,17 @@ export const googleLogin = async (req, res) => {
     const googleUser = userRes.data;
 
     // Check if user already exists
-    let user = await User.findOne({ email: googleUser.email });
-    if (!user) user = await Recruiter.findOne({ email: googleUser.email });
+
+    let user =
+      (await User.findOne({ email: googleUser.email }).select("-password")) ||
+      (await Recruiter.findOne({ email: googleUser.email }).select(
+        "-password"
+      ));
 
     if (user) {
       if (role && role !== user.role) {
         res.status(200).json({
-          message: "Account already exist use another!",
+          message: "Account already exist!",
           success: false,
         });
       }
@@ -324,8 +349,7 @@ export const updateProfile = async (req, res) => {
 
     await user.save();
 
-    const updatedUser = await User.findById(userId);
-
+    const updatedUser = await User.findById(userId).select("-password");
     return res.status(200).json({
       message: "Profile updated successfully.",
       user: updatedUser,

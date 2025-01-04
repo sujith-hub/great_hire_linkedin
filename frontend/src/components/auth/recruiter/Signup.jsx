@@ -9,9 +9,12 @@ import { toast } from "react-hot-toast";
 import axios from "axios";
 import Navbar from "@/components/shared/Navbar";
 import { RECRUITER_API_END_POINT } from "@/utils/ApiEndPoint";
+import { setUser } from "@/redux/authSlice";
+import { useDispatch } from "react-redux";
 
 const Signup = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     fullname: "",
@@ -37,6 +40,9 @@ const Signup = () => {
         `${RECRUITER_API_END_POINT}/register`,
         {
           ...formData,
+        },
+        {
+          withCredentials: true,
         }
       );
 
@@ -51,8 +57,9 @@ const Signup = () => {
         password: "",
       });
 
+      dispatch(setUser(response.data.user)); // Set user in redux store
       // Redirect to login page
-      navigate("/login");
+      navigate("/recruiter/dashboard/home");
     } catch (err) {
       console.log(err);
       // Show error message
@@ -109,7 +116,7 @@ const Signup = () => {
             </h1>
             <h1 className="text-4xl font-bold text-center">Create Account</h1>
             <h1 className="text-md font-semibold text-gray-500 text-center">
-              Where the best startups find their teams
+              Where the best company find their teams
             </h1>
             {/* Google Sign up Button */}
             <GoogleOAuthProvider clientId={google_client_id}>

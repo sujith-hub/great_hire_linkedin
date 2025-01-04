@@ -6,12 +6,14 @@ import {
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { FaArrowLeftLong } from "react-icons/fa6";
+import { setUser } from "@/redux/authSlice";
 
 const VerifyOTP = ({ token, setToken, formData, setFormData }) => {
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (user) navigate("/");
@@ -56,15 +58,22 @@ const VerifyOTP = ({ token, setToken, formData, setFormData }) => {
           if (response?.data?.success) {
             // OTP verified, proceed to registration
             const formData = decoded.formData;
-            response = await axios.post(`${USER_API_END_POINT}/register`, {
-              ...formData,
-            });
+            response = await axios.post(
+              `${USER_API_END_POINT}/register`,
+              {
+                ...formData,
+              },
+              {
+                withCredentials: true,
+              }
+            );
 
             if (response?.data?.success) {
               toast.success(response.data.message);
               setToken(null);
               setFormData({});
-              navigate("/login");
+              dispatch(setUser(response.data.user));
+              navigate("/");
             } else {
               toast.error(response.data.message);
             }

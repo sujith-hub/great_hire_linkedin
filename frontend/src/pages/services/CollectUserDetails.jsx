@@ -73,7 +73,7 @@ const CollectUserDetails = ({ selectedPlan }) => {
         amount,
         currency,
         name: "GreatHire",
-        description: selectedPlan.subHeading,
+        description: selectedPlan?.headline,
         image: "/logo.png",
         order_id: orderId,
         handler: async (response) => {

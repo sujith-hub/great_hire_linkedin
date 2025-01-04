@@ -11,16 +11,17 @@ import { addCompany } from "@/redux/companySlice";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import Loading from "@/components/Loading";
+import { setRecruiterIsCompanyCreated } from "@/redux/authSlice";
 
 const CreateCompany = () => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
-
+  console.log(user);
   useEffect(() => {
     if (user && user.isCompanyCreated) {
-      navigate("/recruiter/dashboard");
+      navigate("/recruiter/dashboard/home");
     } else if (!user) navigate("/login");
   }, []);
 
@@ -35,10 +36,10 @@ const CreateCompany = () => {
     postalCode: "",
     email: "",
     phone: "",
-    recruiterPosition: "",
+    recruiterPosition: user?.position || "",
     recruiterPhone: user?.phoneNumber || "",
     taxId: "",
-    file: null,
+    businessFile: null,
     isAgree: false,
   });
 
@@ -64,7 +65,7 @@ const CreateCompany = () => {
         toast.error("Only allow jpg or png file");
         return;
       }
-      setFormData({ ...formData, file: file });
+      setFormData({ ...formData, businessFile: file });
       setFileUploaded(false);
       setUploadProgress(0);
 
@@ -93,6 +94,8 @@ const CreateCompany = () => {
       Object.entries(formData).forEach(([key, value]) => {
         updatedFormData.append(key, value);
       });
+
+      // this email become company admin email
       updatedFormData.append("userEmail", user.email); // Include userEmail
 
       const res = await axios.post(
@@ -107,10 +110,16 @@ const CreateCompany = () => {
       );
       if (res.data.success) {
         toast.success("Created successfully! Link sent to company email");
-        navigate("/recruiter/dashboard");
+        dispatch(setRecruiterIsCompanyCreated(true));
+        navigate("/recruiter/dashboard/home");
+      }else{
+        toast.error("Error creating company");
       }
     } catch (err) {
       console.log(`error in submitting company details ${err}`);
+      toast.error("Error creating company");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -326,9 +335,9 @@ const CreateCompany = () => {
                       </p>
                     )}
                   </div>
-                  {formData.file && (
+                  {formData.businessFile && (
                     <p className="mt-2 text-green-500 text-center">
-                      File ready: {formData.file.name}
+                      File ready: {formData.businessFile.name}
                     </p>
                   )}
                 </div>
@@ -387,7 +396,7 @@ const CreateCompany = () => {
               <button
                 type="submit"
                 className={`w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 ${
-                  loading ? "cursor-not-allowed" : ""
+                  loading ? "cursor-not-allowed bg-blue-400" : ""
                 }`}
               >
                 {loading ? "Creating..." : "Create Company"}

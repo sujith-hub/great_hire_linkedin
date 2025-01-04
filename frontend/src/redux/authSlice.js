@@ -22,6 +22,12 @@ const authSlice = createSlice({
         state.user.isVerify = action.payload;
       }
     },
+    setRecruiterIsCompanyCreated: (state, action) => {
+      if (state.user) {
+        // Update `isVerify` based on action payload (-1 or 1)
+        state.user.isCompanyCreated = action.payload;
+      }
+    },
     logOut: (state) => {
       state.user = null;
     },
@@ -32,6 +38,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { setLoading, setUser, setRecruiterVerification, logOut, setSearchedQuery } = authSlice.actions;
+export const { setLoading, setUser, setRecruiterVerification, setRecruiterIsCompanyCreated, logOut, setSearchedQuery } = authSlice.actions;
 
 export default authSlice.reducer;

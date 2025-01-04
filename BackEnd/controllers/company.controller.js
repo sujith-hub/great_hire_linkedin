@@ -50,10 +50,10 @@ export const registerCompany = async (req, res) => {
     await recruiter.save();
 
     let cloudResponse;
-    const file = req.file;
-    if (file) {
+    const { businessFile } = req.files;
+    if (businessFile && businessFile.length > 0) {
       // Convert file to a URI
-      const fileUri = getDataUri(file);
+      const fileUri = getDataUri(businessFile[0]);
 
       // Upload to Cloudinary
       cloudResponse = await cloudinary.uploader.upload(fileUri.content);
@@ -76,7 +76,7 @@ export const registerCompany = async (req, res) => {
         postalCode,
       },
       businessFile: cloudResponse ? cloudResponse.secure_url : undefined,
-      bussinessFileName: file ? file.originalname : undefined,
+      bussinessFileName: businessFile ? businessFile.originalname : undefined,
     });
 
     // Generate a verification token

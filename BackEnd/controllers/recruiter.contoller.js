@@ -51,19 +51,39 @@ export const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create new user
-    const newUser = await Recruiter.create({
+    let newUser = await Recruiter.create({
       fullname,
       email,
       phoneNumber,
       password: hashedPassword,
     });
 
-    // Send success response
-    return res.status(201).json({
-      message: "Account created successfully.",
-      success: true,
-      user: newUser,
+    // Remove sensitive information before sending the response
+    const userWithoutPassword = await Recruiter.findById(newUser._id).select(
+      "-password"
+    );
+
+    const tokenData = {
+      userId: userWithoutPassword._id,
+    };
+
+    const token = await jwt.sign(tokenData, process.env.SECRET_KEY, {
+      expiresIn: "1d",
     });
+
+    // cookies strict used...
+    return res
+      .status(200)
+      .cookie("token", token, {
+        maxAge: 1 * 24 * 60 * 60 * 1000,
+        httpsOnly: true,
+        sameSite: "strict",
+      })
+      .json({
+        message: "Account created successfully.",
+        success: true,
+        user: userWithoutPassword,
+      });
   } catch (error) {
     console.error("Error during registration:", error);
     return res.status(500).json({
@@ -358,13 +378,12 @@ export const updateProfile = async (req, res) => {
       user.profile.profilePhoto = cloudResponse.secure_url;
     }
 
-
     if (fullname) user.fullname = fullname;
     if (phoneNumber) user.phoneNumber = phoneNumber;
-    if(position) user.position = position;
+    if (position) user.position = position;
     await user.save();
 
-    const updatedUser = await Recruiter.findById(userId);
+    const updatedUser = await Recruiter.findById(userId).select("-password");
 
     return res.status(200).json({
       message: "Profile updated successfully.",
