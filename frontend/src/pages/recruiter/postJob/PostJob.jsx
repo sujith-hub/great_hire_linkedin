@@ -18,16 +18,40 @@ const PostJob = () => {
 
   const [formData, setFormData] = useState({});
 
+  const [errors, setErrors] = useState({});
+
+const handleContinue1 = (e) => {
+  e.preventDefault();
+  const newErrors = {};
+
+  // Validation checks
+  if (!formData.jobTitle) newErrors.jobTitle = "Job title is required.";
+  if (!formData.jobLocationType)
+    newErrors.jobLocationType = "Job location type is required.";
+  if (!formData.streetAddress)
+    newErrors.streetAddress = "Street address is required.";
+  if (!formData.companyDescription)
+    newErrors.companyDescription = "Company description is required.";
+
+  if (Object.keys(newErrors).length > 0) {
+    setErrors(newErrors);
+  } else {
+    // Proceed to the next step
+    setStep1(false);
+    setStep2(true);
+  }
+};
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleContinue1 = (e) => {
-    e.preventDefault();
-    setStep1(false);
-    setStep2(true);
-  };
+  // const handleContinue1 = (e) => {
+  //   e.preventDefault();
+  //   setStep1(false);
+  //   setStep2(true);
+  // };
 
   const handleContinue2 = () => {
     setStep2(false);
