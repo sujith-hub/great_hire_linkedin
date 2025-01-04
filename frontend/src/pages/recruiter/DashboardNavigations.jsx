@@ -24,7 +24,7 @@ const DashboardNavigations = () => {
     isActive ? "text-white" : "text-blue-600";
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] w-52 bg-gray-100 p-4 justify-between fixed top-16 overflow-y-auto shadow-md">
+    <div className="flex flex-col h-[calc(100vh-4rem)] w-52 bg-gray-100 p-4 justify-between fixed top-16 overflow-y-auto shadow-lg shadow-gray-700">
       {/* Main Navigation Section */}
       <section>
         <h2 className="flex gap-2 items-center text-lg font-semibold text-gray-700 mb-4">

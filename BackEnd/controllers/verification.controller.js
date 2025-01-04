@@ -7,7 +7,7 @@ import mongoose from "mongoose";
 import randomstring from "randomstring";
 import { Order } from "../models/order.model.js";
 import { hmac } from "fast-sha256";
-import { TextEncoder, TextDecoder } from "util";
+import { TextEncoder } from "util";
 
 // Setup nodemailer
 const transporter = nodemailer.createTransport({
@@ -174,7 +174,7 @@ export const sendVerificationStatus = async (req, res) => {
     // Return success response
     return res.status(200).json({
       message: "Verification emails sent successfully.",
-      
+
       success: true,
     });
   } catch (err) {
