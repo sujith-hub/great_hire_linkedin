@@ -1,12 +1,14 @@
-import React from 'react'
-import { useSelector } from 'react-redux';
+import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
 
 const RecruiterHome = () => {
-  const { user } = useSelector((state) => state.auth);
-  console.log(user);
+  const { company } = useSelector((state) => state.company);
+  
   return (
-    <div>RecruiterHome</div>
-  )
-}
+    <p className="text-3xl font-bold text-blue-600">
+      {company?.companyName}
+    </p>
+  );
+};
 
 export default RecruiterHome;
