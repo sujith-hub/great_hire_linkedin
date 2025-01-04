@@ -24,7 +24,7 @@ import VerifyRecruiter from "./pages/recruiter/VerifyRecruiter";
 
 // Recruiter Routes
 import RecruiterDashboard from "./pages/recruiter/RecruiterDashboard";
-import PostJob from "./pages/recruiter/PostJob";
+import PostJob from "./pages/recruiter/postJob/PostJob";
 import RecruiterProfile from "./pages/recruiter/RecruiterProfile";
 import AddRecruiter from "./pages/recruiter/AddRecruiter";
 import CompanyDetails from "./pages/recruiter/CompanyDetails";

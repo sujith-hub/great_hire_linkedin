@@ -8,6 +8,7 @@ import { FaFileSignature } from "react-icons/fa";
 import { TiTick } from "react-icons/ti";
 import ReviewPage from "./ReviewPage";
 import { Link } from "react-router-dom";
+import "react-step-progress-bar/styles.css";
 
 const ApplyForm = ({ setRight }) => {
   const [step1, setStep1] = useState(true);
