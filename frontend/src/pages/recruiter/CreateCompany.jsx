@@ -18,7 +18,7 @@ const CreateCompany = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
-  console.log(user);
+
   useEffect(() => {
     if (user && user.isCompanyCreated) {
       navigate("/recruiter/dashboard/home");
@@ -38,7 +38,7 @@ const CreateCompany = () => {
     phone: "",
     recruiterPosition: user?.position || "",
     recruiterPhone: user?.phoneNumber || "",
-    taxId: "",
+    CIN: "",
     businessFile: null,
     isAgree: false,
   });
@@ -285,15 +285,16 @@ const CreateCompany = () => {
                 </h2>
                 <div className="mt-4">
                   <label className="block text-gray-600">
-                    Tax ID/Registration Number
+                  Corporate Identification Number.
                   </label>
                   <input
                     type="text"
-                    name="taxId"
-                    value={formData.taxId}
+                    name="CIN"
+                    value={formData.CIN}
                     onChange={handleChange}
                     className="w-full p-2 border border-gray-400 rounded focus:outline-blue-500"
-                    placeholder="Leave empty if uploading a file"
+                    placeholder="Corporate Identification Number (CIN)"
+                    required
                   />
                 </div>
                 <div className="mt-4">

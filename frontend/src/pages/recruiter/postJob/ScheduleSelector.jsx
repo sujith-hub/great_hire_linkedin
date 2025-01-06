@@ -47,7 +47,7 @@ const ScheduleSelector = () => {
             onClick={() => handleScheduleTypeClick(type)}
             className={`px-4 py-2 rounded-md border text-sm font-medium ${
               scheduleSelector.includes(type)
-                ? "bg-blue-500 text-white border-blue-500"
+                ? "bg-blue-700 text-white border-blue-500"
                 : "bg-gray-100 text-gray-700 border-gray-300"
             }`}
           >
@@ -66,7 +66,7 @@ const ScheduleSelector = () => {
       </div>
       <button
         onClick={handleShowMoreToggle}
-        className="mt-4 text-blue-500 underline"
+        className="mt-4 text-blue-700 underline"
       >
         {showMore ? "Show Less" : "Show More"}
       </button>

@@ -79,7 +79,7 @@ const handleContinue1 = (e) => {
     <div>
       {step1 && (
         <div className="w-full max-w-3xl mx-auto p-6 bg-white shadow-md rounded-md">
-          <ProgressBar percent={25} unfilledBackground="gray" />
+          <ProgressBar percent={25} filledBackground="linear-gradient(to right, #4972e3, #0944e6)" />
           <h6 className="text-sm text-gray-500 mt-2">
             Application step 1 of 4
           </h6>
@@ -195,7 +195,7 @@ const handleContinue1 = (e) => {
             <div className="flex justify-end items-center mt-6">
               <button
                 onClick={handleContinue1}
-                className="bg-blue-500 text-white px-4 py-2 rounded-md"
+                className="bg-blue-700 text-white px-4 py-2 rounded-md"
               >
                 Continue
               </button>
@@ -212,7 +212,7 @@ const handleContinue1 = (e) => {
 
       {step2 && (
         <div className="w-full max-w-3xl mx-auto p-6 bg-white shadow-md rounded-md">
-          <ProgressBar percent={50} unfilledBackground="gray" />
+          <ProgressBar percent={50} filledBackground="linear-gradient(to right, #4972e3, #0944e6)" />
 
           <div className="flex items-center mt-4">
             <BiArrowBack
@@ -322,7 +322,7 @@ const handleContinue1 = (e) => {
           <div className="flex justify-end items-center mt-6">
             <button
               onClick={handleContinue2}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md"
+              className="bg-blue-700 text-white px-4 py-2 rounded-md"
             >
               Continue
             </button>
@@ -339,7 +339,7 @@ const handleContinue1 = (e) => {
 
       {step3 && (
         <div className="w-full max-w-3xl mx-auto p-6 bg-white shadow-md rounded-md">
-          <ProgressBar percent={75} unfilledBackground="gray" />
+          <ProgressBar percent={75} filledBackground="linear-gradient(to right, #4972e3, #0944e6)" />
 
           <div className="flex items-center mt-4">
             <BiArrowBack
@@ -370,7 +370,7 @@ const handleContinue1 = (e) => {
             </Link>
             <button
               onClick={handleReview}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md"
+              className="bg-blue-700 text-white px-4 py-2 rounded-md"
             >
               Review your job
             </button>

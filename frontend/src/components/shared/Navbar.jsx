@@ -120,7 +120,7 @@ const Navbar = () => {
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 bg-white shadow-md z-30">
-        <div className="flex items-center justify-between mx-auto max-w-7xl h-16 px-4 lg:px-6">
+        <div className="flex items-center justify-between mx-auto max-w-7xl h-16 px-4 lg:px-2">
           {/* Logo */}
           <Link to="/" className="text-2xl font-bold relative z-30">
             Great<span className="text-blue-700">Hire</span>

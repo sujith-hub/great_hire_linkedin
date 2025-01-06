@@ -85,7 +85,7 @@ function CompensationPackageBenefits() {
                 onClick={() => handleButtonClick(button, "compensation")}
                 className={`px-4 py-2 rounded-lg border ${
                   selectedCompensation.includes(button)
-                    ? "bg-blue-500 text-white"
+                    ? "bg-blue-700 text-white"
                     : "bg-gray-100 text-gray-700"
                 }`}
               >
@@ -104,7 +104,7 @@ function CompensationPackageBenefits() {
         </div>
         <button
           onClick={() => setShowAllCompensation((prev) => !prev)}
-          className="mt-4 text-blue-500 underline"
+          className="mt-4 text-blue-700 underline"
         >
           {showAllCompensation ? "Show Less" : "Show More"}
         </button>
@@ -122,7 +122,7 @@ function CompensationPackageBenefits() {
                 onClick={() => handleButtonClick(button, "benefits")}
                 className={`px-4 py-2 rounded-lg border ${
                   selectedBenefits.includes(button)
-                    ? "bg-blue-500 text-white"
+                    ? "bg-blue-700 text-white"
                     : "bg-gray-100 text-gray-700"
                 }`}
               >
@@ -141,7 +141,7 @@ function CompensationPackageBenefits() {
         </div>
         <button
           onClick={() => setShowAllBenefits((prev) => !prev)}
-          className="mt-4 text-blue-500 underline"
+          className="mt-4 text-blue-700 underline"
         >
           {showAllBenefits ? "Show Less" : "Show More"}
         </button>

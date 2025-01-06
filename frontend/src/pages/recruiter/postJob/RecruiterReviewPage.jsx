@@ -81,7 +81,7 @@ const RecruiterReviewPage = ({ handleReview1, formData }) => {
       </small>
 
       <div className="text-center mb-6">
-        <button className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600">
+        <button className="bg-blue-700 text-white px-6 py-2 rounded-md hover:bg-blue-600">
           <Link to="/success" className="text-white no-underline">
             Submit your application
           </Link>
@@ -90,7 +90,7 @@ const RecruiterReviewPage = ({ handleReview1, formData }) => {
 
       <p className="text-center text-sm text-gray-500">
         Having an issue with this application?{" "}
-        <Link to="/contact" className="underline text-blue-500 cursor-pointer">
+        <Link to="/contact" className="underline text-blue-700 cursor-pointer">
           Tell us more
         </Link>
       </p>

@@ -35,8 +35,9 @@ const companySchema = new mongoose.Schema(
     phone: {
       type: String,
     },
-    taxId: {
+    CIN: {
       type: String,
+      required: true,
     },
     businessFile: {
       type: String, // Store the file path or URL
