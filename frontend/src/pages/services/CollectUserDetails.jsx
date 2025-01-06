@@ -10,6 +10,7 @@ const CollectUserDetails = ({ selectedPlan }) => {
     email: "",
     phone: "",
   });
+  console.log(selectedPlan)
 
   const [errors, setErrors] = useState({
     name: "",
