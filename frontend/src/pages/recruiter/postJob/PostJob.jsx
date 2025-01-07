@@ -1,22 +1,3 @@
-// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZWNydWl0ZXJJZCI6IjY3NmE2NTU5MzNkOTFhZGM4NTE0YTczZiIsImNvbXBhbnlJZCI6IjY3NmE4MDZjYjQ3ZmFlNTYyZmUxYTA2NCIsImlhdCI6MTczNTAzMjk0MCwiZXhwIjoxNzM1MTE5MzQwfQ.QpxiOtNH7eOU_gXdZK9MCgEcibnUzObX-iJeFuuqyIE
-// import React from "react";
-// import { useSelector } from "react-redux";
-
-// const { user } = useSelector((state) => state.auth);
-// return (
-//   <>
-//     {user.isVerify === 1 ? (
-//       <>
-//         <p>Post job form</p>
-//       </>
-//     ) : (
-//       <>
-//         <p>You are not verified </p>
-//       </>
-//     )}
-//   </>
-// );
-
 import React, { useState, useRef } from "react";
 import { ProgressBar } from "react-step-progress-bar";
 import { BiArrowBack } from "react-icons/bi";
@@ -110,7 +91,7 @@ const PostJob = () => {
     <div>
       {step1 && (
         <div className="w-full max-w-3xl mx-auto p-6 bg-white shadow-md rounded-md">
-          <ProgressBar percent={25} unfilledBackground="gray" />
+          <ProgressBar percent={25} filledBackground="linear-gradient(to right, #4972e3, #0944e6)" />
           <h6 className="text-sm text-gray-500 mt-2">
             Application step 1 of 4
           </h6>
@@ -237,7 +218,7 @@ const PostJob = () => {
             <div className="flex justify-end items-center mt-6">
               <button
                 onClick={handleContinue1}
-                className="bg-blue-500 text-white px-4 py-2 rounded-md"
+                className="bg-blue-700 text-white px-4 py-2 rounded-md"
               >
                 Continue
               </button>
@@ -254,7 +235,7 @@ const PostJob = () => {
 
       {step2 && (
         <div className="w-full max-w-3xl mx-auto p-6 bg-white shadow-md rounded-md">
-          <ProgressBar percent={50} unfilledBackground="gray" />
+          <ProgressBar percent={50} filledBackground="linear-gradient(to right, #4972e3, #0944e6)" />
 
           <div className="flex items-center mt-4">
             <BiArrowBack
@@ -427,7 +408,7 @@ const PostJob = () => {
           <div className="flex justify-end items-center mt-6">
             <button
               onClick={handleContinue2}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md"
+              className="bg-blue-700 text-white px-4 py-2 rounded-md"
             >
               Continue
             </button>
@@ -444,7 +425,7 @@ const PostJob = () => {
 
       {step3 && (
         <div className="w-full max-w-3xl mx-auto p-6 bg-white shadow-md rounded-md">
-          <ProgressBar percent={75} unfilledBackground="gray" />
+          <ProgressBar percent={75} filledBackground="linear-gradient(to right, #4972e3, #0944e6)" />
 
           <div className="flex items-center mt-4">
             <BiArrowBack
@@ -475,7 +456,7 @@ const PostJob = () => {
             </Link>
             <button
               onClick={handleReview}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md"
+              className="bg-blue-700 text-white px-4 py-2 rounded-md"
             >
               Review your job
             </button>

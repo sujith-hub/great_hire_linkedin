@@ -6,7 +6,6 @@ import { removeCompany } from "@/redux/companySlice";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
-import RequestOTP from "../VerifyOTP";
 
 const Navbar = () => {
   const { user } = useSelector((state) => state.auth);
@@ -114,7 +113,7 @@ const Navbar = () => {
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 bg-white shadow-md z-30">
-        <div className="flex items-center justify-between mx-auto max-w-7xl h-16 px-4 lg:px-6">
+        <div className="flex items-center justify-between mx-auto max-w-7xl h-16 px-4 lg:px-2">
           {/* Logo */}
           <Link to="/" className="text-2xl font-bold relative z-30">
             Great<span className="text-blue-700">Hire</span>
@@ -222,6 +221,7 @@ const Navbar = () => {
                       >
                         {isRecruiter ? "Recruiter" : "User"} Profile
                       </Link>
+                      
                       <button
                         onClick={handleLogout}
                         className="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors text-red-600"

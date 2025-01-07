@@ -1,5 +1,15 @@
 import { Job } from "../models/job.model.js";
 
+// import * as qna from '@tensorflow-models/qna';
+
+// async function extractKeywords(jobTitle) {
+//   const model = await qna.load();
+//   const answers = await model.findAnswers('What are the main keywords?', jobTitle);
+//   console.log(answers);
+// }
+
+// extractKeywords("Senior Software Engineer in Machine Learning");
+
 
 
 export const postJob = async (req, res) => {

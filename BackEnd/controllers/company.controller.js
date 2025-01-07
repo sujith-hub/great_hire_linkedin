@@ -19,16 +19,29 @@ export const registerCompany = async (req, res) => {
       postalCode,
       email,
       phone,
-      taxId,
+      CIN,
       recruiterPosition,
       recruiterPhone,
       userEmail,
     } = req.body;
 
-    // Check if a company already exists with this email
-    let company = await Company.findOne({ email });
-    if (company) {
+    // CIN validation function
+    const isValidCIN = (cin) => {
+      const cinRegex = /^[A-Z]{1}[0-9]{5}[A-Z]{2}[0-9]{4}[A-Z]{3}[0-9]{6}$/;
+      return cinRegex.test(cin);
+    };
+
+    if (!isValidCIN(CIN)) {
       return res.status(400).json({
+        message: "Invalid CIN format.",
+        success: false,
+      });
+    }
+
+    // Check if a company already exists with this email and CIN
+    let company = await Company.findOne({ email, CIN });
+    if (company) {
+      return res.status(200).json({
         message: "Company already exists.",
         success: false,
       });
@@ -66,7 +79,7 @@ export const registerCompany = async (req, res) => {
       email,
       adminEmail: userEmail,
       phone,
-      taxId,
+      CIN,
       userId: [{ user: recruiter._id, isVerified: 0 }], // Add recruiter with `isVerified: false`
       address: {
         streetAddress,

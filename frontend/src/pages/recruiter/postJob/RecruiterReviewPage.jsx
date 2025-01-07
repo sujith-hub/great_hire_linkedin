@@ -102,7 +102,7 @@ const RecruiterReviewPage = ({ handleReview1, formData }) => {
 
       <p className="text-center text-sm text-gray-500">
         Having an issue with this application?{" "}
-        <Link to="/contact" className="underline text-blue-500 cursor-pointer">
+        <Link to="/contact" className="underline text-blue-700 cursor-pointer">
           Tell us more
         </Link>
       </p>

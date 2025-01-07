@@ -46,20 +46,21 @@ const Signup = () => {
         }
       );
 
-      // Show success message
+      if (response.data.success) {
+        // Show success message
+
+        // Reset form fields
+        setFormData({
+          fullname: "",
+          email: "",
+          phoneNumber: "",
+          password: "",
+        });
+        dispatch(setUser(response.data.user)); // Set user in redux store
+        // Redirect to login page
+        navigate("/recruiter/dashboard/home");
+      }
       toast.success(response.data.message);
-
-      // Reset form fields
-      setFormData({
-        fullname: "",
-        email: "",
-        phoneNumber: "",
-        password: "",
-      });
-
-      dispatch(setUser(response.data.user)); // Set user in redux store
-      // Redirect to login page
-      navigate("/recruiter/dashboard/home");
     } catch (err) {
       console.log(err);
       // Show error message

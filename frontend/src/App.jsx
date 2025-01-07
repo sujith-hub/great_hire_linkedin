@@ -151,7 +151,7 @@ const appRouter = createBrowserRouter([
 
 function App() {
   const dispatch = useDispatch();
-  
+
   // this code run for check token in cookies
   useEffect(() => {
     const getCookie = (name) => {
@@ -163,7 +163,7 @@ function App() {
       return null; // Return null if cookie does not exist
     };
     const token = getCookie("token");
-    
+
     if (!token) {
       dispatch(logOut());
     }
