@@ -66,12 +66,9 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await axios.get(
-        `${USER_API_END_POINT}/logout`,
-        {
-          withCredentials:true
-        }
-      );
+      const response = await axios.get(`${USER_API_END_POINT}/logout`, {
+        withCredentials: true,
+      });
       if (response.data.success) {
         dispatch(logOut());
         dispatch(removeCompany());
@@ -95,21 +92,18 @@ const Navbar = () => {
     setIsMenuOpen(false);
   };
 
-
   const navLinks = [
-    // Always include the Home link
-    { to: "/", label: "Home" },
-  
+    ...(!isRecruiter ? [{ to: "/", label: "Home" }] : []),
+
     // Add Dashboard for recruiters, Jobs for others
     ...(isRecruiter
       ? [{ to: "/recruiter/dashboard/home", label: "Dashboard" }]
       : [{ to: "/jobs", label: "Jobs" }]),
-  
+
     // Common links
     { to: "/great-hire/services", label: "Our Services" },
     { to: "/contact", label: "Contact Us" },
   ];
-  
 
   const policyLinks = [
     { to: "/policy/privacy-policy", label: "Privacy Policy" },
@@ -226,7 +220,7 @@ const Navbar = () => {
                         className="block px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
                         onClick={() => setIsProfileMenuOpen(false)}
                       >
-                         {isRecruiter ? "Recruiter" : "User"} Profile
+                        {isRecruiter ? "Recruiter" : "User"} Profile
                       </Link>
                       <button
                         onClick={handleLogout}

@@ -27,6 +27,7 @@ import ExperienceLevelSelector from "./ExperienceLevelSelector";
 import ScheduleSelector from "./ScheduleSelector";
 import CompensationPackageBenefits from "./CompensationPackageBenefits";
 import "react-step-progress-bar/styles.css";
+import { Label } from "@/components/ui/label";
 
 const PostJob = () => {
   const [step1, setStep1] = useState(true);
@@ -39,42 +40,53 @@ const PostJob = () => {
 
   const [errors, setErrors] = useState({});
 
-const handleContinue1 = (e) => {
-  e.preventDefault();
-  const newErrors = {};
+  const handleContinue1 = (e) => {
+    e.preventDefault();
+    const newErrors = {};
 
-  // Validation checks
-  if (!formData.jobTitle) newErrors.jobTitle = "Job title is required.";
-  if (!formData.jobLocationType)
-    newErrors.jobLocationType = "Job location type is required.";
-  if (!formData.streetAddress)
-    newErrors.streetAddress = "Street address is required.";
-  if (!formData.companyDescription)
-    newErrors.companyDescription = "Company description is required.";
-
-  if (Object.keys(newErrors).length > 0) {
-    setErrors(newErrors);
-  } else {
-    // Proceed to the next step
-    setStep1(false);
-    setStep2(true);
-  }
-};
+    // Validation checks
+    if (!formData.jobTitle) newErrors.jobTitle = "Job title is required.";
+    if (!formData.jobLocationType)
+      newErrors.jobLocationType = "Job location type is required.";
+    if (!formData.streetAddress)
+      newErrors.streetAddress = "Street address is required.";
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+    } else {
+      // Proceed to the next step
+      setStep1(false);
+      setStep2(true);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  // const handleContinue1 = (e) => {
-  //   e.preventDefault();
-  //   setStep1(false);
-  //   setStep2(true);
-  // };
+  const handleContinue2 = (e) => {
+    e.preventDefault();
+    const newErrors = {};
 
-  const handleContinue2 = () => {
-    setStep2(false);
-    setStep3(true);
+    // Validation checks
+    if (!formData.salary) newErrors.salary = "Salary is required.";
+    if (!formData.skills) newErrors.skills = "Skills is required.";
+    if (!formData.education) newErrors.education = "Education is required.";
+    if (!formData.hiringPeople || formData.hiringPeople === "Select an option")
+      newErrors.hiringPeople = "Number of people to hire is required.";
+    if (
+      !formData.hiringTimeline ||
+      formData.hiringTimeline === "Select an option"
+    )
+      newErrors.hiringTimeline = "Hiring timeline is required.";
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+    } else {
+      // Proceed to the next step
+      setStep2(false);
+      setStep3(true);
+    }
   };
 
   const handleReview = () => {
@@ -110,9 +122,9 @@ const handleContinue1 = (e) => {
           <form>
             {/* Company Description Section */}
             <div className="mb-6">
-              <label htmlFor="companyDescription" className="font-semibold">
+              <Label htmlFor="companyDescription" className="font-semibold">
                 Company description
-              </label>
+              </Label>
               <h6 className="text-sm">
                 Introduce your company to people in a few lines.
               </h6>
@@ -127,21 +139,16 @@ const handleContinue1 = (e) => {
                 } rounded-md`}
                 placeholder="Present your company by communicating, your business, your market position, your company culture, etc."
               ></textarea>
-              {errors.companyDescription && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.companyDescription}
-                </p>
-              )}
             </div>
 
             {/* Job Title Section */}
             <div className="mb-6">
-              <label
+              <Label
                 htmlFor="jobTitle"
                 className="font-semibold flex items-center"
               >
                 Job title <span className="text-red-500 ml-1">*</span>
-              </label>
+              </Label>
               <input
                 type="text"
                 name="jobTitle"
@@ -158,12 +165,12 @@ const handleContinue1 = (e) => {
 
             {/* Job Location Type Section */}
             <div className="mb-6">
-              <label
+              <Label
                 htmlFor="jobLocationType"
                 className="font-semibold flex items-center"
               >
                 Job Location Type <span className="text-red-500 ml-1">*</span>
-              </label>
+              </Label>
               <select
                 name="jobLocationType"
                 onChange={handleChange}
@@ -188,12 +195,12 @@ const handleContinue1 = (e) => {
 
             {/* Street Address Section */}
             <div className="mb-6">
-              <label
+              <Label
                 htmlFor="streetAddress"
                 className="font-semibold flex items-center"
               >
                 Street Address <span className="text-red-500 ml-1">*</span>
-              </label>
+              </Label>
               <input
                 type="text"
                 name="streetAddress"
@@ -208,6 +215,22 @@ const handleContinue1 = (e) => {
                   {errors.streetAddress}
                 </p>
               )}
+            </div>
+
+              {/* Language Section */}
+            <div className="mb-6">
+              <Label
+                htmlFor="language"
+                className="font-semibold flex items-center"
+              >
+                Languages 
+              </Label>
+              <input
+                type="text"
+                name="language"
+                onChange={handleChange}
+                className="mt-2 w-full p-2 border rounded-md" 
+              />
             </div>
 
             {/* Submit Button */}
@@ -241,102 +264,165 @@ const handleContinue1 = (e) => {
                 setStep1(true);
               }}
             />
-
             <h6 className="ml-2 text-sm text-gray-500">
               Application step 2 of 4
             </h6>
           </div>
+
           <div className="mb-6">
             <h4 className="text-lg font-bold mt-6 text-center">
-              Add job details{" "}
+              Add job details
             </h4>
           </div>
 
           <div className="mb-6">
-            <label
+            <Label
               htmlFor="jobType"
               className="font-semibold flex items-center"
             >
               Job type
-              <span className="text-red-500 ml-1">*</span>
-            </label>
-            <JobTypeSelector />
+            </Label>
+            <JobTypeSelector
+              name="jobType"
+              value={formData.jobType}
+              onChange={handleChange}
+            />
           </div>
 
           <div className="mb-6">
-            <label
+            <Label
               htmlFor="experienceLevel"
               className="font-semibold flex items-center"
             >
               Experience Level
-            </label>
+            </Label>
             <ExperienceLevelSelector />
           </div>
 
           <div className="mb-6">
-            <label
+            <Label
               htmlFor="schedule"
               className="font-semibold flex items-center"
             >
               Schedule
-            </label>
+            </Label>
             <ScheduleSelector />
           </div>
 
           <div className="mb-6">
-            <label
+            <Label
               htmlFor="hiringPeople"
               className="font-semibold flex items-center"
             >
               No of people to hire for this job
               <span className="text-red-500 ml-1">*</span>
-            </label>
+            </Label>
             <select
               name="hiringPeople"
+              value={formData.hiringPeople}
               onChange={handleChange}
               className="mt-2 w-full p-2 border border-gray-300 rounded-md"
-              required
             >
-              <option value="In-person">Select an option</option>
-              <option value="In-person">1</option>
-              <option value="In-person">2</option>
-              <option value="In-person">3</option>
-              <option value="In-person">4</option>
-              <option value="In-person">5</option>
-              <option value="In-person">6</option>
-              <option value="In-person">7</option>
-              <option value="In-person">8</option>
-              <option value="In-person">9</option>
-              <option value="In-person">10</option>
-              <option value="In-person">10+</option>
-              <option value="In-person">
-                I have an ongoing need to fill this role.
-              </option>
+              <option value="">Select an option</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="10+">10+</option>
             </select>
+            {errors.hiringPeople && (
+              <p className="text-red-500 text-sm">{errors.hiringPeople}</p>
+            )}
           </div>
 
           <div className="mb-6">
-            <label
+            <Label
               htmlFor="hiringTimeline"
               className="font-semibold flex items-center"
             >
               Hiring timeline for this job{" "}
               <span className="text-red-500 ml-1">*</span>
-            </label>
+            </Label>
             <select
               name="hiringTimeline"
+              value={formData.hiringTimeline}
               onChange={handleChange}
               className="mt-2 w-full p-2 border border-gray-300 rounded-md"
-              required
             >
-              <option value="In-person">Select an option</option>
-              <option value="In-person">2 days</option>
-              <option value="In-person">7 days</option>
-              <option value="In-person">15 days</option>
-              <option value="In-person">30 days</option>
-              <option value="In-person">45 days</option>
+              <option value="">Select an option</option>
+              <option value="2 days">2 days</option>
+              <option value="7 days">7 days</option>
+              <option value="15 days">15 days</option>
+              <option value="30 days">30 days</option>
             </select>
+            {errors.hiringTimeline && (
+              <p className="text-red-500 text-sm">{errors.hiringTimeline}</p>
+            )}
           </div>
+
+          <div className="mb-6">
+              <Label
+                htmlFor="salary"
+                className="font-semibold flex items-center"
+              >
+                Salary <span className="text-red-500 ml-1">*</span>
+              </Label>
+              <input
+                type="text"
+                name="salary"
+                onChange={handleChange}
+                className={`mt-2 w-full p-2 border ${
+                  errors.salary ? "border-red-500" : "border-gray-300"
+                } rounded-md`}
+                required
+              />
+              {errors.salary && (
+                <p className="text-red-500 text-sm mt-1">{errors.salary}</p>
+              )}
+            </div>
+
+            <div className="mb-6">
+              <Label
+                htmlFor="education"
+                className="font-semibold flex items-center"
+              >
+                Education <span className="text-red-500 ml-1">*</span>
+              </Label>
+              <input
+                type="text"
+                name="education"
+                onChange={handleChange}
+                className={`mt-2 w-full p-2 border ${
+                  errors.education ? "border-red-500" : "border-gray-300"
+                } rounded-md`}
+                required
+              />
+              {errors.education && (
+                <p className="text-red-500 text-sm mt-1">{errors.education}</p>
+              )}
+            </div>
+
+            <div className="mb-6">
+              <Label
+                htmlFor="skills"
+                className="font-semibold flex items-center"
+              >
+                Skills <span className="text-red-500 ml-1">*</span>
+              </Label>
+              <input
+                type="text"
+                name="skills"
+                onChange={handleChange}
+                className={`mt-2 w-full p-2 border ${
+                  errors.skills ? "border-red-500" : "border-gray-300"
+                } rounded-md`}
+                required
+              />
+              {errors.skills && (
+                <p className="text-red-500 text-sm mt-1">{errors.skills}</p>
+              )}
+            </div>
 
           <div className="flex justify-end items-center mt-6">
             <button

@@ -36,6 +36,7 @@ import RecruiterPlans from "./pages/recruiter/RecruiterPlans";
 import { useEffect } from "react";
 import { logOut } from "./redux/authSlice.js";
 import { useDispatch } from "react-redux";
+import RecruiterSuccess from "./pages/recruiter/RecruiterSuccess";
 
 const appRouter = createBrowserRouter([
   {
@@ -137,6 +138,10 @@ const appRouter = createBrowserRouter([
   {
     path: "/verify-recruiter/:token",
     element: <VerifyRecruiter />,
+  },
+  {
+    path: "/recruiter/success",
+    element: <RecruiterSuccess />,
   },
   {
     path: "*",
