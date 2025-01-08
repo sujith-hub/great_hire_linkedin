@@ -20,8 +20,7 @@ const DashboardNavigations = () => {
       isActive ? "bg-blue-600 text-white" : "hover:bg-blue-100 text-gray-700"
     }`;
 
-  const iconClass = (isActive) =>
-    isActive ? "text-white" : "text-blue-600";
+  const iconClass = (isActive) => (isActive ? "text-white" : "text-blue-600");
 
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)] w-52 bg-gray-100 p-4 justify-between fixed top-16 overflow-y-auto shadow-lg shadow-gray-700">
@@ -45,7 +44,7 @@ const DashboardNavigations = () => {
               <IoCreateOutline size={25} className="text-blue-600" />
               <span>Create New</span>
             </span>
-            <ul className="absolute left-5 hidden group-hover:block bg-gray-50 shadow-lg rounded-lg py-2 w-full">
+            <ul className="absolute left-5 hidden group-hover:block bg-gray-50 shadow-lg rounded-xl py-2 w-full transform origin-left animate-slide-in-right">
               {!user?.isCompanyCreated && (
                 <NavLink
                   to="/recruiter/dashboard/create-company"
@@ -53,7 +52,10 @@ const DashboardNavigations = () => {
                 >
                   {({ isActive }) => (
                     <>
-                      <PiBuildingOfficeLight size={25} className={iconClass(isActive)} />
+                      <PiBuildingOfficeLight
+                        size={25}
+                        className={iconClass(isActive)}
+                      />
                       <span>Company</span>
                     </>
                   )}
@@ -68,7 +70,10 @@ const DashboardNavigations = () => {
                   >
                     {({ isActive }) => (
                       <>
-                        <BsPersonPlus size={25} className={iconClass(isActive)} />
+                        <BsPersonPlus
+                          size={25}
+                          className={iconClass(isActive)}
+                        />
                         <span>Add Recruiter</span>
                       </>
                     )}
