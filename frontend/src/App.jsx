@@ -37,11 +37,17 @@ import RecruiterPlans from "./pages/recruiter/RecruiterPlans";
 import { useEffect } from "react";
 import { logOut } from "./redux/authSlice.js";
 import { useDispatch } from "react-redux";
+import RecruiterSuccess from "./pages/recruiter/RecruiterSuccess";
+import JobForm from "./JobForm";
 
 const appRouter = createBrowserRouter([
   {
     path: "/",
-    element: <Home />,
+    element: <Home />
+  },
+  {
+    path: "/jobForm",
+    element: <JobForm />
   },
   {
     path: "/login",
@@ -141,6 +147,10 @@ const appRouter = createBrowserRouter([
   },
 
   {
+    path: "/recruiter/success",
+    element: <RecruiterSuccess />,
+  },
+  {
     path: "*",
     element: <PageNotFound />,
   },
@@ -148,7 +158,7 @@ const appRouter = createBrowserRouter([
 
 function App() {
   const dispatch = useDispatch();
-  
+
   // this code run for check token in cookies
   useEffect(() => {
     const getCookie = (name) => {
@@ -160,7 +170,7 @@ function App() {
       return null; // Return null if cookie does not exist
     };
     const token = getCookie("token");
-    
+
     if (!token) {
       dispatch(logOut());
     }

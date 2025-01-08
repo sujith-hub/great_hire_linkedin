@@ -11,12 +11,12 @@ import { toast } from "react-hot-toast";
 const RecruiterUpdateProfile = ({ open, setOpen }) => {
   const [loading, setLoading] = useState(false);
   const { user } = useSelector((store) => store.auth);
-
+  
   const [input, setInput] = useState({
     fullname: user?.fullname || "",
     email: user?.email || "",
     phoneNumber: user?.phoneNumber || "",
-    position: user?.profile?.position || "",
+    position: user?.position || "",
     profilePhoto: user?.profile?.profilePhoto || "",
   });
 

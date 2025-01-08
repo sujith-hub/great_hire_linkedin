@@ -131,6 +131,10 @@ const VerifyRecruiter = () => {
                   {companyData.companyName}
                 </p>
                 <p>
+                  <span className="font-medium text-gray-600">CIN:</span>{" "}
+                  {companyData.CIN}
+                </p>
+                <p>
                   <span className="font-medium text-gray-600">Website:</span>{" "}
                   <a
                     href={companyData.companyWebsite}

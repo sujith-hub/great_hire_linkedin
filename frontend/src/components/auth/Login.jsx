@@ -141,12 +141,6 @@ const Login = () => {
                 "Login"
               )}
             </button>
-            <p className="text-center text-sm text-gray-500">
-              New at GreatHire?{" "}
-              <a href="/signup" className="text-blue-500 hover:underline">
-                Signup
-              </a>
-            </p>
           </form>
         </div>
 

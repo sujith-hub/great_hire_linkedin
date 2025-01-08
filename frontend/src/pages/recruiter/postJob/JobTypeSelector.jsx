@@ -39,7 +39,7 @@ const JobTypeSelector = () => {
             onClick={() => handleJobTypeClick(type)}
             className={`px-4 py-2 rounded-md border text-sm font-medium ${
               selectedJobTypes.includes(type)
-                ? "bg-blue-500 text-white border-blue-500"
+                ? "bg-blue-700 text-white border-blue-500"
                 : "bg-gray-100 text-gray-700 border-gray-300"
             }`}
           >
