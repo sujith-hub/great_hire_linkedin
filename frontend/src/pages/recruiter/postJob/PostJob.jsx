@@ -91,7 +91,10 @@ const PostJob = () => {
     <div>
       {step1 && (
         <div className="w-full max-w-3xl mx-auto p-6 bg-white shadow-md rounded-md">
-          <ProgressBar percent={25} filledBackground="linear-gradient(to right, #4972e3, #0944e6)" />
+          <ProgressBar
+            percent={25}
+            filledBackground="linear-gradient(to right, #4972e3, #0944e6)"
+          />
           <h6 className="text-sm text-gray-500 mt-2">
             Application step 1 of 4
           </h6>
@@ -198,19 +201,19 @@ const PostJob = () => {
               )}
             </div>
 
-              {/* Language Section */}
+            {/* Language Section */}
             <div className="mb-6">
               <Label
                 htmlFor="language"
                 className="font-semibold flex items-center"
               >
-                Languages 
+                Languages
               </Label>
               <input
                 type="text"
                 name="language"
                 onChange={handleChange}
-                className="mt-2 w-full p-2 border rounded-md" 
+                className="mt-2 w-full p-2 border rounded-md"
               />
             </div>
 
@@ -235,7 +238,10 @@ const PostJob = () => {
 
       {step2 && (
         <div className="w-full max-w-3xl mx-auto p-6 bg-white shadow-md rounded-md">
-          <ProgressBar percent={50} filledBackground="linear-gradient(to right, #4972e3, #0944e6)" />
+          <ProgressBar
+            percent={50}
+            filledBackground="linear-gradient(to right, #4972e3, #0944e6)"
+          />
 
           <div className="flex items-center mt-4">
             <BiArrowBack
@@ -343,67 +349,61 @@ const PostJob = () => {
           </div>
 
           <div className="mb-6">
-              <Label
-                htmlFor="salary"
-                className="font-semibold flex items-center"
-              >
-                Salary <span className="text-red-500 ml-1">*</span>
-              </Label>
-              <input
-                type="text"
-                name="salary"
-                onChange={handleChange}
-                className={`mt-2 w-full p-2 border ${
-                  errors.salary ? "border-red-500" : "border-gray-300"
-                } rounded-md`}
-                required
-              />
-              {errors.salary && (
-                <p className="text-red-500 text-sm mt-1">{errors.salary}</p>
-              )}
-            </div>
+            <Label htmlFor="salary" className="font-semibold flex items-center">
+              Salary <span className="text-red-500 ml-1">*</span>
+            </Label>
+            <input
+              type="text"
+              name="salary"
+              onChange={handleChange}
+              className={`mt-2 w-full p-2 border ${
+                errors.salary ? "border-red-500" : "border-gray-300"
+              } rounded-md`}
+              required
+            />
+            {errors.salary && (
+              <p className="text-red-500 text-sm mt-1">{errors.salary}</p>
+            )}
+          </div>
 
-            <div className="mb-6">
-              <Label
-                htmlFor="education"
-                className="font-semibold flex items-center"
-              >
-                Education <span className="text-red-500 ml-1">*</span>
-              </Label>
-              <input
-                type="text"
-                name="education"
-                onChange={handleChange}
-                className={`mt-2 w-full p-2 border ${
-                  errors.education ? "border-red-500" : "border-gray-300"
-                } rounded-md`}
-                required
-              />
-              {errors.education && (
-                <p className="text-red-500 text-sm mt-1">{errors.education}</p>
-              )}
-            </div>
+          <div className="mb-6">
+            <Label
+              htmlFor="education"
+              className="font-semibold flex items-center"
+            >
+              Education <span className="text-red-500 ml-1">*</span>
+            </Label>
+            <input
+              type="text"
+              name="education"
+              onChange={handleChange}
+              className={`mt-2 w-full p-2 border ${
+                errors.education ? "border-red-500" : "border-gray-300"
+              } rounded-md`}
+              required
+            />
+            {errors.education && (
+              <p className="text-red-500 text-sm mt-1">{errors.education}</p>
+            )}
+          </div>
 
-            <div className="mb-6">
-              <Label
-                htmlFor="skills"
-                className="font-semibold flex items-center"
-              >
-                Skills <span className="text-red-500 ml-1">*</span>
-              </Label>
-              <input
-                type="text"
-                name="skills"
-                onChange={handleChange}
-                className={`mt-2 w-full p-2 border ${
-                  errors.skills ? "border-red-500" : "border-gray-300"
-                } rounded-md`}
-                required
-              />
-              {errors.skills && (
-                <p className="text-red-500 text-sm mt-1">{errors.skills}</p>
-              )}
-            </div>
+          <div className="mb-6">
+            <Label htmlFor="skills" className="font-semibold flex items-center">
+              Skills <span className="text-red-500 ml-1">*</span>
+            </Label>
+            <input
+              type="text"
+              name="skills"
+              onChange={handleChange}
+              className={`mt-2 w-full p-2 border ${
+                errors.skills ? "border-red-500" : "border-gray-300"
+              } rounded-md`}
+              required
+            />
+            {errors.skills && (
+              <p className="text-red-500 text-sm mt-1">{errors.skills}</p>
+            )}
+          </div>
 
           <div className="flex justify-end items-center mt-6">
             <button
@@ -425,7 +425,10 @@ const PostJob = () => {
 
       {step3 && (
         <div className="w-full max-w-3xl mx-auto p-6 bg-white shadow-md rounded-md">
-          <ProgressBar percent={75} filledBackground="linear-gradient(to right, #4972e3, #0944e6)" />
+          <ProgressBar
+            percent={75}
+            filledBackground="linear-gradient(to right, #4972e3, #0944e6)"
+          />
 
           <div className="flex items-center mt-4">
             <BiArrowBack
