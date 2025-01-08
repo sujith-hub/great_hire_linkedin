@@ -33,6 +33,7 @@ import JobList from "./pages/recruiter/JobList";
 import RecruiterHome from "./pages/recruiter/RecruiterHome";
 import RecruiterPlans from "./pages/recruiter/RecruiterPlans";
 
+
 import { useEffect } from "react";
 import { logOut } from "./redux/authSlice.js";
 import { useDispatch } from "react-redux";
@@ -138,6 +139,7 @@ const appRouter = createBrowserRouter([
     path: "/verify-recruiter/:token",
     element: <VerifyRecruiter />,
   },
+
   {
     path: "*",
     element: <PageNotFound />,
