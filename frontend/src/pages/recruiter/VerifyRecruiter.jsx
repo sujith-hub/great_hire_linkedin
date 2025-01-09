@@ -191,11 +191,11 @@ const VerifyRecruiter = () => {
                 </p>
                 <p>
                   <span className="font-medium text-gray-600">Email:</span>{" "}
-                  {recruiterData?.email}
+                  {recruiterData?.emailId.email}
                 </p>
                 <p>
                   <span className="font-medium text-gray-600">Phone:</span>{" "}
-                  {recruiterData?.phoneNumber || "N/A"}
+                  {recruiterData?.phoneNumber.number || "N/A"}
                 </p>
               </div>
             )}

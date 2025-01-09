@@ -14,6 +14,8 @@ import { useNavigate } from "react-router-dom";
 import { logOut } from "@/redux/authSlice";
 import { toast } from "react-hot-toast";
 import { MdOutlineVerified } from "react-icons/md";
+import VerifyEmail from "@/components/VerifyEmail";
+import VerifyNumber from "@/components/VerifyNumber";
 
 const UserProfile = () => {
   const [open, setOpen] = useState(false);
@@ -21,6 +23,8 @@ const UserProfile = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [openEmailOTPModal, setOpenEmailOTPModal] = useState(false);
+  const [openNumberOTPModal, setOpenNumberOTPModal] = useState(false);
 
   const handleDeleteAccount = async () => {
     try {
@@ -91,7 +95,7 @@ const UserProfile = () => {
                 {!user?.emailId.isVerified ? (
                   <span
                     className="text-green-600 text-md cursor-pointer hover:text-green-700"
-                    onClick={() => navigate("/verify-email")}
+                    onClick={() => setOpenEmailOTPModal(true)}
                   >
                     Verify
                   </span>
@@ -109,7 +113,7 @@ const UserProfile = () => {
                 {!user?.phoneNumber.isVerified ? (
                   <span
                     className="text-green-600 text-md cursor-pointer hover:text-green-700"
-                    onClick={() => navigate("/verify-number")}
+                    onClick={() => setOpenNumberOTPModal(true)}
                   >
                     Verify
                   </span>
@@ -191,6 +195,9 @@ const UserProfile = () => {
 
       <UserUpdateProfile open={open} setOpen={setOpen} />
       <Footer className="mt-auto" />
+
+      {openEmailOTPModal && <VerifyEmail setOpenEmailOTPModal = {setOpenEmailOTPModal}/>}
+      {openNumberOTPModal && <VerifyNumber setOpenNumberOTPModal = {setOpenNumberOTPModal}/>}
     </div>
   );
 };

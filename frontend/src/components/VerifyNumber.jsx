@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 
 import { setUser } from "@/redux/authSlice";
 
-const VerifyNumber = () => {
+const VerifyNumber = ({setOpenNumberOTPModal}) => {
   const { user } = useSelector((state) => state.auth);
   const [token, setToken] = useState(null);
   const [otp, setOTP] = useState("");
@@ -15,7 +15,6 @@ const VerifyNumber = () => {
   const [timer, setTimer] = useState(0); // Timer starts at 30 seconds
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  
 
   // Timer Logic
   useEffect(() => {
@@ -95,14 +94,14 @@ const VerifyNumber = () => {
               `${VERIFICATION_API_END_POINT}/update-number-verification`,
               {
                 email: user.emailId.email,
-              },
+              }
             );
 
             if (response?.data?.success) {
               toast.success(response.data.message);
               setToken(null);
               dispatch(setUser(response.data.user));
-              navigate(-1);
+              setOpenNumberOTPModal(false);
             } else {
               toast.error(response.data.message);
             }
@@ -123,44 +122,49 @@ const VerifyNumber = () => {
 
   return (
     <>
-      <div className="flex flex-col items-center justify-center h-screen p-6 space-y-3">
-        <div className="w-full max-w-md">
-          <h1 className="text-3xl font-bold text-center mb-6">
-            Great<span className="text-blue-700">Hire</span>
-          </h1>
-          <div className="mb-4">
-            <label htmlFor="otp" className="block text-gray-700 font-bold mb-2">
-              Check Your Email
-            </label>
-            <input
-              id="otp"
-              type="text"
-              value={otp}
-              onChange={(e) => setOTP(e.target.value)}
-              placeholder="Enter OTP"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="flex flex-col items-center justify-center h-screen p-6 space-y-3 animate-in fade-in duration-200">
+          <div className="w-full max-w-md">
+            <h1 className="text-3xl font-bold text-center mb-6">
+              Great<span className="text-blue-700">Hire</span>
+            </h1>
+            <div className="mb-4">
+              <label
+                htmlFor="otp"
+                className="block text-gray-700 font-bold mb-2"
+              >
+                Check Your Number
+              </label>
+              <input
+                id="otp"
+                type="text"
+                value={otp}
+                onChange={(e) => setOTP(e.target.value)}
+                placeholder="Enter OTP"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <button
+              onClick={verifyOTP}
+              disabled={timer === 0 || !otp || loading || user.emailId.isVerify} // Disable button if no OTP or loading
+              className={`w-full py-2 text-white font-semibold rounded-lg ${
+                !otp || loading || timer === 0 || user.emailId.isVerify
+                  ? "cursor-not-allowed bg-gray-400"
+                  : "bg-blue-700 hover:bg-blue-800"
+              } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+            >
+              {loading ? "Waiting..." : `Verify OTP (${timer}s)`}
+            </button>
           </div>
-          <button
-            onClick={verifyOTP}
-            disabled={timer === 0 || !otp || loading || user.emailId.isVerify} // Disable button if no OTP or loading
-            className={`w-full py-2 text-white font-semibold rounded-lg ${
-              !otp || loading || timer === 0 || user.emailId.isVerify
-                ? "cursor-not-allowed bg-gray-400"
-                : "bg-blue-700 hover:bg-blue-800"
-            } focus:outline-none focus:ring-2 focus:ring-blue-500`}
-          >
-            {loading ? "Waiting..." : `Verify OTP (${timer}s)`}
-          </button>
+          {timer === 0 && (
+            <p
+              className="flex  gap-2 text-blue-600 hover:text-blue-800 cursor-pointer"
+              onClick={requestOTP}
+            >
+              <span>Resend OTP</span>
+            </p>
+          )}
         </div>
-        {timer === 0 && (
-          <p
-            className="flex  gap-2 text-blue-600 hover:text-blue-800 cursor-pointer"
-            onClick={requestOTP}
-          >
-            <span>Resend OTP</span>
-          </p>
-        )}
       </div>
     </>
   );

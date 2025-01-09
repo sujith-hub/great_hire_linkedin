@@ -107,7 +107,7 @@ export const sendVerificationStatus = async (req, res) => {
     // Email to Recruiter
     const mailOptionsForRecrutier = {
       from: `"GreatHire Support" <${process.env.EMAIL_USER}>`,
-      to: recruiterData.email,
+      to: recruiterData?.emailId?.email,
       subject: `Recruiter Verification Status by ${companyData.companyName}`,
       html: `
         <div style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px; max-width: 600px; margin: auto; border-radius: 10px; border: 1px solid #ddd;">
@@ -122,7 +122,7 @@ export const sendVerificationStatus = async (req, res) => {
             recruiterData.fullname
           }</p>
           <p><strong style="color: #333;">Recruiter Email:</strong> ${
-            recruiterData.email
+            recruiterData?.emailId?.email
           }</p>
           <p><strong style="color: #333;">Status:</strong> ${
             status === 1 ? "Verified" : "Not Verified"
@@ -157,15 +157,26 @@ export const sendVerificationStatus = async (req, res) => {
     };
 
     if (status === -1) {
+      // Delete the company based on the provided email
       await Company.deleteOne({ email: companyData.email });
+
+      // Update the recruiter's isVerify and isCompanyCreated fields
       await Recruiter.updateOne(
-        { email: recruiterData.email }, // Filter to find the document
-        { $set: { isVerify: status, isCompanyCreated: false } } // Combine updates in one $set
+        { "emailId.email": recruiterData.emailId.email }, // Using dot notation to access nested email field
+        {
+          $set: {
+            isVerify: status,
+            isCompanyCreated: false,
+          },
+        }
       );
     } else {
+      // Update only the isVerify field for the recruiter
       await Recruiter.updateOne(
-        { email: recruiterData.email }, // Filter to find the document
-        { $set: { isVerify: status } } // Update only the isVerify field
+        { "emailId.email": recruiterData.emailId.email }, // Using dot notation to access nested email field
+        {
+          $set: { isVerify: status },
+        }
       );
     }
 

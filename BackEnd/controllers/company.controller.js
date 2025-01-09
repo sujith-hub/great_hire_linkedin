@@ -21,8 +21,7 @@ export const registerCompany = async (req, res) => {
       phone,
       CIN,
       recruiterPosition,
-      recruiterPhone,
-      userEmail,
+      userEmail
     } = req.body;
 
     // CIN validation function
@@ -37,7 +36,7 @@ export const registerCompany = async (req, res) => {
         success: false,
       });
     }
-
+    
     // Check if a company already exists with this email and CIN
     let company = await Company.findOne({ email, CIN });
     if (company) {
@@ -56,8 +55,6 @@ export const registerCompany = async (req, res) => {
       });
     }
 
-    // Update recruiter's position and phone number
-    recruiter.phoneNumber = recruiterPhone;
     recruiter.position = recruiterPosition;
     recruiter.isCompanyCreated = true;
     await recruiter.save();

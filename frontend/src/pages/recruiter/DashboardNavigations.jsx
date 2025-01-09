@@ -63,7 +63,7 @@ const DashboardNavigations = () => {
               )}
               {user?.isVerify === 1 &&
                 user?.isCompanyCreated &&
-                user?.email === company?.adminEmail && (
+                user?.emailId?.email === company?.adminEmail && (
                   <NavLink
                     to="/recruiter/dashboard/add-recruiter"
                     className={navLinkClass}
