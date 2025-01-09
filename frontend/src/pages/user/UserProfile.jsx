@@ -13,6 +13,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { logOut } from "@/redux/authSlice";
 import { toast } from "react-hot-toast";
+import { MdOutlineVerified } from "react-icons/md";
 
 const UserProfile = () => {
   const [open, setOpen] = useState(false);
@@ -85,14 +86,38 @@ const UserProfile = () => {
               <div className="flex items-center gap-3">
                 <Mail className="text-gray-500" />
                 <span className="text-gray-700">
-                  {user?.email || "Not Provided"}
+                  {user?.emailId.email || "Not Provided"}
                 </span>
+                {!user?.emailId.isVerified ? (
+                  <span
+                    className="text-green-600 text-md cursor-pointer hover:text-green-700"
+                    onClick={() => navigate("/verify-email")}
+                  >
+                    Verify
+                  </span>
+                ) : (
+                  <span className="flex  items-center text-green-600 bg-green-50 px-2 rounded-lg gap-1">
+                    <MdOutlineVerified size={25} /> <span>Verified</span>
+                  </span>
+                )}
               </div>
               <div className="flex items-center gap-3">
                 <Contact className="text-gray-500" />
                 <span className="text-gray-700">
-                  {user?.phoneNumber || "Not Provided"}
+                  {user?.phoneNumber.number || "Not Provided"}
                 </span>
+                {!user?.phoneNumber.isVerified ? (
+                  <span
+                    className="text-green-600 text-md cursor-pointer hover:text-green-700"
+                    onClick={() => navigate("/verify-number")}
+                  >
+                    Verify
+                  </span>
+                ) : (
+                  <span className="flex  items-center text-green-600 bg-green-50 px-2 rounded-lg gap-1 ">
+                    <MdOutlineVerified size={25} /> <span>Verified</span>
+                  </span>
+                )}
               </div>
             </div>
           </div>

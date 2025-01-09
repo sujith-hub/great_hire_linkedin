@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { User } from "../models/user.model.js";
 import { Recruiter } from "../models/recruiter.model.js";
+import { Admin } from "../models/admin.model.js";
 import cloudinary from "../utils/cloudinary.js";
 import getDataUri from "../utils/dataUri.js";
 import { oauth2Client } from "../utils/googleConfig.js";
@@ -37,7 +38,8 @@ export const register = async (req, res) => {
 
     // Check if user already exists
     let userExists =
-      (await User.findOne({ email })) || (await Recruiter.findOne({ email }));
+      (await User.findOne({ "emailId.email": email })) ||
+      (await Recruiter.findOne({ "emailId.email": email })) || (await Admin.findOne({ "emailId.email": email }));
 
     if (userExists) {
       return res.status(200).json({
@@ -52,8 +54,14 @@ export const register = async (req, res) => {
     // Create new user
     let newUser = await User.create({
       fullname,
-      email,
-      phoneNumber,
+      emailId: {
+        email, // Setting the email
+        isVerified: false, // Default to false unless you have a value to set
+      },
+      phoneNumber: {
+        number: phoneNumber, // Setting the phone number
+        isVerified: false, // Default to false unless you have a value to set
+      },
       password: hashedPassword,
     });
 
@@ -102,7 +110,8 @@ export const login = async (req, res) => {
     }
     //check mail is correct or not...
     let user =
-      (await User.findOne({ email })) || (await Recruiter.findOne({ email }));
+      (await User.findOne({ "emailId.email": email })) ||
+      (await Recruiter.findOne({ "emailId.email": email }));
 
     if (!user) {
       return res.status(200).json({
@@ -133,7 +142,7 @@ export const login = async (req, res) => {
     user = {
       _id: user._id,
       fullname: user.fullname,
-      email: user.email,
+      emailId: user.emailId,
       phoneNumber: user.phoneNumber,
       role: user.role,
       profile: user.profile,
@@ -185,8 +194,10 @@ export const googleLogin = async (req, res) => {
     // Check if user already exists
 
     let user =
-      (await User.findOne({ email: googleUser.email }).select("-password")) ||
-      (await Recruiter.findOne({ email: googleUser.email }).select(
+      (await User.findOne({ "emailId.email": googleUser.email }).select(
+        "-password"
+      )) ||
+      (await Recruiter.findOne({ "emailId.email": googleUser.email }).select(
         "-password"
       ));
 
@@ -225,8 +236,14 @@ export const googleLogin = async (req, res) => {
     // If user doesn't exist, create a new one
     user = new User({
       fullname: googleUser.name || googleUser.given_name || "No Name",
-      email: googleUser.email,
-      phoneNumber: "",
+      emailId: {
+        email: googleUser.email, // Set email from Google user data
+        isVerified: true, // Google-authenticated users are usually verified
+      },
+      phoneNumber: {
+        number: "", // No phone number provided by Google
+        isVerified: false, // Default to false since no phone verification
+      },
       password: "", // No password for Google-authenticated users
       role: role, // Use the provided role
       profile: {
@@ -335,10 +352,16 @@ export const updateProfile = async (req, res) => {
       ? skills
       : skills?.split(",").map((skill) => skill.trim()) || [];
 
-    if (fullname) user.fullname = fullname;
-    if (email) user.email = email;
-    if (phoneNumber) user.phoneNumber = phoneNumber;
-    if (bio) user.profile.bio = bio;
+    if (fullname && user.fullname !== fullname) user.fullname = fullname;
+    if (email && user.emailId.email !== email){
+      user.emailId.email = email;
+      user.emailId.isVerified = false; 
+    } 
+    if (phoneNumber && user.phoneNumber.number !== phoneNumber){
+      user.phoneNumber = phoneNumber;
+      user.phoneNumber.isVerified = false;
+    } 
+    if (bio && user.profile.bio !== bio) user.profile.bio = bio;
     if (experience) {
       user.profile.experience = {
         ...user.profile.experience,
@@ -425,7 +448,8 @@ export const forgotPassword = async (req, res) => {
     const { email } = req.body;
 
     let user =
-      (await User.findOne({ email })) || (await Recruiter.findOne({ email }));
+      (await User.findOne({ "emailId.email": email })) ||
+      (await Recruiter.findOne({ "emailId.email": email }));
 
     if (!user) {
       return res.status(200).json({
@@ -555,7 +579,8 @@ export const deleteAccount = async (req, res) => {
 
     // Check if the user exists
     const user =
-      (await User.findOne({ email })) || (await Recruiter.findOne({ email }));
+      (await User.findOne({ "emailId.email": email })) ||
+      (await Recruiter.findOne({ "emailId.email": email }));
     if (!user) {
       return res.status(404).json({
         message: "User not found.",
@@ -564,7 +589,7 @@ export const deleteAccount = async (req, res) => {
     }
 
     // Delete the user
-    await User.findOneAndDelete({ email });
+    await User.findOneAndDelete({ "emailId.email": email });
 
     return res
       .status(200)

@@ -2,13 +2,15 @@ import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import { Recruiter } from "../models/recruiter.model.js";
 import { User } from "../models/user.model.js";
+import { Admin } from "../models/admin.model.js";
 import { Company } from "../models/company.model.js";
 import mongoose from "mongoose";
 import randomstring from "randomstring";
 import { Order } from "../models/order.model.js";
 import { hmac } from "fast-sha256";
 import { TextEncoder } from "util";
-
+// otpService.js
+import twilio from "twilio";
 // Setup nodemailer
 const transporter = nodemailer.createTransport({
   service: "Gmail",
@@ -17,6 +19,9 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS,
   },
 });
+
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
 
 // OTP Secret
 const OTP_SECRET = process.env.SECRET_KEY;
@@ -187,34 +192,23 @@ export const sendVerificationStatus = async (req, res) => {
   }
 };
 
-export const requestOTP = async (req, res) => {
-  const formData = req.body;
+export const requestOTPForEmail = async (req, res) => {
+  const { email } = req.body;
   try {
-    // Check if user already exists
-    let user =
-      (await User.findOne({ email: formData.email })) ||
-      (await Recruiter.findOne({ email: formData.email }));
-    if (user) {
-      return res.status(401).json({
-        message: "User already exists!",
-        success: false,
-      });
-    }
-
     // Generate OTP
     const otp = randomstring.generate({
       length: 6,
       charset: "numeric",
     });
 
-    const token = jwt.sign({ otp, formData }, OTP_SECRET, {
+    const token = jwt.sign({ otp }, OTP_SECRET, {
       expiresIn: "30s",
     });
 
     // Send OTP via email
     await transporter.sendMail({
       from: `"GreatHire Support" <${process.env.EMAIL_USER}>`,
-      to: formData.email,
+      to: email,
       subject: "Your GreatHire OTP Code",
       html: `
         <div style="font-family: Arial, sans-serif; line-height: 1.6; max-width: 600px; margin: 0 auto; color: #333; border: 1px solid #eaeaea; padding: 20px; border-radius: 8px; background-color: #f9f9f9;">
@@ -244,6 +238,41 @@ export const requestOTP = async (req, res) => {
       message: "OTP sent successfully!",
       success: true,
       token,
+    });
+  } catch (err) {
+    console.error(`Error in sending OTP: ${err}`);
+    res.status(500).json({
+      message: "Failed to send OTP. Please try again.",
+      success: false,
+    });
+  }
+};
+
+export const requestOTPForNumber = async (req, res) => {
+  const { number } = req.body;
+  const client = twilio(accountSid, authToken);
+  try {
+    // Generate a JWT token with the OTP and 30-second expiration
+    const otp = randomstring.generate({
+      length: 6,
+      charset: "numeric",
+    });
+
+    const token = jwt.sign({ otp }, OTP_SECRET, {
+      expiresIn: "30s",
+    });
+
+    // Send OTP to mobile number via Twilio
+    await client.messages.create({
+      body: `Hello from GreatHire!\n ${otp}.\nThis OTP is valid for the next 30 seconds.`,
+      from: `${process.env.TWILIO_PHONE_NUMBER}`, // Replace with your Twilio phone number
+      to: `+91${number}`,
+    });
+
+    res.status(200).json({
+      message: "OTP sent successfully!",
+      success: true,
+      token, // Return the JWT token for client-side verification
     });
   } catch (err) {
     console.error(`Error in sending OTP: ${err}`);
@@ -331,5 +360,79 @@ export const verifyPayment = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+// update user email verification
+export const updateEmailVerification = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    let user =
+      (await User.findOne({ "emailId.email": email })) ||
+      (await Recruiter.findOne({ "emailId.email": email })) ||
+      (await Admin.findOne({ "emailId.email": email }));
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found.",
+        success: false,
+      });
+    }
+
+    // Update email verification status
+    user.set("emailId.isVerified", true);
+
+    await user.save();
+
+    return res.status(200).json({
+      message: "Email Verified.",
+      success: true,
+      user,
+    });
+  } catch (err) {
+    console.error("Error updating email verification:", err);
+    return res.status(500).json({
+      message: "Internal server error.",
+      success: false,
+      error: err.message,
+    });
+  }
+};
+
+// update user phone number verification
+export const updateNumberVerification = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    let user =
+      (await User.findOne({ "emailId.email": email })) ||
+      (await Recruiter.findOne({ "emailId.email": email })) ||
+      (await Admin.findOne({ "emailId.email": email }));
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found.",
+        success: false,
+      });
+    }
+
+    // Update email verification status
+    user.set("phoneNumber.isVerified", true);
+
+    await user.save();
+
+    return res.status(200).json({
+      message: "Number Verified.",
+      success: true,
+      user,
+    });
+  } catch (err) {
+    console.error("Error updating email verification:", err);
+    return res.status(500).json({
+      message: "Internal server error.",
+      success: false,
+      error: err.message,
+    });
   }
 };

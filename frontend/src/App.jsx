@@ -43,6 +43,9 @@ import { useDispatch } from "react-redux";
 import RecruiterSuccess from "./pages/recruiter/RecruiterSuccess";
 import JobForm from "./JobForm";
 
+import VerifyEmail from "./components/VerifyEmail";
+import VerifyNumber from "./components/VerifyNumber";
+
 const appRouter = createBrowserRouter([
   {
     path: "/",
@@ -59,6 +62,15 @@ const appRouter = createBrowserRouter([
   {
     path: "/signup",
     element: <Signup />,
+  },
+
+  {
+    path: "/verify-email",
+    element: <VerifyEmail />,
+  },
+  {
+    path: "/verify-number",
+    element: <VerifyNumber />,
   },
 
   {

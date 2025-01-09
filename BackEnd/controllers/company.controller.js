@@ -48,7 +48,7 @@ export const registerCompany = async (req, res) => {
     }
 
     // Check if a recruiter exists with this email
-    let recruiter = await Recruiter.findOne({ email: userEmail });
+    let recruiter = await Recruiter.findOne({ "emailId.email": userEmail });
     if (!recruiter) {
       return res.status(404).json({
         message: "Recruiter not found.",
