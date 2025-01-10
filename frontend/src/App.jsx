@@ -38,17 +38,13 @@ import { useEffect } from "react";
 import { logOut } from "./redux/authSlice.js";
 import { useDispatch } from "react-redux";
 import RecruiterSuccess from "./pages/recruiter/RecruiterSuccess";
-import JobForm from "./JobForm";
 
 const appRouter = createBrowserRouter([
   {
     path: "/",
     element: <Home />
   },
-  {
-    path: "/jobForm",
-    element: <JobForm />
-  },
+  
   {
     path: "/login",
     element: <Login />,

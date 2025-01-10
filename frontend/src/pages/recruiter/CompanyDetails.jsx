@@ -1,149 +1,234 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import React, { useState } from "react";
 
 const CompanyDetails = () => {
-  const { id } = useParams(); // Assuming company id is passed via URL params
-  const navigate = useNavigate();
-  const [company, setCompany] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchCompanyDetails = async () => {
-      try {
-        // Mock data to simulate API response
-        const mockCompanyData = {
-          name: "Tech Swim",
-          website: "https://www.techswim.com",
-          industry: "Product Based",
-          location: "RIICO Industury, Tapukara, Rajasthan, India, 301707",
-          description:
-            "Tech Swim is a leading company in the product-based industry, delivering innovative solutions for businesses worldwide.",
-          email: "virsingh8938@gmail.com",
-          adminEmail: "kcribca28134@gmail.com",
-          phone: "8599446788",
-          taxId: "123456789",
-          businessFile:
-            "https://res.cloudinary.com/ddj21a6aq/image/upload/v1735903135/nlh7er4o...",
-        };
-
-        setCompany(mockCompanyData);
-      } catch (err) {
-        setError("Failed to load company details.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCompanyDetails();
-  }, [id]);
-
-  const handleEditClick = () => {
-    navigate(`/recruiter/dashboard/create-company?id=${id}`);
+  const initialCompany = {
+    companyName: "Tech Swim",
+    companyWebsite: "https://www.techswim.com",
+    industry: "Product Based",
+    address: {
+      streetAddress: "RIICO Industury",
+      city: "Tapukara",
+      state: "Rajasthan",
+      country: "India",
+      postalCode: "301707",
+    },
+    email: "virsingh8938@gmail.com",
+    adminEmail: "kcribca28134@gmail.com",
+    phone: "8599446788",
+    taxId: "123456789", // CIN Number
+    businessFile:
+      "https://res.cloudinary.com/ddj21a6aq/image/upload/v1735903135/nlh7er4o...",
   };
 
-  const handleDeleteClick = async () => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this company?");
-    if (!confirmDelete) return;
+  const [company, setCompany] = useState(initialCompany);
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState(initialCompany);
 
-    try {
-      // Simulate API call
-      await axios.delete(`/api/companies/${id}`); // Replace with your actual API endpoint
+  const toggleEdit = () => {
+    setIsEditing(!isEditing);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleAddressChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      address: {
+        ...formData.address,
+        [name]: value,
+      },
+    });
+  };
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    setCompany(formData);
+    setIsEditing(false);
+    alert("Company details updated successfully!");
+  };
+
+  const handleDeleteCompany = () => {
+    if (window.confirm("Are you sure you want to delete this company?")) {
+      setCompany(null);
       alert("Company deleted successfully!");
-      navigate("/recruiter/dashboard"); // Redirect to dashboard or another page
-    } catch (err) {
-      console.error("Error deleting company:", err);
-      alert("Failed to delete company. Please try again.");
     }
   };
 
-  if (loading) {
-    return <div className="text-center text-xl text-gray-500">Loading company details...</div>;
-  }
-
-  if (error) {
-    return <div className="text-center text-red-600">{error}</div>;
-  }
-
-  if (!company) {
-    return <div className="text-center text-xl text-gray-500">No company data found.</div>;
-  }
-
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 bg-white rounded-lg shadow-lg mt-12">
-      <h1 className="text-4xl font-semibold text-blue-600 text-center mb-8 mt-0">Company Profile</h1>
+    <div className="max-w-6xl mx-auto p-8 bg-white shadow-lg rounded-lg mt-10 border border-gray-300">
+      <h1 className="text-3xl font-semibold text-gray-800 mb-8 text-center">Company Details</h1>
 
-      <div className="flex flex-col md:flex-row gap-8 mb-12 items-center">
-        <div className="flex-1 space-y-6">
-          <h2 className="text-3xl font-semibold text-gray-800">{company.name}</h2>
-          <p className="text-lg text-gray-600">{company.description}</p>
-
-          <div className="space-y-4">
-            <div className="flex justify-between items-center text-gray-800">
-              <span className="font-semibold">Industry:</span>
-              <span>{company.industry}</span>
+      {!isEditing ? (
+        <div className="space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="info-card">
+              <p className="text-sm text-gray-500 font-medium">Company Name</p>
+              <p className="text-xl text-gray-800 font-semibold">{company.companyName}</p>
             </div>
-            <div className="flex justify-between items-center text-gray-800">
-              <span className="font-semibold">Location:</span>
-              <span>{company.location}</span>
-            </div>
-            <div className="flex justify-between items-center text-gray-800">
-              <span className="font-semibold">Website:</span>
+            <div className="info-card">
+              <p className="text-sm text-gray-500 font-medium">Website</p>
               <a
-                href={company.website}
+                href={company.companyWebsite}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 hover:text-indigo-500"
+                className="text-blue-500 hover:underline text-xl font-semibold"
               >
-                {company.website}
+                {company.companyWebsite}
               </a>
             </div>
-            <div className="flex justify-between items-center text-gray-800">
-              <span className="font-semibold">Email:</span>
-              <span>{company.email}</span>
+            <div className="info-card">
+              <p className="text-sm text-gray-500 font-medium">Industry</p>
+              <p className="text-xl text-gray-800 font-semibold">{company.industry}</p>
             </div>
-            <div className="flex justify-between items-center text-gray-800">
-              <span className="font-semibold">Admin Email:</span>
-              <span>{company.adminEmail}</span>
+            <div className="info-card">
+              <p className="text-sm text-gray-500 font-medium">Email</p>
+              <p className="text-xl text-gray-800 font-semibold">{company.email}</p>
             </div>
-            <div className="flex justify-between items-center text-gray-800">
-              <span className="font-semibold">Phone:</span>
-              <span>{company.phone}</span>
+            <div className="info-card">
+              <p className="text-sm text-gray-500 font-medium">Admin Email</p>
+              <p className="text-xl text-gray-800 font-semibold">{company.adminEmail}</p>
             </div>
-            <div className="flex justify-between items-center text-gray-800">
-              <span className="font-semibold">CIN Number:</span>
-              <span>{company.taxId}</span>
+            <div className="info-card">
+              <p className="text-sm text-gray-500 font-medium">Phone</p>
+              <p className="text-xl text-gray-800 font-semibold">{company.phone}</p>
             </div>
-            <div className="flex justify-between items-center text-gray-800">
-              <span className="font-semibold">Business File:</span>
+            <div className="info-card">
+              <p className="text-sm text-gray-500 font-medium">CIN Number</p>
+              <p className="text-xl text-gray-800 font-semibold">{company.taxId}</p>
+            </div>
+            <div className="info-card">
+              <p className="text-sm text-gray-500 font-medium">Business File</p>
               <a
                 href={company.businessFile}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 hover:text-indigo-500"
+                className="text-blue-500 hover:underline text-xl font-semibold"
               >
                 View Business File
               </a>
             </div>
           </div>
-        </div>
-      </div>
 
-      <div className="flex justify-between">
-        <button
-          onClick={handleEditClick}
-          className="bg-blue-600 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-indigo-500 transition duration-300 ease-in-out"
-        >
-          Edit Company Details
-        </button>
-        <button
-          onClick={handleDeleteClick}
-          className="bg-red-600 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-red-700 transition duration-300 ease-in-out"
-        >
-          Delete Company
-        </button>
-      </div>
+          <div className="flex justify-end space-x-6 mt-8">
+            <button
+              onClick={toggleEdit}
+              className="px-6 py-3 text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-200"
+            >
+              Edit Company Details
+            </button>
+            <button
+              onClick={handleDeleteCompany}
+              className="px-6 py-3 text-white bg-red-600 rounded-md hover:bg-red-700 transition duration-200"
+            >
+              Delete Company
+            </button>
+          </div>
+        </div>
+      ) : (
+        <form onSubmit={handleFormSubmit} className="space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="input-card">
+              <label className="text-sm text-gray-600 font-medium">Company Name</label>
+              <input
+                type="text"
+                name="companyName"
+                value={formData.companyName}
+                onChange={handleInputChange}
+                className="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div className="input-card">
+              <label className="text-sm text-gray-600 font-medium">Website</label>
+              <input
+                type="url"
+                name="companyWebsite"
+                value={formData.companyWebsite}
+                onChange={handleInputChange}
+                className="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div className="input-card">
+              <label className="text-sm text-gray-600 font-medium">Industry</label>
+              <input
+                type="text"
+                name="industry"
+                value={formData.industry}
+                onChange={handleInputChange}
+                className="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div className="input-card">
+              <label className="text-sm text-gray-600 font-medium">Email</label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                className="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div className="input-card">
+              <label className="text-sm text-gray-600 font-medium">Admin Email</label>
+              <input
+                type="email"
+                name="adminEmail"
+                value={formData.adminEmail}
+                onChange={handleInputChange}
+                className="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div className="input-card">
+              <label className="text-sm text-gray-600 font-medium">Phone</label>
+              <input
+                type="text"
+                name="phone"
+                value={formData.phone}
+                onChange={handleInputChange}
+                className="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div className="input-card">
+              <label className="text-sm text-gray-600 font-medium">CIN Number</label>
+              <input
+                type="text"
+                name="taxId"
+                value={formData.taxId}
+                onChange={handleInputChange}
+                className="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div className="input-card">
+              <label className="text-sm text-gray-600 font-medium">Business File</label>
+              <input
+                type="text"
+                name="businessFile"
+                value={formData.businessFile}
+                onChange={handleInputChange}
+                className="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end space-x-6 mt-8">
+            <button
+              type="submit"
+              className="px-6 py-3 text-white bg-green-600 rounded-md hover:bg-green-700 transition duration-200"
+            >
+              Save Changes
+            </button>
+            <button
+              onClick={toggleEdit}
+              className="px-6 py-3 text-white bg-gray-600 rounded-md hover:bg-gray-700 transition duration-200"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      )}
     </div>
   );
 };
