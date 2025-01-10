@@ -64,9 +64,9 @@ export const sendVerificationStatus = async (req, res) => {
     // Construct the message based on status
     let message;
     if (status === -1) {
-      message = `${recruiterData.fullname} with email ${recruiterData.email} has been marked as not verified.`;
+      message = `${recruiterData.fullname} with email ${recruiterData.emailId.email} has been marked as not verified.`;
     } else if (status === 1) {
-      message = `${recruiterData.fullname} with email ${recruiterData.email} has been verified successfully.`;
+      message = `${recruiterData.fullname} with email ${recruiterData.emailId.email} has been verified successfully.`;
     } else {
       return res.status(400).json({
         message: "Invalid status provided.",

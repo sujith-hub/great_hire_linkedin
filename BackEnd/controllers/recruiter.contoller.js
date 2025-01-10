@@ -243,10 +243,19 @@ export const addRecruiterToCompany = async (req, res) => {
       });
     }
 
+    // Validate fullName length
+    if (password.length < 3) {
+      return res.status(200).json({
+        message: "Fullname must be at least 3 characters long.",
+        success: false,
+      });
+    }
+
     // Check if recruiter email already exists
     const existingRecruiter =
       (await Recruiter.findOne({ "emailId.email": email })) ||
       (await User.findOne({ "emailId.email": email }));
+
     if (existingRecruiter) {
       return res.status(400).json({
         success: false,
@@ -266,7 +275,7 @@ export const addRecruiterToCompany = async (req, res) => {
       },
       phoneNumber: {
         number: phoneNumber,
-        isVerified: false,
+        isVerified: true,
       },
       password: hashedPassword,
       position,

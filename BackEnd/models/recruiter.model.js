@@ -8,10 +8,7 @@ const recruiterSchema = new mongoose.Schema(
     },
     emailId: {
       email: { type: String, required: true, unique: true },
-      isVerified: {
-        type: Boolean,
-        default: false,
-      },
+      isVerified: { type: Boolean, default: false },
     },
     phoneNumber: {
       number: {
