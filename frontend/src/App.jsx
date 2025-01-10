@@ -37,6 +37,7 @@ import RecruiterPlans from "./pages/recruiter/RecruiterPlans";
 import AdminSignup from "./components/auth/admin/AdminSignup";
 import AdminLogin from "./components/auth/admin/AdminLogin";
 
+
 import { useEffect } from "react";
 import { logOut } from "./redux/authSlice.js";
 import { useDispatch } from "react-redux";
@@ -50,6 +51,9 @@ const appRouter = createBrowserRouter([
     path: "/",
     element: <Home />,
   },
+
+  
+
   {
     path: "/login",
     element: <Login />,
@@ -155,6 +159,7 @@ const appRouter = createBrowserRouter([
     path: "/verify-recruiter/:token",
     element: <VerifyRecruiter />,
   },
+
   {
     path: "/recruiter/success",
     element: <RecruiterSuccess />,
