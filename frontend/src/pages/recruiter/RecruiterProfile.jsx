@@ -70,12 +70,12 @@ const RecruiterProfile = () => {
           <div className="mt-4 space-y-2">
             <div className="flex items-center gap-3">
               <Mail className="text-gray-500" />
-              <span className="text-gray-700">{user?.email || "No Email"}</span>
+              <span className="text-gray-700">{user?.emailId.email || "No Email"}</span>
             </div>
             <div className="flex items-center gap-3">
               <Contact className="text-gray-500" />
               <span className="text-gray-700">
-                {user?.phoneNumber || "No Phone Number"}
+                {user?.phoneNumber.number || "No Phone Number"}
               </span>
             </div>
           </div>

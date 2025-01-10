@@ -191,11 +191,11 @@ const VerifyRecruiter = () => {
                 </p>
                 <p>
                   <span className="font-medium text-gray-600">Email:</span>{" "}
-                  {recruiterData?.email}
+                  {recruiterData?.emailId.email}
                 </p>
                 <p>
                   <span className="font-medium text-gray-600">Phone:</span>{" "}
-                  {recruiterData?.phoneNumber || "N/A"}
+                  {recruiterData?.phoneNumber.number || "N/A"}
                 </p>
               </div>
             )}
@@ -207,7 +207,7 @@ const VerifyRecruiter = () => {
               <div className="flex justify-center space-x-4">
                 <button
                   className={`px-6 py-2 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-600 transition duration-300 ${
-                    loading === -1 ? "cursor-not-allowed" : ""
+                    loading === -1 || loading === 1 ? "cursor-not-allowed" : ""
                   }`}
                   onClick={() => isVerifyRecruiter(-1)}
                 >
@@ -215,7 +215,7 @@ const VerifyRecruiter = () => {
                 </button>
                 <button
                   className={`px-6 py-2 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 transition duration-300 ${
-                    loading === 1 ? "cursor-not-allowed" : ""
+                    loading === 1 || loading === -1 ? "cursor-not-allowed" : ""
                   }`}
                   onClick={() => isVerifyRecruiter(1)}
                 >

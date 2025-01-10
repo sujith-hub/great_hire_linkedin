@@ -16,8 +16,8 @@ const UserUpdateProfile = ({ open, setOpen }) => {
 
   const [input, setInput] = useState({
     fullname: user?.fullname || "",
-    email: user?.email || "",
-    phoneNumber: user?.phoneNumber || "",
+    email: user?.emailId.email || "",
+    phoneNumber: user?.phoneNumber.number || "",
     bio: user?.profile?.bio || "",
     experience: user?.profile?.experience?.duration || "",
     skills: user?.profile?.skills?.join(", ") || "",

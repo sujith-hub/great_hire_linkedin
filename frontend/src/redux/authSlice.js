@@ -28,6 +28,14 @@ const authSlice = createSlice({
         state.user.isCompanyCreated = action.payload;
       }
     },
+
+    updateEmailVerification: (state, action) => {
+      state.user.emailId.isVerified = action.payload;
+    },
+    updateNumberVerification: (state, action) => {
+      state.user.phoneNumber.isVerified = action.payload;
+    },
+
     logOut: (state) => {
       state.user = null;
     },
@@ -38,6 +46,15 @@ const authSlice = createSlice({
   },
 });
 
-export const { setLoading, setUser, setRecruiterVerification, setRecruiterIsCompanyCreated, logOut, setSearchedQuery } = authSlice.actions;
+export const {
+  setLoading,
+  setUser,
+  setRecruiterVerification,
+  setRecruiterIsCompanyCreated,
+  logOut,
+  setSearchedQuery,
+  updateEmailVerification,
+  updateNumberVerification,
+} = authSlice.actions;
 
 export default authSlice.reducer;

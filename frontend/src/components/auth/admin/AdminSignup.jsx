@@ -1,20 +1,18 @@
 import React, { useState } from "react";
-import img1 from "../../../assets/img1.png";
-import { GoogleOAuthProvider } from "@react-oauth/google";
-import GoogleLogin from "@/components/GoogleLogin";
-import { google_client_id } from "../../../utils/GoogleOAuthCredentials.js";
-import axios from "axios";
-import { toast } from "react-hot-toast";
-import Navbar from "@/components/shared/Navbar";
-import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { setUser } from "@/redux/authSlice";
+import img from "../../../assets/img9.png";
+import { MdOutlineVerified } from "react-icons/md";
+import { toast } from "react-hot-toast";
+import axios from "axios";
 
-const Signup = () => {
-  const [loading, setLoading] = useState(false);
-  const dispatch = useDispatch();
+import { ADMIN_API_END_POINT } from "@/utils/ApiEndPoint";
+import { setUser } from "@/redux/authSlice";
+import { useDispatch } from "react-redux";
+
+const AdminSignup = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     fullname: "",
     email: "",
@@ -22,7 +20,6 @@ const Signup = () => {
     password: "",
   });
 
-  // Update state when input fields change
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -37,7 +34,7 @@ const Signup = () => {
     setLoading(true); // Set loading to true
     try {
       const response = await axios.post(
-        `${USER_API_END_POINT}/register`,
+        `${ADMIN_API_END_POINT}/register`,
         {
           ...formData,
         },
@@ -46,23 +43,27 @@ const Signup = () => {
         }
       );
 
-      if (response?.data?.success) {
+      if (response.data.success) {
+        // Show success message
+
+        // Reset form fields
         setFormData({
           fullname: "",
           email: "",
           phoneNumber: "",
           password: "",
         });
-        toast.success(response.data.message);
-        dispatch(setUser(response.data.user));
-        navigate("/");
-      } else {
-        toast.error(response.data.message);
+        dispatch(setUser(response.data.user)); // Set user in redux store
+        // Redirect to login page
+        navigate("/recruiter/dashboard/home");
       }
+      toast.success(response.data.message);
     } catch (err) {
+      console.log(err);
       // Show error message
-      console.log(`error in sign up ${err}`);
-      toast.error(err);
+      const errorMessage =
+        err.response?.data?.message || "Something went wrong";
+      toast.error(errorMessage);
     } finally {
       setLoading(false); // Set loading to false
     }
@@ -70,43 +71,28 @@ const Signup = () => {
 
   return (
     <>
-      <Navbar />
-      <div className="flex flex-col md:flex-row h-screen">
+      <div className="flex flex-col md:flex-row h-screen ">
         {/* Left Section - Background Image and Content */}
-        <div className="relative w-full md:w-2/3 h-1/2 md:h-full">
+        <div className="relative w-full md:w-2/3 md:h-full hidden md:block p-2">
+          {/* Background Image */}
           <img
-            src={img1}
+            src={img}
             alt="Image 1"
-            className="w-full h-full object-cover opacity-80"
+            className="w-full h-full object-contain opacity-85"
           />
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-center space-y-4">
-            <h1 className="font-bold text-3xl md:text-4xl">
-              Find the job made for you.
-            </h1>
-            <p className="font-medium text-gray-800 text-md md:text-lg w-4/5 md:w-3/5">
-              Browse over 150K jobs at top companies.
-            </p>
-          </div>
         </div>
 
         {/* Right Section - Form */}
-
-        <div className="w-full md:w-1/3 flex items-center justify-center bg-gradient-to-r from-white to-blue-100">
+        <div className="w-full md:w-1/3 flex items-center justify-center bg-gradient-to-r from-white to-blue-100 h-full ">
           <form className="w-4/5 space-y-4" onSubmit={handleSubmit}>
             <h1 className="text-3xl font-bold text-center">
               Great<span className="text-blue-700">Hire</span>
             </h1>
             <h1 className="text-4xl font-bold text-center">Create Account</h1>
             <h1 className="text-md font-semibold text-gray-500 text-center">
-              Find your next opportunity!
+              Empowering you to manage and grow your organization effortlessly
             </h1>
-            {/* Google Sign up Button */}
-            <GoogleOAuthProvider clientId={google_client_id}>
-              <GoogleLogin text="Sign up" role="student" route="user" />
-            </GoogleOAuthProvider>
-            <h1 className="text-sm font-semibold text-gray-400 text-center">
-              ---- or Sign up with email ----
-            </h1>
+
             <div className="flex flex-col space-y-2">
               <label className="font-bold">Full Name</label>
               <input
@@ -118,7 +104,7 @@ const Signup = () => {
                 className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                 required
               />
-              <label className="font-bold">Email</label>
+              <label className="font-bold">Work Email</label>
               <input
                 type="email"
                 name="email"
@@ -133,7 +119,7 @@ const Signup = () => {
                 type="text"
                 name="phoneNumber"
                 placeholder="Contact number"
-                value={formData.phoneNumber}
+                value={formData.mobileNumber}
                 onChange={handleChange}
                 className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                 required
@@ -143,6 +129,7 @@ const Signup = () => {
                 type="password"
                 name="password"
                 placeholder="min 8 characters"
+                value={formData.password}
                 onChange={handleChange}
                 className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                 required
@@ -159,7 +146,7 @@ const Signup = () => {
             </button>
             <p className="text-center text-sm text-gray-500">
               Already have an account?{" "}
-              <a href="/login" className="text-blue-500 hover:underline">
+              <a href="/admin/login" className="text-blue-500 hover:underline">
                 Log In
               </a>
             </p>
@@ -170,4 +157,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default AdminSignup;
