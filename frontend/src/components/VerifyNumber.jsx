@@ -2,10 +2,9 @@ import React, { useEffect, useState } from "react";
 import { VERIFICATION_API_END_POINT } from "@/utils/ApiEndPoint";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
-import { setUser } from "@/redux/authSlice";
+import { updateNumberVerification } from "@/redux/authSlice";
 
 const VerifyNumber = ({setOpenNumberOTPModal}) => {
   const { user } = useSelector((state) => state.auth);
@@ -13,7 +12,6 @@ const VerifyNumber = ({setOpenNumberOTPModal}) => {
   const [otp, setOTP] = useState("");
   const [loading, setLoading] = useState(false);
   const [timer, setTimer] = useState(0); // Timer starts at 30 seconds
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   // Timer Logic
@@ -100,7 +98,7 @@ const VerifyNumber = ({setOpenNumberOTPModal}) => {
             if (response?.data?.success) {
               toast.success(response.data.message);
               setToken(null);
-              dispatch(setUser(response.data.user));
+              dispatch(updateNumberVerification(true));
               setOpenNumberOTPModal(false);
             } else {
               toast.error(response.data.message);

@@ -92,7 +92,7 @@ export const sendVerificationStatus = async (req, res) => {
             recruiterData.fullname
           }</p>
           <p><strong style="color: #333;">Recruiter Email:</strong> ${
-            recruiterData.email
+            recruiterData?.emailId?.email
           }</p>
           <p><strong style="color: #333;">Status:</strong> ${
             status === 1 ? "Verified" : "Not Verified"
@@ -399,7 +399,6 @@ export const updateEmailVerification = async (req, res) => {
     return res.status(200).json({
       message: "Email Verified.",
       success: true,
-      user,
     });
   } catch (err) {
     console.error("Error updating email verification:", err);
@@ -436,7 +435,6 @@ export const updateNumberVerification = async (req, res) => {
     return res.status(200).json({
       message: "Number Verified.",
       success: true,
-      user,
     });
   } catch (err) {
     console.error("Error updating email verification:", err);

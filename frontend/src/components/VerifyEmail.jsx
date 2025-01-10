@@ -2,10 +2,9 @@ import React, { useEffect, useState } from "react";
 import { VERIFICATION_API_END_POINT } from "@/utils/ApiEndPoint";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
-import { setUser } from "@/redux/authSlice";
+import { updateEmailVerification } from "@/redux/authSlice";
 
 const VerifyEmail = ({setOpenEmailOTPModal}) => {
   const { user } = useSelector((state) => state.auth);
@@ -13,7 +12,6 @@ const VerifyEmail = ({setOpenEmailOTPModal}) => {
   const [otp, setOTP] = useState("");
   const [loading, setLoading] = useState(false);
   const [timer, setTimer] = useState(0); // Timer starts at 30 seconds
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   // Timer Logic
@@ -29,10 +27,10 @@ const VerifyEmail = ({setOpenEmailOTPModal}) => {
 
   // // Request OTP only once on component mount
   useEffect(() => {
-    if (user && !token && user?.emailId?.isVerified) {
+    if (user && !token) {
       requestOTP();
       setTimer(30);
-    } else navigate("/");
+    }
   }, [user]); // Dependency on user ensures this runs once when user data is available
 
   const requestOTP = async () => {
@@ -100,7 +98,7 @@ const VerifyEmail = ({setOpenEmailOTPModal}) => {
             if (response?.data?.success) {
               toast.success(response.data.message);
               setToken(null);
-              dispatch(setUser(response.data.user));
+              dispatch(updateEmailVerification(true));
               setOpenEmailOTPModal(false)
             } else {
               toast.error(response.data.message);
