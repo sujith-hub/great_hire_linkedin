@@ -4,13 +4,15 @@ import * as Yup from "yup";
 import Stepper from "react-stepper-horizontal";
 import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const PostJob = () => {
   const [step, setStep] = useState(0);
-
+  const {company} = useSelector((state)=> state.company);
+  
   const formik = useFormik({
     initialValues: {
-      companyName: "",
+      companyName: company?.companyName,
       urgentHiring: "",
       title: "",
       details: "",
@@ -112,10 +114,9 @@ const PostJob = () => {
                 name="companyName"
                 type="text"
                 placeholder="Enter company name"
-                className="w-full p-2 border border-gray-300 rounded"
-                onChange={formik.handleChange}
+                className="w-full p-2 border border-gray-300 rounded" 
                 value={formik.values.companyName}
-                required
+                readOnly
               />
               {formik.touched.companyName && formik.errors.companyName && (
                 <div className="text-red-500 text-sm">

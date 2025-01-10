@@ -31,6 +31,7 @@ const userSchema = new mongoose.Schema(
       default: "student",
     },
     profile: {
+      jobTagList: { type: [String] },
       bio: { type: String },
       experience: {
         companyName: {

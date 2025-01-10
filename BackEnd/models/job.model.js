@@ -19,9 +19,10 @@ const jobSchema = new mongoose.Schema(
         type: String,
         required: true,
       },
-      benefits: [
+      
+      skills: [
         {
-          type: String, // take by user speratated by new line use rich text area 
+          type: String,
         },
       ],
       qualifications: [
@@ -29,17 +30,24 @@ const jobSchema = new mongoose.Schema(
           type: String, // take by user speratated by new line use ich text area 
         },
       ],
+      benefits: [
+        {
+          type: String, // take by user speratated by new line use rich text area 
+        },
+      ],
+      
       responsibilities: [
         {
           type: String,// take by user speratated by new line use ich text area 
         },
       ],
-      salary: {
-        type: String, // Use String if the salary includes a range
-        required: true,
-      },
+
       experience: {
         type: String, // Assuming it's a number but stored as string
+        required: true,
+      },
+      salary: {
+        type: String, // Use String if the salary includes a range
         required: true,
       },
       jobType: {
@@ -50,10 +58,7 @@ const jobSchema = new mongoose.Schema(
         type: String,
         required: true,
       },
-      companyName: {
-        type: String,
-        required: true,
-      },
+
       numberOfOpening: {
         type: String, // Assuming this is a numberOfOpening
         required: true,
@@ -62,11 +67,7 @@ const jobSchema = new mongoose.Schema(
         type: String,
         required: true,
       },
-      skills: [
-        {
-          type: String,
-        },
-      ],
+      
       duration: {
         type: String, // If it's a text field (e.g., "Monday to Friday")
         required: true,
