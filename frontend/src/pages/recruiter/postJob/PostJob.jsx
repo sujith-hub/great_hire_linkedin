@@ -42,7 +42,7 @@ const PostJob = () => {
       numberOfOpening: Yup.string().required("Number of openings is required"),
       respondTime: Yup.string().required("Response time is required"),
       duration: Yup.string().required("Duration is required"),
-     skills: Yup.string().required("Skills are required"),
+      skills: Yup.string().required("Skills are required"),
       benefits: Yup.string().required("Benefits are required"),
       qualifications: Yup.string().required("Qualification is required"),
       responsibilities: Yup.string().required("Responsibility is required"),
@@ -82,7 +82,7 @@ const PostJob = () => {
       return; // Block navigation if there are errors or blank fields
     } 
     // Move to the next step if all fields are valid
-    setStep((prev) => Math.min(prev + 1, currentStepFields.length - 1));
+   setStep((prev) => Math.min(prev + 1, steps.length - 1));
   };
 
   const handlePrevious = () => setStep((prev) => Math.max(prev - 1, 0));
