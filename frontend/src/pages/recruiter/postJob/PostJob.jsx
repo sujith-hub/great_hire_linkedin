@@ -1,226 +1,321 @@
-import React, { useState, useRef } from "react";
-import { ProgressBar } from "react-step-progress-bar";
-import { BiArrowBack } from "react-icons/bi";
-import RecruiterReviewPage from "./RecruiterReviewPage";
-import { Link } from "react-router-dom";
-import JobTypeSelector from "./JobTypeSelector";
-import ExperienceLevelSelector from "./ExperienceLevelSelector";
-import ScheduleSelector from "./ScheduleSelector";
-import CompensationPackageBenefits from "./CompensationPackageBenefits";
-import "react-step-progress-bar/styles.css";
+import React, { useState } from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import Stepper from "react-stepper-horizontal";
 import { Label } from "@/components/ui/label";
+import { Link } from "react-router-dom";
 
 const PostJob = () => {
-  const [step1, setStep1] = useState(true);
-  const [step2, setStep2] = useState(false);
-  const [step3, setStep3] = useState(false);
-  const [review, setReview] = useState(false);
-  const inputRef = useRef();
+  const [step, setStep] = useState(0);
 
-  const [formData, setFormData] = useState({});
+  const formik = useFormik({
+    initialValues: {
+      companyName: "",
+      urgentHiring: "",
+      title: "",
+      details: "",
 
-  const [errors, setErrors] = useState({});
+      skills: [],
+      benefits: [],
+      qualifications: [],
+      responsibilities: [],
 
-  const handleContinue1 = (e) => {
-    e.preventDefault();
-    const newErrors = {};
+      experience: "",
+      salary: "",
+      jobType: "",
+      location: "",
 
-    // Validation checks
-    if (!formData.jobTitle) newErrors.jobTitle = "Job title is required.";
-    if (!formData.jobLocationType)
-      newErrors.jobLocationType = "Job location type is required.";
-    if (!formData.streetAddress)
-      newErrors.streetAddress = "Street address is required.";
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-    } else {
-      // Proceed to the next step
-      setStep1(false);
-      setStep2(true);
-    }
+      numberOfOpening: "",
+      respondTime: "",
+      duration: "",
+      jobValidityInDays: "",
+    },
+    validationSchema: Yup.object({
+      urgentHiring: Yup.string().required("This field is required"),
+      title: Yup.string().required("Job title is required"),
+      details: Yup.string().required("Job details are required"),
+      salary: Yup.string().required("Salary is required"),
+      experience: Yup.string().required("Experience is required"),
+      jobType: Yup.string().required("Job type is required"),
+      location: Yup.string().required("Location is required"),
+      companyName: Yup.string().required("Company name is required"),
+      numberOfOpening: Yup.string().required("Number of openings is required"),
+      respondTime: Yup.string().required("Response time is required"),
+      duration: Yup.string().required("Duration is required"),
+     skills: Yup.string().required("Skills are required"),
+      benefits: Yup.string().required("Benefits are required"),
+      qualifications: Yup.string().required("Qualification is required"),
+      responsibilities: Yup.string().required("Responsibility is required"),
+      jobValidityInDays: Yup.string().required("Job validity in days is required"),
+    }),
+
+    onSubmit: (values) => {
+      console.log("Form Submitted:", values);
+      // Send data to the backend via an API call
+    },
+  });
+
+  const handleNext = async () => {
+    const currentStepFields = [
+      ["companyName", "urgentHiring", "title", "details"], // Step 0
+      ["skills", "benefits", "qualifications", "responsibilities"], // Step 1
+      ["experience", "salary", "jobType", "location"], // Step 2
+      ["numberOfOpening", "respondTime", "duration", "jobValidityInDays"], // Step 3
+    ][step]; 
+    // Mark the current step fields as touched to trigger validation messages
+    const touchedFields = {};
+    currentStepFields.forEach((field) => {
+      touchedFields[field] = true;
+    });
+    formik.setTouched(touchedFields);  
+    // Trigger validation and ensure required fields show error messages
+    await formik.validateForm();  
+    // Check if there are any errors or blank fields in the current step's fields
+    const hasErrors = currentStepFields.some(
+      (field) => !!formik.errors[field] || !formik.values[field]
+    );
+  
+    if (hasErrors) {
+      console.log(
+        "Validation failed. Please fill all required fields before proceeding."
+      );
+      return; // Block navigation if there are errors or blank fields
+    } 
+    // Move to the next step if all fields are valid
+    setStep((prev) => Math.min(prev + 1, currentStepFields.length - 1));
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+  const handlePrevious = () => setStep((prev) => Math.max(prev - 1, 0));
 
-  const handleContinue2 = (e) => {
-    e.preventDefault();
-    const newErrors = {};
-
-    // Validation checks
-    if (!formData.salary) newErrors.salary = "Salary is required.";
-    if (!formData.skills) newErrors.skills = "Skills is required.";
-    if (!formData.education) newErrors.education = "Education is required.";
-    if (!formData.hiringPeople || formData.hiringPeople === "Select an option")
-      newErrors.hiringPeople = "Number of people to hire is required.";
-    if (
-      !formData.hiringTimeline ||
-      formData.hiringTimeline === "Select an option"
-    )
-      newErrors.hiringTimeline = "Hiring timeline is required.";
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-    } else {
-      // Proceed to the next step
-      setStep2(false);
-      setStep3(true);
-    }
-  };
-
-  const handleReview = () => {
-    setStep3(false);
-    setReview(true);
-    setRight(false);
-  };
-
-  const handleReview1 = () => {
-    setReview(false);
-    setStep3(true);
-  };
-
-  const handleChoose = () => {
-    if (inputRef.current) {
-      inputRef.current.click();
-    }
-  };
+  const steps = [
+    { title: "Basic Info" },
+    { title: "Job Details" },
+    { title: "Requirements" },
+    { title: "Additional Info" },
+    { title: "Review & Submit" },
+  ];
 
   return (
-    <div>
-      {step1 && (
-        <div className="w-full max-w-3xl mx-auto p-6 bg-white shadow-md rounded-md">
-          <ProgressBar percent={25} filledBackground="linear-gradient(to right, #4972e3, #0944e6)" />
-          <h6 className="text-sm text-gray-500 mt-2">
-            Application step 1 of 4
-          </h6>
-          <div className="mb-6">
-            <h4 className="text-xl font-semibold my-4 text-center">
-              Add job basics
-            </h4>
-          </div>
-          <form>
-            {/* Company Description Section */}
-            <div className="mb-6">
-              <Label htmlFor="companyDescription" className="font-semibold">
-                Company description
-              </Label>
-              <h6 className="text-sm">
-                Introduce your company to people in a few lines.
-              </h6>
-              <textarea
-                name="companyDescription"
-                onChange={handleChange}
-                rows="3"
-                className={`mt-2 w-full p-2 border ${
-                  errors.companyDescription
-                    ? "border-red-500"
-                    : "border-gray-300"
-                } rounded-md`}
-                placeholder="Present your company by communicating, your business, your market position, your company culture, etc."
-              ></textarea>
-            </div>
+    <div className="w-full max-w-3xl mx-auto p-6 bg-white shadow-md rounded-md">
+      <div className="mb-10">
+        <Stepper steps={steps} activeStep={step} />
+      </div>
 
-            {/* Job Title Section */}
+      <form onSubmit={formik.handleSubmit}>
+        {step === 0 && (
+          <div>
             <div className="mb-6">
-              <Label
-                htmlFor="jobTitle"
-                className="font-semibold flex items-center"
-              >
-                Job title <span className="text-red-500 ml-1">*</span>
+              <Label className="block text-gray-700 mb-1">
+                Company Name<span className="text-red-500 ml-1">*</span>
               </Label>
               <input
+                name="companyName"
                 type="text"
-                name="jobTitle"
-                onChange={handleChange}
-                className={`mt-2 w-full p-2 border ${
-                  errors.jobTitle ? "border-red-500" : "border-gray-300"
-                } rounded-md`}
+                placeholder="Enter company name"
+                className="w-full p-2 border border-gray-300 rounded"
+                onChange={formik.handleChange}
+                value={formik.values.companyName}
                 required
               />
-              {errors.jobTitle && (
-                <p className="text-red-500 text-sm mt-1">{errors.jobTitle}</p>
+              {formik.touched.companyName && formik.errors.companyName && (
+                <div className="text-red-500 text-sm">
+                  {formik.errors.companyName}
+                </div>
               )}
             </div>
 
-            {/* Job Location Type Section */}
             <div className="mb-6">
-              <Label
-                htmlFor="jobLocationType"
-                className="font-semibold flex items-center"
-              >
-                Job Location Type <span className="text-red-500 ml-1">*</span>
+              <Label className="block text-gray-700 mb-1">
+                Urgent Hiring<span className="text-red-500 ml-1">*</span>
               </Label>
               <select
-                name="jobLocationType"
-                onChange={handleChange}
-                className={`mt-2 w-full p-2 border ${
-                  errors.jobLocationType ? "border-red-500" : "border-gray-300"
-                } rounded-md`}
-                required
+                name="urgentHiring"
+                className="w-full p-2 border border-gray-300 rounded"
+                onChange={formik.handleChange}
+                value={formik.values.urgentHiring}
               >
                 <option value="">Select</option>
-                <option value="In-person">In-person</option>
-                <option value="Fully Remote">Fully Remote</option>
-                <option value="On-site work required">
-                  On-site work required
-                </option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
               </select>
-              {errors.jobLocationType && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.jobLocationType}
-                </p>
+              {formik.touched.urgentHiring && formik.errors.urgentHiring && (
+                <div className="text-red-500 text-sm">
+                  {formik.errors.urgentHiring}
+                </div>
               )}
             </div>
 
-            {/* Street Address Section */}
             <div className="mb-6">
-              <Label
-                htmlFor="streetAddress"
-                className="font-semibold flex items-center"
-              >
-                Street Address <span className="text-red-500 ml-1">*</span>
+              <Label className="block text-gray-700  mb-1">
+                Job Title<span className="text-red-500 ml-1">*</span>
               </Label>
               <input
+                name="title"
                 type="text"
-                name="streetAddress"
-                onChange={handleChange}
-                className={`mt-2 w-full p-2 border ${
-                  errors.streetAddress ? "border-red-500" : "border-gray-300"
-                } rounded-md`}
-                required
+                placeholder="Enter job title"
+                className="w-full p-2 border border-gray-300 rounded"
+                onChange={formik.handleChange}
+                value={formik.values.title}
               />
-              {errors.streetAddress && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.streetAddress}
-                </p>
+              {formik.touched.title && formik.errors.title && (
+                <div className="text-red-500 text-sm">
+                  {formik.errors.title}
+                </div>
               )}
             </div>
 
-              {/* Language Section */}
             <div className="mb-6">
-              <Label
-                htmlFor="language"
-                className="font-semibold flex items-center"
-              >
-                Languages 
+              <Label className="block text-gray-700 mb-1">
+                Job Details<span className="text-red-500 ml-1">*</span>
               </Label>
-              <input
-                type="text"
-                name="language"
-                onChange={handleChange}
-                className="mt-2 w-full p-2 border rounded-md" 
+              <textarea
+                name="details"
+                placeholder="Enter job details"
+                className="w-full p-2 border border-gray-300 rounded"
+                onChange={formik.handleChange}
+                value={formik.values.details}
               />
+              {formik.touched.details && formik.errors.details && (
+                <div className="text-red-500 text-sm">
+                  {formik.errors.details}
+                </div>
+              )}
             </div>
-
-            {/* Submit Button */}
-            <div className="flex justify-end items-center mt-6">
+            {/* Buttons */}
+            <div className="flex justify-between">
               <button
-                onClick={handleContinue1}
-                className="bg-blue-700 text-white px-4 py-2 rounded-md"
+                type="button"
+                onClick={handlePrevious}
+                disabled={step === 0} // Disable button if step is 0
+                className={`p-2 rounded ${
+                  step === 0
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-gray-500 text-white"
+                }`}
               >
-                Continue
+                Previous
+              </button>
+              <button
+                type="button"
+                onClick={handleNext}
+                className="bg-blue-500 text-white p-2 rounded"
+              >
+                Next
+              </button>
+            </div>
+
+            <p className="text-sm text-gray-600 text-center mt-4">
+              Have feedback?{" "}
+              <Link to="/contact" className="text-blue-700 cursor-pointer">
+                Tell us more
+              </Link>
+            </p>
+          </div>
+        )}
+
+        {step === 1 && (
+          <div>
+            {/* Skills */}
+            <div className="mb-6">
+              <Label htmlFor="skills" className="block text-gray-700 mb-1">
+                Skills<span className="text-red-500 ml-1">*</span>
+              </Label>
+              <input
+                id="skills"
+                name="skills"
+                placeholder="Enter skills separated by commas (e.g., HTML, CSS, JavaScript)"
+                className="w-full p-2 border border-gray-300 rounded"
+                onChange={formik.handleChange}
+                value={formik.values.skills}
+              />
+              {formik.touched.skills && formik.errors.skills && (
+                <div className="text-red-500 text-sm">
+                  {formik.errors.skills}
+                </div>
+              )}
+            </div>
+
+            {/* Benefits */}
+            <div className="mb-6">
+              <Label htmlFor="benefits" className="block text-gray-700 mb-1">
+                Benefits<span className="text-red-500 ml-1">*</span>
+              </Label>
+              <textarea
+                id="benefits"
+                name="benefits"
+                placeholder="Enter benefits separated by new lines"
+                className="w-full p-2 border border-gray-300 rounded"
+                onChange={formik.handleChange}
+                value={formik.values.benefits}
+              />
+              {formik.touched.benefits && formik.errors.benefits && (
+                <div className="text-red-500 text-sm">
+                  {formik.errors.benefits}
+                </div>
+              )}
+            </div>
+
+            {/* Qualifications */}
+            <div className="mb-6">
+              <Label
+                htmlFor="qualifications"
+                className="block text-gray-700 mb-1"
+              >
+                Qualifications<span className="text-red-500 ml-1">*</span>
+              </Label>
+              <textarea
+                id="qualifications"
+                name="qualifications"
+                placeholder="Enter qualifications separated by new lines"
+                className="w-full p-2 border border-gray-300 rounded"
+                onChange={formik.handleChange}
+                value={formik.values.qualifications}
+              />
+              {formik.touched.qualifications && formik.errors.qualifications && (
+                <div className="text-red-500 text-sm">
+                  {formik.errors.qualifications}
+                </div>
+              )}
+            </div>
+
+            {/* Responsibilities */}
+            <div className="mb-6">
+              <Label
+                htmlFor="responsibilities"
+                className="block text-gray-700 mb-1"
+              >
+                Responsibilities<span className="text-red-500 ml-1">*</span>
+              </Label>
+              <textarea
+                id="responsibilities"
+                name="responsibilities"
+                placeholder="Enter responsibilities separated by new lines"
+                className="w-full p-2 border border-gray-300 rounded"
+                onChange={formik.handleChange}
+                value={formik.values.responsibilities}
+              />
+              {formik.touched.responsibilities && formik.errors.responsibilities && (
+                <div className="text-red-500 text-sm">
+                  {formik.errors.responsibilities}
+                </div>
+              )}
+            </div>
+
+            {/* Navigation Buttons */}
+            <div className="flex justify-between">
+              <button
+                type="button"
+                onClick={handlePrevious}
+                className="bg-gray-500 text-white p-2 rounded"
+              >
+                Previous
+              </button>
+              <button
+                type="button"
+                onClick={handleNext}
+                className="bg-blue-500 text-white p-2 rounded"
+              >
+                Next
               </button>
             </div>
             <p className="text-sm text-gray-600 text-center mt-4">
@@ -229,253 +324,343 @@ const PostJob = () => {
                 Tell us more
               </Link>
             </p>
-          </form>
-        </div>
-      )}
-
-      {step2 && (
-        <div className="w-full max-w-3xl mx-auto p-6 bg-white shadow-md rounded-md">
-          <ProgressBar percent={50} filledBackground="linear-gradient(to right, #4972e3, #0944e6)" />
-
-          <div className="flex items-center mt-4">
-            <BiArrowBack
-              className="text-gray-600 cursor-pointer"
-              onClick={() => {
-                setStep2(false);
-                setStep1(true);
-              }}
-            />
-            <h6 className="ml-2 text-sm text-gray-500">
-              Application step 2 of 4
-            </h6>
           </div>
+        )}
 
-          <div className="mb-6">
-            <h4 className="text-lg font-bold mt-6 text-center">
-              Add job details
-            </h4>
-          </div>
-
-          <div className="mb-6">
-            <Label
-              htmlFor="jobType"
-              className="font-semibold flex items-center"
-            >
-              Job type
-            </Label>
-            <JobTypeSelector
-              name="jobType"
-              value={formData.jobType}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="mb-6">
-            <Label
-              htmlFor="experienceLevel"
-              className="font-semibold flex items-center"
-            >
-              Experience Level
-            </Label>
-            <ExperienceLevelSelector />
-          </div>
-
-          <div className="mb-6">
-            <Label
-              htmlFor="schedule"
-              className="font-semibold flex items-center"
-            >
-              Schedule
-            </Label>
-            <ScheduleSelector />
-          </div>
-
-          <div className="mb-6">
-            <Label
-              htmlFor="hiringPeople"
-              className="font-semibold flex items-center"
-            >
-              No of people to hire for this job
-              <span className="text-red-500 ml-1">*</span>
-            </Label>
-            <select
-              name="hiringPeople"
-              value={formData.hiringPeople}
-              onChange={handleChange}
-              className="mt-2 w-full p-2 border border-gray-300 rounded-md"
-            >
-              <option value="">Select an option</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-              <option value="10+">10+</option>
-            </select>
-            {errors.hiringPeople && (
-              <p className="text-red-500 text-sm">{errors.hiringPeople}</p>
-            )}
-          </div>
-
-          <div className="mb-6">
-            <Label
-              htmlFor="hiringTimeline"
-              className="font-semibold flex items-center"
-            >
-              Hiring timeline for this job{" "}
-              <span className="text-red-500 ml-1">*</span>
-            </Label>
-            <select
-              name="hiringTimeline"
-              value={formData.hiringTimeline}
-              onChange={handleChange}
-              className="mt-2 w-full p-2 border border-gray-300 rounded-md"
-            >
-              <option value="">Select an option</option>
-              <option value="2 days">2 days</option>
-              <option value="7 days">7 days</option>
-              <option value="15 days">15 days</option>
-              <option value="30 days">30 days</option>
-            </select>
-            {errors.hiringTimeline && (
-              <p className="text-red-500 text-sm">{errors.hiringTimeline}</p>
-            )}
-          </div>
-
-          <div className="mb-6">
-              <Label
-                htmlFor="salary"
-                className="font-semibold flex items-center"
-              >
-                Salary <span className="text-red-500 ml-1">*</span>
+        {step === 2 && (
+          <div>
+            {/* Experience */}
+            <div className="mb-6">
+              <Label htmlFor="experience" className="block text-gray-700 mb-1">
+                Experience<span className="text-red-500 ml-1">*</span>
               </Label>
               <input
+                id="experience"
+                name="experience"
                 type="text"
+                placeholder="Enter experience in years (e.g., 1, 2)"
+                className="w-full p-2 border border-gray-300 rounded"
+                onChange={formik.handleChange}
+                value={formik.values.experience}
+              />
+              {formik.touched.experience && formik.errors.experience && (
+                <div className="text-red-500 text-sm">
+                  {formik.errors.experience}
+                </div>
+              )}
+            </div>
+
+            {/* Salary */}
+            <div className="mb-6">
+              <Label htmlFor="salary" className="block text-gray-700 mb-1">
+                Salary<span className="text-red-500 ml-1">*</span>
+              </Label>
+              <input
+                id="salary"
                 name="salary"
-                onChange={handleChange}
-                className={`mt-2 w-full p-2 border ${
-                  errors.salary ? "border-red-500" : "border-gray-300"
-                } rounded-md`}
-                required
+                type="text"
+                placeholder="Enter salary (e.g., 45000-50000)"
+                className="w-full p-2 border border-gray-300 rounded"
+                onChange={formik.handleChange}
+                value={formik.values.salary}
               />
-              {errors.salary && (
-                <p className="text-red-500 text-sm mt-1">{errors.salary}</p>
+              {formik.touched.salary && formik.errors.salary && (
+                <div className="text-red-500 text-sm">
+                  {formik.errors.salary}
+                </div>
               )}
             </div>
 
+            {/* Job Type */}
             <div className="mb-6">
-              <Label
-                htmlFor="education"
-                className="font-semibold flex items-center"
-              >
-                Education <span className="text-red-500 ml-1">*</span>
+              <Label htmlFor="jobType" className="block text-gray-700 mb-1">
+                Job Type<span className="text-red-500 ml-1">*</span>
+              </Label>      
+              <input
+                id="jobType"
+                name="jobType"
+                type="text"
+                placeholder="Enter job type (e.g., Full-time, Part-time)"
+                className="w-full p-2 border border-gray-300 rounded"
+                onChange={formik.handleChange}
+                value={formik.values.jobType}
+              />
+              {formik.touched.jobType && formik.errors.jobType && (
+                <div className="text-red-500 text-sm">
+                  {formik.errors.jobType}
+                </div>
+              )}
+            </div>
+
+            {/* Location */}
+            <div className="mb-6">
+              <Label htmlFor="location" className="block text-gray-700 mb-1">
+                Location<span className="text-red-500 ml-1">*</span>
               </Label>
               <input
+                id="location"
+                name="location"
                 type="text"
-                name="education"
-                onChange={handleChange}
-                className={`mt-2 w-full p-2 border ${
-                  errors.education ? "border-red-500" : "border-gray-300"
-                } rounded-md`}
-                required
+                placeholder="Enter location (e.g., New Delhi, USA)"
+                className="w-full p-2 border border-gray-300 rounded"
+                onChange={formik.handleChange}
+                value={formik.values.location}
               />
-              {errors.education && (
-                <p className="text-red-500 text-sm mt-1">{errors.education}</p>
+              {formik.touched.location && formik.errors.location && (
+                <div className="text-red-500 text-sm">
+                  {formik.errors.location}
+                </div>
               )}
             </div>
 
-            <div className="mb-6">
-              <Label
-                htmlFor="skills"
-                className="font-semibold flex items-center"
+            {/* Navigation Buttons */}
+            <div className="flex justify-between">
+              <button
+                type="button"
+                onClick={handlePrevious}
+                className="bg-gray-500 text-white p-2 rounded"
               >
-                Skills <span className="text-red-500 ml-1">*</span>
+                Previous
+              </button>
+              <button
+                type="button"
+                onClick={handleNext}
+                className="bg-blue-500 text-white p-2 rounded"
+              >
+                Next
+              </button>
+            </div>
+            <p className="text-sm text-gray-600 text-center mt-4">
+              Have feedback?{" "}
+              <Link to="/contact" className="text-blue-700 cursor-pointer">
+                Tell us more
+              </Link>
+            </p>
+          </div>
+        )}
+
+        {step === 3 && (
+          <div>
+            {/* Number of Openings */}
+            <div className="mb-6">
+              <Label className="block text-gray-700 mb-1">
+                Number of Openings<span className="text-red-500 ml-1">*</span>
               </Label>
               <input
-                type="text"
-                name="skills"
-                onChange={handleChange}
-                className={`mt-2 w-full p-2 border ${
-                  errors.skills ? "border-red-500" : "border-gray-300"
-                } rounded-md`}
-                required
+                name="numberOfOpening"
+                type="number"
+                placeholder="Enter number of openings (e.g. 1, 2)"
+                className="w-full p-2 border border-gray-300 rounded"
+                onChange={formik.handleChange}
+                value={formik.values.numberOfOpening}
               />
-              {errors.skills && (
-                <p className="text-red-500 text-sm mt-1">{errors.skills}</p>
+              {formik.touched.numberOfOpening && formik.errors.numberOfOpening && (
+                <div className="text-red-500 text-sm">
+                  {formik.errors.numberOfOpening}
+                </div>
               )}
             </div>
 
-          <div className="flex justify-end items-center mt-6">
-            <button
-              onClick={handleContinue2}
-              className="bg-blue-700 text-white px-4 py-2 rounded-md"
-            >
-              Continue
-            </button>
+            {/* Response Time */}
+            <div className="mb-6">
+              <Label className="block text-gray-700  mb-1">
+                Response Time<span className="text-red-500 ml-1">*</span>
+              </Label>
+              <input
+                name="respondTime"
+                type="number"
+                placeholder="Enter response time (e.g. 1 day, 2 days)"
+                className="w-full p-2 border border-gray-300 rounded"
+                onChange={formik.handleChange}
+                value={formik.values.respondTime}
+              />
+              {formik.touched.respondTime && formik.errors.respondTime && (
+                <div className="text-red-500 text-sm">
+                  {formik.errors.respondTime}
+                </div>
+              )}
+            </div>
+
+            {/* Duration */}
+            <div className="mb-6">
+              <Label className="block text-gray-700 mb-1">
+                Duration<span className="text-red-500 ml-1">*</span>
+              </Label>
+              <input
+                name="duration"
+                type="text"
+                placeholder="Enter duration (e.g. Monday to Friday)"
+                className="w-full p-2 border border-gray-300 rounded"
+                onChange={formik.handleChange}
+                value={formik.values.duration}
+              />
+              {formik.touched.duration && formik.errors.duration && (
+                <div className="text-red-500 text-sm">
+                  {formik.errors.duration}
+                </div>
+              )}
+            </div>
+
+            {/* Job Validity (in Days) */}
+            <div className="mb-6">
+              <Label className="block text-gray-700 mb-1">
+                Job Validity (in Days)
+                <span className="text-red-500 ml-1">*</span>
+              </Label>
+              <input
+                name="jobValidityInDays"
+                type="number"
+                placeholder="Enter job validity in days (e.g. 15, 30)"
+                className="w-full p-2 border border-gray-300 rounded"
+                onChange={formik.handleChange}
+                value={formik.values.jobValidityInDays}
+              />
+              {formik.touched.jobValidityInDays && formik.errors.jobValidityInDays && (
+                <div className="text-red-500 text-sm">
+                  {formik.errors.jobValidityInDays}
+                </div>
+              )}
+            </div>
+
+            <div className="flex justify-between">
+              <button
+                type="button"
+                onClick={handlePrevious}
+                className="bg-gray-500 text-white p-2 rounded"
+              >
+                Previous
+              </button>
+              <button
+                type="button"
+                onClick={handleNext}
+                className="bg-blue-500 text-white p-2 rounded"
+              >
+                Next
+              </button>
+            </div>
+            <p className="text-sm text-gray-600 text-center mt-4">
+              Have feedback?{" "}
+              <Link to="/contact" className="text-blue-700 cursor-pointer">
+                Tell us more
+              </Link>
+            </p>
           </div>
+        )}
 
-          <p className="text-sm text-gray-600 text-center mt-4">
-            Have feedback?{" "}
-            <Link to="/contact" className="text-blue-500 cursor-pointer">
-              Tell us more
-            </Link>
-          </p>
-        </div>
-      )}
+        {step === 4 && (
+          <>
+            {/* <h2 className="text-xl font-bold mb-4">Review & Submit</h2> */}
+            <div className="p-4 bg-gray-100 rounded">
+              <div className="mb-2">
+                <strong>Company Name:</strong>{" "}
+                {formik.values.companyName || "N/A"}
+              </div>
+              <div className="mb-2">
+                <strong>Urgent Hiring:</strong>{" "}
+                {formik.values.urgentHiring || "N/A"}
+              </div>
+              <div className="mb-2">
+                <strong>Job Title:</strong> {formik.values.title || "N/A"}
+              </div>
+              <div className="mb-2">
+                <strong>Job Details:</strong> {formik.values.details || "N/A"}
+              </div>
+              <div className="mb-2">
+                <strong>Skills:</strong>{" "}
+                {formik.values.skills.length > 0
+                  ? formik.values.skills.split(",").map((skill, index) => (
+                      <span
+                        key={index}
+                        className="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded mr-2 mb-2"
+                      >
+                        {skill.trim()}
+                      </span>
+                    ))
+                  : "N/A"}
+              </div>
+              <div className="mb-2">
+                <strong>Experience:</strong> {formik.values.experience || "N/A"}
+              </div>
+              <div className="mb-2">
+                <strong>Salary:</strong> {formik.values.salary || "N/A"}
+              </div>
+              <div className="mb-2">
+                <strong>Job Type:</strong> {formik.values.jobType || "N/A"}
+              </div>
+              <div className="mb-2">
+                <strong>Location:</strong> {formik.values.location || "N/A"}
+              </div>
+              <div className="mb-2">
+                <strong>Number of Openings:</strong>{" "}
+                {formik.values.numberOfOpening || "N/A"}
+              </div>
+              <div className="mb-2">
+                <strong>Response Time:</strong>{" "}
+                {formik.values.respondTime || "N/A"}
+              </div>
+              <div className="mb-2">
+                <strong>Duration:</strong> {formik.values.duration || "N/A"}
+              </div>
+              <div className="mb-2">
+                <strong>Job Validity (in days):</strong>{" "}
+                {formik.values.jobValidityInDays || "N/A"}
+              </div>
+              <p className="text-sm text-gray-500 mb-6">
+                If you notice an error in your job post, please <br />
+                <Link to="/contact" className="underline cursor-pointer">
+                  contact Great Hire
+                </Link>
+              </p>
 
-      {step3 && (
-        <div className="w-full max-w-3xl mx-auto p-6 bg-white shadow-md rounded-md">
-          <ProgressBar percent={75} filledBackground="linear-gradient(to right, #4972e3, #0944e6)" />
+              <small className="text-xs text-gray-500 block mb-6">
+                By pressing apply: 1) you agree to our{" "}
+                <Link
+                  to="/policy/privacy-policy"
+                  className="underline cursor-pointer"
+                >
+                  Terms, Cookie & Privacy Policies
+                </Link>
+                ; 2) you consent to your jobs being transmitted to the Students
+                (Great Hire does not guarantee receipt), & processed & analyzed
+                in accordance with its & Great Hire's terms & privacy policies;
+                & 3) you acknowledge that when you post to jobs outside your
+                country it may involve you sending your personal data to
+                countries with lower levels of data protection.
+              </small>
 
-          <div className="flex items-center mt-4">
-            <BiArrowBack
-              className="text-gray-600 cursor-pointer"
-              onClick={() => {
-                setStep3(false);
-                setStep2(true);
-              }}
-            />
-
-            <h6 className="ml-2 text-sm text-gray-500 my-4">
-              Application step 3 of 4
-            </h6>
-          </div>
-
-          <div className="mb-6">
-            <h4 className="text-xl font-semibold my-4 text-center">
-              Add benefits
-            </h4>
-          </div>
-          <CompensationPackageBenefits />
-          <div className="flex justify-between items-center mt-6">
-            <Link
-              to="/recruiter/dashboard/home"
-              className="text-blue-600 hover:underline text-sm font-medium"
-            >
-              Exit
-            </Link>
-            <button
-              onClick={handleReview}
-              className="bg-blue-700 text-white px-4 py-2 rounded-md"
-            >
-              Review your job
-            </button>
-          </div>
-
-          <p className="text-sm text-center text-gray-600 mt-4">
-            Have feedback?{" "}
-            <Link to="/contact" className="text-blue-500 cursor-pointer">
-              Tell us more
-            </Link>
-          </p>
-        </div>
-      )}
-      {review && (
-        <RecruiterReviewPage
-          formData={formData}
-          handleReview1={handleReview1}
-        />
-      )}
+              <p className="text-center text-sm text-gray-500">
+                Having an issue with this job?{" "}
+                <Link
+                  to="/contact"
+                  className="underline text-blue-700 cursor-pointer"
+                >
+                  Tell us more
+                </Link>
+              </p>
+            </div>
+            <div className="mt-2 flex justify-between">
+              <button
+                type="button"
+                onClick={handlePrevious}
+                className="bg-gray-500 text-white p-2 rounded"
+              >
+                Previous
+              </button>
+              <button
+                type="submit"
+                className="bg-green-500 text-white p-2 rounded"
+              >
+                <Link
+                  to="/recruiter/success"
+                  className="text-white no-underline"
+                >
+                  Submit
+                </Link>
+              </button>
+            </div>
+          </>
+        )}
+      </form>
     </div>
   );
 };
