@@ -1,52 +1,102 @@
 import { Job } from "../models/job.model.js";
-import * as qna from '@tensorflow-models/qna';
+import { Application } from "../models/application.model.js";
+import * as qna from "@tensorflow-models/qna";
 
+// Function to extract keywords from the job title
 async function extractKeywords(jobTitle) {
   const model = await qna.load();
-  const answers = await model.findAnswers('What are the main keywords for job title?', jobTitle);
-  console.log(answers);
+  const answers = await model.findAnswers(
+    "What are the main keywords for job title?",
+    jobTitle
+  );
+  return answers.map((answer) => answer.text);
 }
-
-
-
-
 
 export const postJob = async (req, res) => {
   try {
     // Extract job details from the request body
     const {
-      companyName, urgentHiring, title, details, skills, qualifications, benefits, responsibilities, experience, salary, jobType, location, numberOfOpening, respondTime, duration, jobValidityInDays, companyId
+      companyName,
+      urgentHiring = "No",
+      title,
+      details,
+      skills = "",
+      qualifications = "",
+      benefits = "",
+      responsibilities = "",
+      experience,
+      salary,
+      jobType,
+      location,
+      numberOfOpening,
+      respondTime,
+      duration,
+      jobValidityInDays,
+      companyId,
     } = req.body;
 
-    
-    // split skills by commas
-
-    // split qualification by new line
-
-    // split benefits by new line
-
-    // split responsibilities by new line
-
-
-
+    // Extract recruiter ID from the request (assuming it's added to the request during authentication)
     const recruiterId = req.id;
 
     // Validate required fields
-    if (!jobDetails || !created_by || !company) {
+    if (
+      !title ||
+      !details ||
+      !experience ||
+      !salary ||
+      !jobType ||
+      !location ||
+      !numberOfOpening ||
+      !respondTime ||
+      !duration ||
+      !jobValidityInDays ||
+      !companyId
+    ) {
       return res.status(400).json({
         success: false,
         message: "All required fields must be provided.",
       });
     }
 
+    // Extract tags from the job title
+    const tags = await extractKeywords(title);
+
+    // Split skills, qualifications, benefits, responsibilities by new line or comma
+    const splitSkills = skills.split(",").map((skill) => skill.trim());
+    const splitQualifications = qualifications
+      .split("\n")
+      .map((qualification) => qualification.trim());
+    const splitBenefits = benefits.split("\n").map((benefit) => benefit.trim());
+    const splitResponsibilities = responsibilities
+      .split("\n")
+      .map((responsibility) => responsibility.trim());
+
     // Create new job instance
     const newJob = new Job({
       jobDetails: {
-        ...jobDetails,
-        urgentHiring: jobDetails.urgentHiring || "No", // Default value if not provided
+        companyName,
+        tags,
+        urgentHiring,
+        title,
+        details,
+
+        skills: splitSkills,
+        benefits: splitBenefits,
+        qualifications: splitQualifications,
+        responsibilities: splitResponsibilities,
+
+        salary,
+        experience,
+        jobType,
+        location,
+
+        numberOfOpening,
+        respondTime,
+        duration,
+        jobValidityInDays,
       },
-      created_by,
-      company,
+      created_by: recruiterId,
+      company: companyId,
     });
 
     // Save the job to the database
@@ -67,37 +117,34 @@ export const postJob = async (req, res) => {
   }
 };
 
-//employer
 //get all jobs.....
 export const getAllJobs = async (req, res) => {
   try {
-    const keyword = req.query.keyword || "";
-    const query = {
-      $or: [
-        { title: { $regex: keyword, $options: "i" } },
-        { description: { $regex: keyword, $options: "i" } },
-      ],
-    };
-    const jobs = await Job.find(query)
+    // Retrieve all jobs from the database
+    const jobs = await Job.find({})
       .populate({
         path: "company",
+        select: "name address",
       })
-      .sort({ createdAt: -1 });
-    if (!jobs) {
-      return res.status(404).json({
-        message: "Jobs not found.",
-        success: false,
+      .populate({
+        path: "created_by",
+        select: "fullname emailId.email",
       });
-    }
+
+    // Respond with the list of all jobs
     return res.status(200).json({
       jobs,
       success: true,
     });
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching all jobs:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error.",
+    });
   }
 };
-//employer
+
 //get job by id...
 export const getJobById = async (req, res) => {
   try {
@@ -118,23 +165,68 @@ export const getJobById = async (req, res) => {
   }
 };
 
-//admin created job count...
-
-export const getAdminJob = async (req, res) => {
+export const getJobForRecruiter = async (req, res) => {
   try {
-    const adminId = req.id;
-    const jobs = await Job.find({ created_by: adminId });
-    if (!jobs) {
-      return res.status(404).json({
-        message: "Jobs not found.",
-        success: false,
+    const recruiterId = req.id; // Assuming recruiter ID is coming from the request object (e.g., via middleware)
+
+    // Find jobs created by the recruiter and populate company with name and address
+    const jobs = await Job.find({ created_by: recruiterId })
+      .populate({
+        path: "company",
+        select: "name address",
+      })
+      .populate({
+        path: "created_by",
+        select: "fullname emailId.email",
       });
-    }
+
+    // Respond with the list of jobs
     return res.status(200).json({
-      jobs,
       success: true,
+      jobs,
     });
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching jobs for recruiter:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error.",
+    });
   }
 };
+
+export const deleteJobById = async (req, res) => {
+  try {
+    const { jobId } = req.params;
+
+    // Check if the job exists
+    const job = await Job.findById(jobId);
+    if (!job) {
+      return res.status(404).json({
+        success: false,
+        message: "Job not found.",
+      });
+    }
+
+    // Delete the job
+    await Job.findByIdAndDelete(jobId);
+
+    // Delete all applications related to this job
+    await Application.deleteMany({ job: jobId });
+
+    // Respond with success message
+    return res.status(200).json({
+      success: true,
+      message: "Job and related applications deleted successfully.",
+    });
+  } catch (error) {
+    console.error("Error deleting job:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error.",
+    });
+  }
+};
+
+export const updateJob = async (req, res) => {
+
+}
