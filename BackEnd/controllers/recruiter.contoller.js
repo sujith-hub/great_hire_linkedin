@@ -245,7 +245,8 @@ export const addRecruiterToCompany = async (req, res) => {
 
     // Check if recruiter email already exists
     const existingRecruiter =
-      (await Recruiter.findOne({ email })) || (await User.findOne({ email }));
+      (await Recruiter.findOne({ "emailId.email": email })) ||
+      (await User.findOne({ "emailId.email": email }));
     if (existingRecruiter) {
       return res.status(400).json({
         success: false,
@@ -259,8 +260,14 @@ export const addRecruiterToCompany = async (req, res) => {
     // Create new recruiter
     const recruiter = await Recruiter.create({
       fullname: fullName,
-      email,
-      phoneNumber,
+      emailId: {
+        email,
+        isVerified: true,
+      },
+      phoneNumber: {
+        number: phoneNumber,
+        isVerified: false,
+      },
       password: hashedPassword,
       position,
       isVerify: 1,
