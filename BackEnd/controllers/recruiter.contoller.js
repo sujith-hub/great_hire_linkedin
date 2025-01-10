@@ -38,7 +38,8 @@ export const register = async (req, res) => {
 
     // Check if user already exists
     let userExists =
-      (await Recruiter.findOne({ email })) || (await User.findOne({ email }));
+      (await Recruiter.findOne({ "emailId.email": email })) ||
+      (await User.findOne({ "emailId.email": email }));
 
     if (userExists) {
       return res.status(200).json({
@@ -53,8 +54,14 @@ export const register = async (req, res) => {
     // Create new user
     let newUser = await Recruiter.create({
       fullname,
-      email,
-      phoneNumber,
+      emailId: {
+        email,
+        isVerified: false,
+      },
+      phoneNumber: {
+        number: phoneNumber,
+        isVerified: false,
+      },
       password: hashedPassword,
     });
 
@@ -116,8 +123,8 @@ export const googleLogin = async (req, res) => {
 
     // Check if user already exists
     let user =
-      (await Recruiter.findOne({ email: googleUser.email })) ||
-      (await User.findOne({ email: googleUser.email }));
+      (await Recruiter.findOne({ "emailId.email": googleUser.email })) ||
+      (await User.findOne({ "emailId.email": googleUser.email }));
 
     if (user) {
       if (role && role !== user.role) {
@@ -152,8 +159,14 @@ export const googleLogin = async (req, res) => {
     // If user doesn't exist, create a new one
     user = new Recruiter({
       fullname: googleUser.name || googleUser.given_name || "No Name",
-      email: googleUser.email,
-      phoneNumber: "",
+      emailId: {
+        email,
+        isVerified: false,
+      },
+      phoneNumber: {
+        number: "",
+        isVerified: false,
+      },
       password: "", // No password for Google-authenticated users
       profile: {
         profilePhoto: googleUser.picture || "",

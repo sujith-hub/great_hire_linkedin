@@ -13,6 +13,9 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { logOut } from "@/redux/authSlice";
 import { toast } from "react-hot-toast";
+import { MdOutlineVerified } from "react-icons/md";
+import VerifyEmail from "@/components/VerifyEmail";
+import VerifyNumber from "@/components/VerifyNumber";
 
 const UserProfile = () => {
   const [open, setOpen] = useState(false);
@@ -20,6 +23,8 @@ const UserProfile = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [openEmailOTPModal, setOpenEmailOTPModal] = useState(false);
+  const [openNumberOTPModal, setOpenNumberOTPModal] = useState(false);
 
   const handleDeleteAccount = async () => {
     try {
@@ -85,14 +90,38 @@ const UserProfile = () => {
               <div className="flex items-center gap-3">
                 <Mail className="text-gray-500" />
                 <span className="text-gray-700">
-                  {user?.email || "Not Provided"}
+                  {user?.emailId.email || "Not Provided"}
                 </span>
+                {!user?.emailId.isVerified ? (
+                  <span
+                    className="text-green-600 text-md cursor-pointer hover:text-green-700"
+                    onClick={() => setOpenEmailOTPModal(true)}
+                  >
+                    Verify
+                  </span>
+                ) : (
+                  <span className="flex  items-center text-green-600 bg-green-50 px-2 rounded-lg gap-1">
+                    <MdOutlineVerified size={25} /> <span>Verified</span>
+                  </span>
+                )}
               </div>
               <div className="flex items-center gap-3">
                 <Contact className="text-gray-500" />
                 <span className="text-gray-700">
-                  {user?.phoneNumber || "Not Provided"}
+                  {user?.phoneNumber.number || "Not Provided"}
                 </span>
+                {!user?.phoneNumber.isVerified ? (
+                  <span
+                    className="text-green-600 text-md cursor-pointer hover:text-green-700"
+                    onClick={() => setOpenNumberOTPModal(true)}
+                  >
+                    Verify
+                  </span>
+                ) : (
+                  <span className="flex  items-center text-green-600 bg-green-50 px-2 rounded-lg gap-1 ">
+                    <MdOutlineVerified size={25} /> <span>Verified</span>
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -166,6 +195,9 @@ const UserProfile = () => {
 
       <UserUpdateProfile open={open} setOpen={setOpen} />
       <Footer className="mt-auto" />
+
+      {openEmailOTPModal && <VerifyEmail setOpenEmailOTPModal = {setOpenEmailOTPModal}/>}
+      {openNumberOTPModal && <VerifyNumber setOpenNumberOTPModal = {setOpenNumberOTPModal}/>}
     </div>
   );
 };

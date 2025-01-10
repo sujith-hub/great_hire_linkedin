@@ -6,13 +6,22 @@ const recruiterSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    email: {
-      type: String,
-      required: true,
-      unique: true,
+    emailId: {
+      email: { type: String, required: true, unique: true },
+      isVerified: {
+        type: Boolean,
+        default: false,
+      },
     },
     phoneNumber: {
-      type: String,
+      number: {
+        type: String,
+        required: true,
+      },
+      isVerified: {
+        type: Boolean,
+        required: true,
+      },
     },
     password: {
       type: String,
@@ -21,17 +30,17 @@ const recruiterSchema = new mongoose.Schema(
       type: String,
       default: "recruiter",
     },
-    position:{
+    position: {
       type: String,
-      default: "" 
+      default: "",
     },
     maxPostJobs: {
       type: Number,
-      default:10
+      default: 10,
     },
     maxResumeDownload: {
       type: Number,
-      default:10
+      default: 10,
     },
     haveSubscription: {
       type: Boolean,
@@ -46,7 +55,6 @@ const recruiterSchema = new mongoose.Schema(
       default: false,
     },
     profile: {
-      
       profilePhoto: {
         type: String,
         default: "",

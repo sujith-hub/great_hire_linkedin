@@ -37,7 +37,7 @@ const CreateCompany = () => {
     email: "",
     phone: "",
     recruiterPosition: user?.position || "",
-    recruiterPhone: user?.phoneNumber || "",
+    recruiterPhone: user?.phoneNumber.number || "",
     CIN: "",
     businessFile: null,
     isAgree: false,
@@ -96,7 +96,7 @@ const CreateCompany = () => {
       });
 
       // this email become company admin email
-      updatedFormData.append("userEmail", user.email); // Include userEmail
+      updatedFormData.append("userEmail", user?.emailId.email); // Include userEmail
 
       const res = await axios.post(
         `${COMPANY_API_END_POINT}/register`,
@@ -373,7 +373,7 @@ const CreateCompany = () => {
                       value={formData.recruiterPhone}
                       onChange={handleChange}
                       className="w-full p-2 border border-gray-400 rounded focus:outline-blue-500"
-                      required
+                      readOnly
                     />
                   </div>
                 </div>
