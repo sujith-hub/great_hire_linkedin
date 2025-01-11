@@ -160,7 +160,7 @@ export const googleLogin = async (req, res) => {
     user = new Recruiter({
       fullname: googleUser.name || googleUser.given_name || "No Name",
       emailId: {
-        email,
+        email: googleUser.email,
         isVerified: false,
       },
       phoneNumber: {
