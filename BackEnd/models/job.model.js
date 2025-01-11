@@ -7,9 +7,6 @@ const jobSchema = new mongoose.Schema(
         type: String,
         required: true,
       },
-      tags: {
-        type: [String], // Properly define as an array of strings
-      },
       urgentHiring: {
         type: String,
         required: true, // Corrected to Boolean, true/false

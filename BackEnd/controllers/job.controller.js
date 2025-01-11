@@ -1,33 +1,26 @@
 import { Job } from "../models/job.model.js";
 import { Application } from "../models/application.model.js";
-import * as qna from "@tensorflow-models/qna";
-
-// Function to extract keywords from the job title
-async function extractKeywords(jobTitle) {
-  const model = await qna.load();
-  const answers = await model.findAnswers(
-    "What are the main keywords for job title?",
-    jobTitle
-  );
-  return answers.map((answer) => answer.text);
-}
 
 export const postJob = async (req, res) => {
   try {
     // Extract job details from the request body
+
     const {
       companyName,
-      urgentHiring = "No",
+      urgentHiring,
       title,
       details,
-      skills = "",
-      qualifications = "",
-      benefits = "",
-      responsibilities = "",
+
+      skills,
+      qualifications,
+      benefits,
+      responsibilities,
+
       experience,
       salary,
       jobType,
       location,
+
       numberOfOpening,
       respondTime,
       duration,
@@ -58,9 +51,6 @@ export const postJob = async (req, res) => {
       });
     }
 
-    // Extract tags from the job title
-    const tags = await extractKeywords(title);
-
     // Split skills, qualifications, benefits, responsibilities by new line or comma
     const splitSkills = skills.split(",").map((skill) => skill.trim());
     const splitQualifications = qualifications
@@ -75,7 +65,6 @@ export const postJob = async (req, res) => {
     const newJob = new Job({
       jobDetails: {
         companyName,
-        tags,
         urgentHiring,
         title,
         details,
@@ -121,15 +110,53 @@ export const postJob = async (req, res) => {
 export const getAllJobs = async (req, res) => {
   try {
     // Retrieve all jobs from the database
-    const jobs = await Job.find({})
-      .populate({
-        path: "company",
-        select: "name address",
-      })
-      .populate({
-        path: "created_by",
-        select: "fullname emailId.email",
-      });
+    const userId = req.id;
+    let jobs;
+    if (userId) {
+    } else {
+      jobs = await Job.find({})
+        .populate({
+          path: "company",
+          select: "name address",
+        })
+        .populate({
+          path: "created_by",
+          select: "fullname emailId.email",
+        });
+    }
+
+    // Respond with the list of all jobs
+    return res.status(200).json({
+      jobs,
+      success: true,
+    });
+  } catch (error) {
+    console.error("Error fetching all jobs:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error.",
+    });
+  }
+};
+
+// get Bookmark Jobs
+export const getBookmarkJobs = async (req, res) => {
+  try {
+    // Retrieve all jobs from the database
+    const userId = req.id;
+    let jobs;
+    if (userId) {
+    } else {
+      jobs = await Job.find({})
+        .populate({
+          path: "company",
+          select: "name address",
+        })
+        .populate({
+          path: "created_by",
+          select: "fullname emailId.email",
+        });
+    }
 
     // Respond with the list of all jobs
     return res.status(200).json({
@@ -227,6 +254,4 @@ export const deleteJobById = async (req, res) => {
   }
 };
 
-export const updateJob = async (req, res) => {
-
-}
+export const updateJob = async (req, res) => {};
