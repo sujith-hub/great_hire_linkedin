@@ -74,7 +74,7 @@ const CompanyDetails = () => {
               </p>
             </div>
             <div className="info-card">
-              <p className="text-sm text-gray-500 font-medium">Email</p>
+              <p className="text-sm text-gray-500 font-medium">Business Email</p>
               <p className="text-xl text-gray-800 font-semibold">
                 {company.email}
               </p>
@@ -168,7 +168,7 @@ const CompanyDetails = () => {
               />
             </div>
             <div className="input-card">
-              <label className="text-sm text-gray-600 font-medium">Email</label>
+              <label className="text-sm text-gray-600 font-medium">Business Email</label>
               <input
                 type="email"
                 name="email"
