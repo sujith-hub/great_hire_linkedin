@@ -15,7 +15,7 @@ const CompanyDetails = () => {
     email: "virsingh8938@gmail.com",
     adminEmail: "kcribca28134@gmail.com",
     phone: "8599446788",
-    taxId: "123456789", // CIN Number
+    CINNumber: "123456789", // CIN Number
     businessFile:
       "https://res.cloudinary.com/ddj21a6aq/image/upload/v1735903135/nlh7er4o...",
   };
