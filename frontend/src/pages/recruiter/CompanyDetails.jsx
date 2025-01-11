@@ -110,22 +110,23 @@ const CompanyDetails = () => {
             </div>
           </div>
 
-          <div className="flex justify-end space-x-6 mt-8">
-            {user.emailId.email === company.adminEmail && (
+          {user.emailId.email === company.adminEmail && (
+            <div className="flex justify-end space-x-6 mt-8">
               <button
                 onClick={toggleEdit}
                 className="px-6 py-3 text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-200"
               >
                 Edit Company Details
               </button>
-            )}
-            <button
-              onClick={handleDeleteCompany}
-              className="px-6 py-3 text-white bg-red-600 rounded-md hover:bg-red-700 transition duration-200"
-            >
-              Delete Company
-            </button>
-          </div>
+
+              <button
+                onClick={handleDeleteCompany}
+                className="px-6 py-3 text-white bg-red-600 rounded-md hover:bg-red-700 transition duration-200"
+              >
+                Delete Company
+              </button>
+            </div>
+          )}
         </div>
       ) : (
         <form onSubmit={handleFormSubmit} className="space-y-8">
