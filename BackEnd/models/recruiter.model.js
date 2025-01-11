@@ -13,11 +13,9 @@ const recruiterSchema = new mongoose.Schema(
     phoneNumber: {
       number: {
         type: String,
-        required: true,
       },
       isVerified: {
         type: Boolean,
-        required: true,
       },
     },
     password: {

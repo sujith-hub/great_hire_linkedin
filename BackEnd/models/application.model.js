@@ -1,4 +1,3 @@
-//for applicants...
 import mongoose from "mongoose";
 const applicationSchema = new mongoose.Schema({
     job: {
@@ -13,7 +12,7 @@ const applicationSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['pending', 'accepted', 'rejected'],
+        enum: ['pending', 'selected', 'rejected'],
         default:'pending'
     }
     
