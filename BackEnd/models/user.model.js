@@ -16,11 +16,9 @@ const userSchema = new mongoose.Schema(
     phoneNumber: {
       number: {
         type: String,
-        required: true,
       },
       isVerified: {
         type: Boolean,
-        required: true,
       },
     },
     password: {
@@ -31,6 +29,7 @@ const userSchema = new mongoose.Schema(
       default: "student",
     },
     profile: {
+      jobTagList: { type: [String] },
       bio: { type: String },
       experience: {
         companyName: {

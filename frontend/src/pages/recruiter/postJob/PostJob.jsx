@@ -4,13 +4,15 @@ import * as Yup from "yup";
 import Stepper from "react-stepper-horizontal";
 import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const PostJob = () => {
   const [step, setStep] = useState(0);
+  const { company } = useSelector((state) => state.company);
 
   const formik = useFormik({
     initialValues: {
-      companyName: "",
+      companyName: company?.companyName,
       urgentHiring: "",
       title: "",
       details: "",
@@ -46,7 +48,9 @@ const PostJob = () => {
       benefits: Yup.string().required("Benefits are required"),
       qualifications: Yup.string().required("Qualification is required"),
       responsibilities: Yup.string().required("Responsibility is required"),
-      jobValidityInDays: Yup.string().required("Job validity in days is required"),
+      jobValidityInDays: Yup.string().required(
+        "Job validity in days is required"
+      ),
     }),
 
     onSubmit: (values) => {
@@ -61,28 +65,28 @@ const PostJob = () => {
       ["skills", "benefits", "qualifications", "responsibilities"], // Step 1
       ["experience", "salary", "jobType", "location"], // Step 2
       ["numberOfOpening", "respondTime", "duration", "jobValidityInDays"], // Step 3
-    ][step]; 
+    ][step];
     // Mark the current step fields as touched to trigger validation messages
     const touchedFields = {};
     currentStepFields.forEach((field) => {
       touchedFields[field] = true;
     });
-    formik.setTouched(touchedFields);  
+    formik.setTouched(touchedFields);
     // Trigger validation and ensure required fields show error messages
-    await formik.validateForm();  
+    await formik.validateForm();
     // Check if there are any errors or blank fields in the current step's fields
     const hasErrors = currentStepFields.some(
       (field) => !!formik.errors[field] || !formik.values[field]
     );
-  
+
     if (hasErrors) {
       console.log(
         "Validation failed. Please fill all required fields before proceeding."
       );
       return; // Block navigation if there are errors or blank fields
-    } 
+    }
     // Move to the next step if all fields are valid
-   setStep((prev) => Math.min(prev + 1, steps.length - 1));
+    setStep((prev) => Math.min(prev + 1, steps.length - 1));
   };
 
   const handlePrevious = () => setStep((prev) => Math.max(prev - 1, 0));
@@ -113,9 +117,8 @@ const PostJob = () => {
                 type="text"
                 placeholder="Enter company name"
                 className="w-full p-2 border border-gray-300 rounded"
-                onChange={formik.handleChange}
                 value={formik.values.companyName}
-                required
+                readOnly
               />
               {formik.touched.companyName && formik.errors.companyName && (
                 <div className="text-red-500 text-sm">
@@ -271,11 +274,12 @@ const PostJob = () => {
                 onChange={formik.handleChange}
                 value={formik.values.qualifications}
               />
-              {formik.touched.qualifications && formik.errors.qualifications && (
-                <div className="text-red-500 text-sm">
-                  {formik.errors.qualifications}
-                </div>
-              )}
+              {formik.touched.qualifications &&
+                formik.errors.qualifications && (
+                  <div className="text-red-500 text-sm">
+                    {formik.errors.qualifications}
+                  </div>
+                )}
             </div>
 
             {/* Responsibilities */}
@@ -294,11 +298,12 @@ const PostJob = () => {
                 onChange={formik.handleChange}
                 value={formik.values.responsibilities}
               />
-              {formik.touched.responsibilities && formik.errors.responsibilities && (
-                <div className="text-red-500 text-sm">
-                  {formik.errors.responsibilities}
-                </div>
-              )}
+              {formik.touched.responsibilities &&
+                formik.errors.responsibilities && (
+                  <div className="text-red-500 text-sm">
+                    {formik.errors.responsibilities}
+                  </div>
+                )}
             </div>
 
             {/* Navigation Buttons */}
@@ -375,7 +380,7 @@ const PostJob = () => {
             <div className="mb-6">
               <Label htmlFor="jobType" className="block text-gray-700 mb-1">
                 Job Type<span className="text-red-500 ml-1">*</span>
-              </Label>      
+              </Label>
               <input
                 id="jobType"
                 name="jobType"
@@ -454,11 +459,12 @@ const PostJob = () => {
                 onChange={formik.handleChange}
                 value={formik.values.numberOfOpening}
               />
-              {formik.touched.numberOfOpening && formik.errors.numberOfOpening && (
-                <div className="text-red-500 text-sm">
-                  {formik.errors.numberOfOpening}
-                </div>
-              )}
+              {formik.touched.numberOfOpening &&
+                formik.errors.numberOfOpening && (
+                  <div className="text-red-500 text-sm">
+                    {formik.errors.numberOfOpening}
+                  </div>
+                )}
             </div>
 
             {/* Response Time */}
@@ -515,11 +521,12 @@ const PostJob = () => {
                 onChange={formik.handleChange}
                 value={formik.values.jobValidityInDays}
               />
-              {formik.touched.jobValidityInDays && formik.errors.jobValidityInDays && (
-                <div className="text-red-500 text-sm">
-                  {formik.errors.jobValidityInDays}
-                </div>
-              )}
+              {formik.touched.jobValidityInDays &&
+                formik.errors.jobValidityInDays && (
+                  <div className="text-red-500 text-sm">
+                    {formik.errors.jobValidityInDays}
+                  </div>
+                )}
             </div>
 
             <div className="flex justify-between">
