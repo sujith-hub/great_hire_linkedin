@@ -110,53 +110,16 @@ export const postJob = async (req, res) => {
 export const getAllJobs = async (req, res) => {
   try {
     // Retrieve all jobs from the database
-    const userId = req.id;
-    let jobs;
-    if (userId) {
-    } else {
-      jobs = await Job.find({})
-        .populate({
-          path: "company",
-          select: "name address",
-        })
-        .populate({
-          path: "created_by",
-          select: "fullname emailId.email",
-        });
-    }
 
-    // Respond with the list of all jobs
-    return res.status(200).json({
-      jobs,
-      success: true,
-    });
-  } catch (error) {
-    console.error("Error fetching all jobs:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error.",
-    });
-  }
-};
-
-// get Bookmark Jobs
-export const getBookmarkJobs = async (req, res) => {
-  try {
-    // Retrieve all jobs from the database
-    const userId = req.id;
-    let jobs;
-    if (userId) {
-    } else {
-      jobs = await Job.find({})
-        .populate({
-          path: "company",
-          select: "name address",
-        })
-        .populate({
-          path: "created_by",
-          select: "fullname emailId.email",
-        });
-    }
+    const jobs = await Job.find({})
+      .populate({
+        path: "company",
+        select: "name address",
+      })
+      .populate({
+        path: "created_by",
+        select: "fullname emailId.email",
+      });
 
     // Respond with the list of all jobs
     return res.status(200).json({

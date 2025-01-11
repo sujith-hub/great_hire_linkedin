@@ -1,137 +1,233 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-
-// Your action to fetch user data (assuming you have one)
-import { fetchUserData } from '../../actions/userActions';
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
 
 const CompanyDetails = () => {
-  // Accessing user data from the Redux store with fallback for undefined state
-  const { user, loading, error } = useSelector((state) => state?.user || {});
+  const { user } = useSelector((state) => state.auth);
+  const { company } = useSelector((state) => state.company);
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState(company);
 
-  const dispatch = useDispatch();
-
-  // Check if the user is fetched, if not, fetch it
-  useEffect(() => {
-    if (!user) {
-      dispatch(fetchUserData()); // Assuming this action will fetch the user data
-    }
-  }, [dispatch, user]);
-
-  // Show loading state if user data is not yet available
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  // Show error if something went wrong while fetching data
-  if (error) {
-    return <div>Error fetching user data</div>;
-  }
-
-  // Destructure company details if user exists
-  const { companyName, website, industry, email, phone, CINNumber, businessFile } = user?.companyDetails || {};
-
-  // Handle form changes
-  const handleInputChange = (e) => {
-    // Handle input changes here (e.g., form updates or validations)
+  const toggleEdit = () => {
+    setIsEditing(!isEditing);
   };
 
-  // Handle form submission
-  const handleSubmit = (e) => {
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleAddressChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      address: {
+        ...formData.address,
+        [name]: value,
+      },
+    });
+  };
+
+  const handleFormSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission (e.g., update company details in Redux or backend)
+    setCompany(formData);
+    setIsEditing(false);
+    alert("Company details updated successfully!");
+  };
+
+  const handleDeleteCompany = () => {
+    if (window.confirm("Are you sure you want to delete this company?")) {
+      setCompany(null);
+      alert("Company deleted successfully!");
+    }
   };
 
   return (
-    <div className="container">
-      <h1>Company Details</h1>
-      {/* Form for company details */}
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="companyName">Company Name</label>
-          <input
-            type="text"
-            id="companyName"
-            name="companyName"
-            value={companyName || ''}
-            onChange={handleInputChange}
-            className="form-input"
-          />
-        </div>
-        
-        <div className="form-group">
-          <label htmlFor="website">Website</label>
-          <input
-            type="text"
-            id="website"
-            name="website"
-            value={website || ''}
-            onChange={handleInputChange}
-            className="form-input"
-          />
-        </div>
+    <div className="max-w-6xl mx-auto p-8 bg-white shadow-lg rounded-lg mt-10 border border-gray-300">
+      <h1 className="text-3xl font-semibold text-gray-800 mb-8 text-center">
+        Company Details
+      </h1>
 
-        <div className="form-group">
-          <label htmlFor="industry">Industry</label>
-          <input
-            type="text"
-            id="industry"
-            name="industry"
-            value={industry || ''}
-            onChange={handleInputChange}
-            className="form-input"
-          />
-        </div>
+      {!isEditing ? (
+        <div className="space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="info-card">
+              <p className="text-sm text-gray-500 font-medium">Company Name</p>
+              <p className="text-xl text-gray-800 font-semibold">
+                {company.companyName}
+              </p>
+            </div>
+            <div className="info-card">
+              <p className="text-sm text-gray-500 font-medium">Website</p>
+              <a
+                href={company.companyWebsite}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 hover:underline text-xl font-semibold"
+              >
+                {company.companyWebsite}
+              </a>
+            </div>
+            <div className="info-card">
+              <p className="text-sm text-gray-500 font-medium">Industry</p>
+              <p className="text-xl text-gray-800 font-semibold">
+                {company.industry}
+              </p>
+            </div>
+            <div className="info-card">
+              <p className="text-sm text-gray-500 font-medium">Email</p>
+              <p className="text-xl text-gray-800 font-semibold">
+                {company.email}
+              </p>
+            </div>
+            <div className="info-card">
+              <p className="text-sm text-gray-500 font-medium">Admin Email</p>
+              <p className="text-xl text-gray-800 font-semibold">
+                {company.adminEmail}
+              </p>
+            </div>
+            <div className="info-card">
+              <p className="text-sm text-gray-500 font-medium">Phone</p>
+              <p className="text-xl text-gray-800 font-semibold">
+                {company.phone}
+              </p>
+            </div>
+            <div className="info-card">
+              <p className="text-sm text-gray-500 font-medium">CIN Number</p>
+              <p className="text-xl text-gray-800 font-semibold">
+                {company.CIN}
+              </p>
+            </div>
+            <div className="info-card">
+              <p className="text-sm text-gray-500 font-medium">Business File</p>
+              <a
+                href={company.businessFile}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 hover:underline text-xl font-semibold"
+              >
+                View Business File
+              </a>
+            </div>
+          </div>
 
-        <div className="form-group">
-          <label htmlFor="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={email || ''}
-            onChange={handleInputChange}
-            className="form-input"
-          />
+          <div className="flex justify-end space-x-6 mt-8">
+            {user.emailId.email === company.adminEmail && (
+              <button
+                onClick={toggleEdit}
+                className="px-6 py-3 text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-200"
+              >
+                Edit Company Details
+              </button>
+            )}
+            <button
+              onClick={handleDeleteCompany}
+              className="px-6 py-3 text-white bg-red-600 rounded-md hover:bg-red-700 transition duration-200"
+            >
+              Delete Company
+            </button>
+          </div>
         </div>
+      ) : (
+        <form onSubmit={handleFormSubmit} className="space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="input-card">
+              <label className="text-sm text-gray-600 font-medium">
+                Company Name
+              </label>
+              <input
+                type="text"
+                name="companyName"
+                value={formData.companyName}
+                onChange={handleInputChange}
+                className="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div className="input-card">
+              <label className="text-sm text-gray-600 font-medium">
+                Website
+              </label>
+              <input
+                type="url"
+                name="companyWebsite"
+                value={formData.companyWebsite}
+                onChange={handleInputChange}
+                className="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div className="input-card">
+              <label className="text-sm text-gray-600 font-medium">
+                Industry
+              </label>
+              <input
+                type="text"
+                name="industry"
+                value={formData.industry}
+                onChange={handleInputChange}
+                className="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div className="input-card">
+              <label className="text-sm text-gray-600 font-medium">Email</label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                className="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div className="input-card">
+              <label className="text-sm text-gray-600 font-medium">
+                Admin Email
+              </label>
+              <input
+                type="email"
+                name="adminEmail"
+                value={formData.adminEmail}
+                onChange={handleInputChange}
+                className="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div className="input-card">
+              <label className="text-sm text-gray-600 font-medium">Phone</label>
+              <input
+                type="text"
+                name="phone"
+                value={formData.phone}
+                onChange={handleInputChange}
+                className="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div className="input-card">
+              <label className="text-sm text-gray-600 font-medium">
+                CIN Number
+              </label>
+              <input
+                type="text"
+                name="taxId"
+                value={formData.CIN}
+                onChange={handleInputChange}
+                className="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </div>
 
-        <div className="form-group">
-          <label htmlFor="phone">Phone</label>
-          <input
-            type="text"
-            id="phone"
-            name="phone"
-            value={phone || ''}
-            onChange={handleInputChange}
-            className="form-input"
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="CINNumber">CIN Number</label>
-          <input
-            type="text"
-            id="CINNumber"
-            name="CINNumber"
-            value={CINNumber || ''}
-            onChange={handleInputChange}
-            className="form-input"
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="businessFile">Business File</label>
-          <input
-            type="file"
-            id="businessFile"
-            name="businessFile"
-            onChange={handleInputChange}
-            className="form-input"
-          />
-        </div>
-
-        {/* Submit button */}
-        <button type="submit" className="submit-button">Save Changes</button>
-      </form>
+          <div className="flex justify-end space-x-6 mt-8">
+            <button
+              type="submit"
+              className="px-6 py-3 text-white bg-green-600 rounded-md hover:bg-green-700 transition duration-200"
+            >
+              Save Changes
+            </button>
+            <button
+              onClick={toggleEdit}
+              className="px-6 py-3 text-white bg-gray-600 rounded-md hover:bg-gray-700 transition duration-200"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      )}
     </div>
   );
 };
