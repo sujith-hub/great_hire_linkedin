@@ -1,11 +1,4 @@
 import { Job } from "../models/job.model.js";
-import * as qna from '@tensorflow-models/qna';
-
-async function extractKeywords(jobTitle) {
-  const model = await qna.load();
-  const answers = await model.findAnswers('What are the main keywords for job title?', jobTitle);
-  console.log(answers);
-}
 import { Application } from "../models/application.model.js";
 
 export const postJob = async (req, res) => {
