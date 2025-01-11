@@ -1,28 +1,11 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 
 const CompanyDetails = () => {
-  const initialCompany = {
-    companyName: "Tech Swim",
-    companyWebsite: "https://www.techswim.com",
-    industry: "Product Based",
-    address: {
-      streetAddress: "RIICO Industury",
-      city: "Tapukara",
-      state: "Rajasthan",
-      country: "India",
-      postalCode: "301707",
-    },
-    email: "virsingh8938@gmail.com",
-    adminEmail: "kcribca28134@gmail.com",
-    phone: "8599446788",
-    CINNumber: "123456789", // CIN Number
-    businessFile:
-      "https://res.cloudinary.com/ddj21a6aq/image/upload/v1735903135/nlh7er4o...",
-  };
-
-  const [company, setCompany] = useState(initialCompany);
+  const { user } = useSelector((state) => state.auth);
+  const { company } = useSelector((state) => state.company);
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState(initialCompany);
+  const [formData, setFormData] = useState(company);
 
   const toggleEdit = () => {
     setIsEditing(!isEditing);
@@ -60,14 +43,18 @@ const CompanyDetails = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-8 bg-white shadow-lg rounded-lg mt-10 border border-gray-300">
-      <h1 className="text-3xl font-semibold text-gray-800 mb-8 text-center">Company Details</h1>
+      <h1 className="text-3xl font-semibold text-gray-800 mb-8 text-center">
+        Company Details
+      </h1>
 
       {!isEditing ? (
         <div className="space-y-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="info-card">
               <p className="text-sm text-gray-500 font-medium">Company Name</p>
-              <p className="text-xl text-gray-800 font-semibold">{company.companyName}</p>
+              <p className="text-xl text-gray-800 font-semibold">
+                {company.companyName}
+              </p>
             </div>
             <div className="info-card">
               <p className="text-sm text-gray-500 font-medium">Website</p>
@@ -82,23 +69,33 @@ const CompanyDetails = () => {
             </div>
             <div className="info-card">
               <p className="text-sm text-gray-500 font-medium">Industry</p>
-              <p className="text-xl text-gray-800 font-semibold">{company.industry}</p>
+              <p className="text-xl text-gray-800 font-semibold">
+                {company.industry}
+              </p>
             </div>
             <div className="info-card">
               <p className="text-sm text-gray-500 font-medium">Email</p>
-              <p className="text-xl text-gray-800 font-semibold">{company.email}</p>
+              <p className="text-xl text-gray-800 font-semibold">
+                {company.email}
+              </p>
             </div>
             <div className="info-card">
               <p className="text-sm text-gray-500 font-medium">Admin Email</p>
-              <p className="text-xl text-gray-800 font-semibold">{company.adminEmail}</p>
+              <p className="text-xl text-gray-800 font-semibold">
+                {company.adminEmail}
+              </p>
             </div>
             <div className="info-card">
               <p className="text-sm text-gray-500 font-medium">Phone</p>
-              <p className="text-xl text-gray-800 font-semibold">{company.phone}</p>
+              <p className="text-xl text-gray-800 font-semibold">
+                {company.phone}
+              </p>
             </div>
             <div className="info-card">
               <p className="text-sm text-gray-500 font-medium">CIN Number</p>
-              <p className="text-xl text-gray-800 font-semibold">{company.taxId}</p>
+              <p className="text-xl text-gray-800 font-semibold">
+                {company.CIN}
+              </p>
             </div>
             <div className="info-card">
               <p className="text-sm text-gray-500 font-medium">Business File</p>
@@ -114,12 +111,14 @@ const CompanyDetails = () => {
           </div>
 
           <div className="flex justify-end space-x-6 mt-8">
-            <button
-              onClick={toggleEdit}
-              className="px-6 py-3 text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-200"
-            >
-              Edit Company Details
-            </button>
+            {user.emailId.email === company.adminEmail && (
+              <button
+                onClick={toggleEdit}
+                className="px-6 py-3 text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-200"
+              >
+                Edit Company Details
+              </button>
+            )}
             <button
               onClick={handleDeleteCompany}
               className="px-6 py-3 text-white bg-red-600 rounded-md hover:bg-red-700 transition duration-200"
@@ -132,7 +131,9 @@ const CompanyDetails = () => {
         <form onSubmit={handleFormSubmit} className="space-y-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="input-card">
-              <label className="text-sm text-gray-600 font-medium">Company Name</label>
+              <label className="text-sm text-gray-600 font-medium">
+                Company Name
+              </label>
               <input
                 type="text"
                 name="companyName"
@@ -142,7 +143,9 @@ const CompanyDetails = () => {
               />
             </div>
             <div className="input-card">
-              <label className="text-sm text-gray-600 font-medium">Website</label>
+              <label className="text-sm text-gray-600 font-medium">
+                Website
+              </label>
               <input
                 type="url"
                 name="companyWebsite"
@@ -152,7 +155,9 @@ const CompanyDetails = () => {
               />
             </div>
             <div className="input-card">
-              <label className="text-sm text-gray-600 font-medium">Industry</label>
+              <label className="text-sm text-gray-600 font-medium">
+                Industry
+              </label>
               <input
                 type="text"
                 name="industry"
@@ -172,7 +177,9 @@ const CompanyDetails = () => {
               />
             </div>
             <div className="input-card">
-              <label className="text-sm text-gray-600 font-medium">Admin Email</label>
+              <label className="text-sm text-gray-600 font-medium">
+                Admin Email
+              </label>
               <input
                 type="email"
                 name="adminEmail"
@@ -192,21 +199,13 @@ const CompanyDetails = () => {
               />
             </div>
             <div className="input-card">
-              <label className="text-sm text-gray-600 font-medium">CIN Number</label>
+              <label className="text-sm text-gray-600 font-medium">
+                CIN Number
+              </label>
               <input
                 type="text"
                 name="taxId"
-                value={formData.taxId}
-                onChange={handleInputChange}
-                className="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div className="input-card">
-              <label className="text-sm text-gray-600 font-medium">Business File</label>
-              <input
-                type="text"
-                name="businessFile"
-                value={formData.businessFile}
+                value={formData.CIN}
                 onChange={handleInputChange}
                 className="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
