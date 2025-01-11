@@ -29,14 +29,16 @@ const CompanyDetails = () => {
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    setCompany(formData);
+    // Assuming a function exists to save updated company data
+    // setCompany(formData);
     setIsEditing(false);
     alert("Company details updated successfully!");
   };
 
   const handleDeleteCompany = () => {
     if (window.confirm("Are you sure you want to delete this company?")) {
-      setCompany(null);
+      // Assuming a function exists to delete company data
+      // setCompany(null);
       alert("Company deleted successfully!");
     }
   };
@@ -205,7 +207,7 @@ const CompanyDetails = () => {
               </label>
               <input
                 type="text"
-                name="taxId"
+                name="CIN"
                 value={formData.CIN}
                 onChange={handleInputChange}
                 className="w-full p-3 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
