@@ -95,7 +95,6 @@ export const postJob = async (req, res) => {
     return res.status(201).json({
       success: true,
       message: "Job posted successfully.",
-      job: savedJob,
     });
   } catch (error) {
     console.error("Error posting job:", error);
@@ -186,8 +185,7 @@ export const getJobForRecruiter = async (req, res) => {
 
 export const deleteJobById = async (req, res) => {
   try {
-    const { jobId } = req.params;
-
+    const  jobId  = req.params.id;
     // Check if the job exists
     const job = await Job.findById(jobId);
     if (!job) {

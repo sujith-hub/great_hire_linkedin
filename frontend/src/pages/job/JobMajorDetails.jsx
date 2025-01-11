@@ -21,6 +21,7 @@ const JobMajorDetails = ({
   // const [currentEducationIndex, setCurrentEducationIndex] = useState(0);
   // const [currentLanguageIndex, setCurrentLanguageIndex] = useState(0);
   const navigate = useNavigate();
+  
 
   // const handleSkillSelection = (skill, status) => {
   //   onUpdateSkill(skill, status);
@@ -73,52 +74,12 @@ const JobMajorDetails = ({
                     : "bg-red-200"
                 } */}
           <div className="flex flex-wrap gap-2 mt-2">
-            {selectedJob?.skills.map((skill, index) => (
+            {selectedJob?.jobDetails?.skills.map((skill, index) => (
               <div
                 key={index}
-                className={`flex items-center w-fit p-1 rounded-lg bg-slate-200 gap-1 text-sm text-gray-800`}
+                className={`flex items-center w-fit px-4 py-2 rounded-lg bg-slate-200 gap-1 text-sm text-gray-800`}
               >
-                <span className="font-bold">{skill.skill}</span>
-                <span>{skill.required ? "(required)" : ""}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Education Section */}
-        <div className="mt-4">
-          <h3 className="text-xl text-gray-500 flex items-center gap-2">
-            <FaBookOpen />
-            <span className="text-xl font-bold text-black">Education</span>
-          </h3>
-
-          <div className="flex flex-wrap gap-2 mt-2">
-            {selectedJob?.educations.map((education, index) => (
-              <div
-                key={index}
-                className={`flex items-center w-fit p-1 rounded-lg bg-slate-200 gap-1 text-sm text-gray-800`}
-              >
-                <span className="font-bold">{education.edu}</span>
-                <span>{education.required ? "(required)" : ""}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Language Section */}
-        <div className="mt-4">
-          <h3 className="text-xl text-gray-500 flex items-center gap-2">
-            <GrLanguage />
-            <span className="text-xl font-bold text-black">Languages</span>
-          </h3>
-          <div className="flex flex-wrap gap-2 mt-1">
-            {selectedJob?.languages.map((language, index) => (
-              <div
-                key={index}
-                className={`flex items-center w-fit p-1 rounded-lg bg-slate-200  gap-1 text-sm text-gray-800`}
-              >
-                <span className="font-bold">{language.lan}</span>
-                <span>{language.required ? "(required)" : ""}</span>
+                <span className="font-bold">{skill}</span>
               </div>
             ))}
           </div>
@@ -142,8 +103,8 @@ const JobMajorDetails = ({
             <span className="text-xl font-bold text-black">Pay</span>
           </h3>
           <div className="flex flex-wrap gap-2 mt-2">
-            <div className="flex items-center w-fit p-1 rounded-lg  bg-slate-200 gap-1 text-sm text-gray-800">
-              <span className="font-bold">{selectedJob?.salary}</span>
+            <div className="flex items-center w-fit px-4 py-2 rounded-lg  bg-slate-200 gap-1 text-sm text-gray-800">
+              <span className="font-bold">{selectedJob?.jobDetails?.salary}</span>
             </div>
           </div>
         </div>
@@ -155,8 +116,8 @@ const JobMajorDetails = ({
             <span className="text-xl font-bold text-black">Experience</span>
           </h3>
           <div className="flex flex-wrap gap-2 mt-2">
-            <div className="flex items-center w-fit px-4 rounded-lg bg-slate-200 gap-1 text-sm text-gray-800">
-              <span className="font-bold">{selectedJob?.experience} Years</span>
+            <div className="flex items-center w-fit px-4 py-2 rounded-lg bg-slate-200 gap-1 text-sm text-gray-800">
+              <span className="font-bold">{selectedJob?.jobDetails?.experience} Years</span>
             </div>
           </div>
         </div>
@@ -169,9 +130,9 @@ const JobMajorDetails = ({
           </h3>
           <div className="flex flex-wrap gap-2 mt-2">
             <div
-              className={`flex items-center w-fit p-1 rounded-lg bg-slate-200 gap-1 text-sm text-gray-800`}
+              className={`flex items-center w-fit px-4 py-2 rounded-lg bg-slate-200 gap-1 text-sm text-gray-800`}
             >
-              <span className="font-bold">{selectedJob?.jobType.type}</span>
+              <span className="font-bold">{selectedJob?.jobDetails?.jobType}</span>
             </div>
           </div>
         </div>
@@ -225,7 +186,7 @@ const JobMajorDetails = ({
           className="ml-6 text-sm text-gray-600 mt-2"
           style={{ listStyleType: "circle" }}
         >
-          {selectedJob?.benifits?.map((benifit, index) => (
+          {selectedJob?.jobDetails?.benefits?.map((benifit, index) => (
             <li key={index}>{benifit}</li>
           ))}
         </ul>
@@ -238,7 +199,7 @@ const JobMajorDetails = ({
           className="ml-6 text-sm text-gray-600 mt-2"
           style={{ listStyleType: "circle" }}
         >
-          {selectedJob?.responsibilities?.map((responsibilitie, index) => (
+          {selectedJob?.jobDetails?.responsibilities?.map((responsibilitie, index) => (
             <li key={index}>{responsibilitie}</li>
           ))}
         </ul>
@@ -251,14 +212,14 @@ const JobMajorDetails = ({
           className="ml-6 text-sm text-gray-600 mt-2"
           style={{ listStyleType: "circle" }}
         >
-          {selectedJob?.qualifications?.map((qualification, index) => (
+          {selectedJob?.jobDetails?.qualifications?.map((qualification, index) => (
             <li key={index}>{qualification}</li>
           ))}
         </ul>
       </div>
 
       <div className="p-4">
-        <button className="flex items-center gap-2 bg-gray-400 p-2 rounded-lg cursor-pointer" onClick={()=> navigate(`/report-job/${selectedJob?.id}`)}>
+        <button className="flex items-center gap-2 bg-gray-400 p-2 rounded-lg cursor-pointer" onClick={()=> navigate(`/report-job/${selectedJob?.jobDetails?.id}`)}>
           <BsFlagFill /> <span className="font-semibold">Report Job</span>
         </button>
       </div>
