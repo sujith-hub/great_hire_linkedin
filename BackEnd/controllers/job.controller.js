@@ -7,10 +7,6 @@ async function extractKeywords(jobTitle) {
   console.log(answers);
 }
 
-
-
-
-
 export const postJob = async (req, res) => {
   try {
     // Extract job details from the request body

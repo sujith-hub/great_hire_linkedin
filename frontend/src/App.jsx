@@ -29,7 +29,7 @@ import RecruiterProfile from "./pages/recruiter/RecruiterProfile";
 import AddRecruiter from "./pages/recruiter/AddRecruiter";
 import CompanyDetails from "./pages/recruiter/CompanyDetails";
 import CreateCompany from "./pages/recruiter/CreateCompany";
-import JobList from "./pages/recruiter/JobList";
+import PostedJobList from "./pages/recruiter/PostedJobList";
 import RecruiterHome from "./pages/recruiter/RecruiterHome";
 import RecruiterPlans from "./pages/recruiter/RecruiterPlans";
 
@@ -51,9 +51,6 @@ const appRouter = createBrowserRouter([
     path: "/",
     element: <Home />,
   },
-
-  
-
   {
     path: "/login",
     element: <Login />,
@@ -141,7 +138,7 @@ const appRouter = createBrowserRouter([
       { path: "create-company", element: <CreateCompany /> },
       { path: "add-recruiter", element: <AddRecruiter /> },
       { path: "post-job", element: <PostJob /> },
-      { path: "jobs", element: <JobList /> },
+      { path: "jobs", element: <PostedJobList /> },
       { path: "company-details", element: <CompanyDetails /> },
       { path: "your-plans", element: <RecruiterPlans /> },
       { index: true, element: <RecruiterHome /> },
