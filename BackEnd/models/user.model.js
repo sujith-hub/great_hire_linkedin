@@ -28,6 +28,17 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "student",
     },
+    address:{
+      city:{
+        type:String
+      },
+      state:{
+        type:String
+      },
+      country:{
+        type:String
+      }
+    },
     profile: {
       jobTagList: { type: [String] },
       bio: { type: String },

@@ -173,9 +173,14 @@ export const sendVerificationStatus = async (req, res) => {
     } else {
       // Update only the isVerify field for the recruiter
       await Recruiter.updateOne(
-        { "emailId.email": recruiterData.emailId.email }, // Using dot notation to access nested email field
+        { "emailId.email": recruiterData.emailId.email }, // Matching the email
         {
-          $set: { isVerify: status },
+          $set: {
+            "emailId.isVerified": true, // Set email isVerified to true
+            ...(recruiterData.phoneNumber?.number && {
+              "phoneNumber.isVerified": true, // Conditionally set phone isVerified to true if phone number exists
+            }),
+          },
         }
       );
     }
