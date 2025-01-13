@@ -37,7 +37,6 @@ import RecruiterPlans from "./pages/recruiter/RecruiterPlans";
 import AdminSignup from "./components/auth/admin/AdminSignup";
 import AdminLogin from "./components/auth/admin/AdminLogin";
 
-
 import { useEffect } from "react";
 import { logOut } from "./redux/authSlice.js";
 import { useDispatch } from "react-redux";
@@ -45,6 +44,7 @@ import RecruiterSuccess from "./pages/recruiter/RecruiterSuccess";
 
 import VerifyEmail from "./components/VerifyEmail";
 import VerifyNumber from "./components/VerifyNumber";
+import { Worker } from "@react-pdf-viewer/core";
 
 const appRouter = createBrowserRouter([
   {
@@ -195,10 +195,13 @@ function App() {
       dispatch(logOut());
     }
   }, []);
+
   return (
     <div>
       <JobDetailsProvider>
-        <RouterProvider router={appRouter} />
+        <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.6.347/build/pdf.worker.min.js">
+          <RouterProvider router={appRouter} />
+        </Worker>
       </JobDetailsProvider>
     </div>
   );

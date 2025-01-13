@@ -1,16 +1,20 @@
 import React, { useState, useRef } from "react";
-import { ProgressBar } from "react-step-progress-bar";
+// import { ProgressBar } from "react-step-progress-bar";
 import { MdInfo } from "react-icons/md";
 import { BiArrowBack } from "react-icons/bi";
-import { BsFileEarmarkArrowUp } from "react-icons/bs";
+import { Viewer } from "@react-pdf-viewer/core";
+import "@react-pdf-viewer/core/lib/styles/index.css";
 import { CgFileRemove } from "react-icons/cg";
 import { FaFileSignature } from "react-icons/fa";
 import { TiTick } from "react-icons/ti";
 import ReviewPage from "./ReviewPage";
 import { Link } from "react-router-dom";
 import "react-step-progress-bar/styles.css";
+import { useSelector } from "react-redux";
 
 const ApplyForm = ({ setRight }) => {
+  const { user } = useSelector((state) => state.auth);
+
   const [step1, setStep1] = useState(true);
   const [step2, setStep2] = useState(false);
   const [step3, setStep3] = useState(false);
@@ -21,7 +25,18 @@ const ApplyForm = ({ setRight }) => {
   const [resume, setResume] = useState("");
   const inputRef = useRef();
 
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    fullname: user?.fullname,
+    number: user?.phoneNumber.number,
+    email: user?.emailId.email,
+    address:
+      user?.address?.city +
+      ", " +
+      user?.address?.state +
+      ", " +
+      user?.address?.country,
+    resume: user?.profile?.resume,
+  });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -79,6 +94,19 @@ const ApplyForm = ({ setRight }) => {
     }
   };
 
+  const ProgressBar = ({ percent, unfilledBackground }) => {
+    return (
+      <div className="w-full bg-gray-200 rounded-full h-3 dark:bg-gray-700">
+        <div
+          className={`h-3 rounded-full ${
+            percent > 0 ? "bg-gradient-to-r from-blue-400 to-blue-700" : ""
+          }`}
+          style={{ width: `${percent}%` }}
+        ></div>
+      </div>
+    );
+  };
+
   return (
     <div>
       {step1 && (
@@ -92,29 +120,18 @@ const ApplyForm = ({ setRight }) => {
           </h4>
           <form>
             <label
-              htmlFor="firstName"
+              htmlFor="fullname"
               className="block text-sm font-medium text-gray-700"
             >
-              First name
+              Full Name
             </label>
             <input
               type="text"
-              name="firstName"
+              name="fullname"
               onChange={handleChange}
               className="mt-1 w-full p-2 border border-gray-300 rounded-md"
-            />
-
-            <label
-              htmlFor="lastName"
-              className="block text-sm font-medium text-gray-700 mt-4"
-            >
-              Last name
-            </label>
-            <input
-              type="text"
-              name="lastName"
-              onChange={handleChange}
-              className="mt-1 w-full p-2 border border-gray-300 rounded-md"
+              value={formData.fullname}
+              readOnly
             />
 
             <label
@@ -128,6 +145,8 @@ const ApplyForm = ({ setRight }) => {
               name="phoneNumber"
               onChange={handleChange}
               className="mt-1 w-full p-2 border border-gray-300 rounded-md"
+              value={formData.number}
+              readOnly
             />
             <label
               htmlFor="email"
@@ -140,6 +159,8 @@ const ApplyForm = ({ setRight }) => {
               name="email"
               onChange={handleChange}
               className="mt-1 w-full p-2 border border-gray-300 rounded-md"
+              value={formData.email}
+              readOnly
             />
 
             <label
@@ -153,6 +174,8 @@ const ApplyForm = ({ setRight }) => {
               name="city"
               onChange={handleChange}
               className="mt-1 w-full p-2 border border-gray-300 rounded-md"
+              value={formData.address}
+              readOnly
             />
 
             <div className="flex items-start mt-4">
@@ -172,7 +195,7 @@ const ApplyForm = ({ setRight }) => {
               </Link>
               <button
                 onClick={handleContinue1}
-                className="bg-blue-500 text-white px-4 py-2 rounded-md"
+                className="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
               >
                 Continue
               </button>
@@ -181,7 +204,7 @@ const ApplyForm = ({ setRight }) => {
 
           <p className="text-sm text-gray-600 mt-4">
             Having an issue with this application?{" "}
-            <Link to="/contact" className="text-blue-500 cursor-pointer">
+            <Link to="/contact" className="text-blue-700 cursor-pointer">
               Tell us more
             </Link>
           </p>
@@ -206,32 +229,14 @@ const ApplyForm = ({ setRight }) => {
             </h6>
           </div>
 
-          <h4 className="text-lg font-bold mt-6">Add a resume</h4>
-
-          {/* Hidden File Input */}
-          <input
-            type="file"
-            name="resume"
-            onChange={handleChange1}
-            ref={inputRef}
-            className="hidden"
-          />
-
-          {/* Resume Upload Section */}
-          <div
-            className="flex items-center mt-6 p-4 border border-gray-300 rounded-md cursor-pointer"
-            onClick={handleChoose}
-          >
-            <BsFileEarmarkArrowUp className="text-gray-500 mr-4" />
-            <section>
-              <h4 className="text-base font-semibold">
-                {resume ? resume : "Upload resume"}
-              </h4>
-              <p className="text-sm text-gray-500">
-                Use a pdf, docx, doc, rtf, or txt
-              </p>
-            </section>
-            {resume && <TiTick className="text-green-500 ml-auto" />}
+          <div className="mt-4 bg-gray-100 h-fit w-full flex items-center justify-center overflow-hidden">
+            {formData.resume ? (
+              <div className="w-full h-full">
+                <Viewer fileUrl={formData.resume} />
+              </div>
+            ) : (
+              <p className="text-gray-500">No resume uploaded</p>
+            )}
           </div>
 
           <div className="flex justify-between items-center mt-6">
@@ -243,7 +248,7 @@ const ApplyForm = ({ setRight }) => {
             </Link>
             <button
               onClick={handleContinue2}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md"
+              className="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
             >
               Continue
             </button>
@@ -251,7 +256,7 @@ const ApplyForm = ({ setRight }) => {
 
           <p className="text-sm text-gray-600 mt-4">
             Having an issue with this application?{" "}
-            <Link to="/contact" className="text-blue-500 cursor-pointer">
+            <Link to="/contact" className="text-blue-700 cursor-pointer">
               Tell us more
             </Link>
           </p>
@@ -322,7 +327,7 @@ const ApplyForm = ({ setRight }) => {
             </Link>
             <button
               onClick={handleContinue3}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md"
+              className="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
             >
               Continue
             </button>
@@ -330,7 +335,7 @@ const ApplyForm = ({ setRight }) => {
 
           <p className="text-sm text-gray-600 mt-4">
             Having an issue with this application?{" "}
-            <Link to="/contact" className="text-blue-500 cursor-pointer">
+            <Link to="/contact" className="text-blue-700 cursor-pointer">
               Tell us more
             </Link>
           </p>
@@ -414,7 +419,7 @@ const ApplyForm = ({ setRight }) => {
             </Link>
             <button
               onClick={handleReview}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md"
+              className="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
             >
               Review your application
             </button>
@@ -422,7 +427,7 @@ const ApplyForm = ({ setRight }) => {
 
           <p className="text-sm text-gray-600 mt-4">
             Having an issue with this application?{" "}
-            <Link to="/contact" className="text-blue-500 cursor-pointer">
+            <Link to="/contact" className="text-blue-700 cursor-pointer">
               Tell us more
             </Link>
           </p>

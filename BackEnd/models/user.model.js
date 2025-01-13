@@ -28,18 +28,21 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "student",
     },
-    address:{
-      city:{
-        type:String
+    address: {
+      city: {
+        type: String,
       },
-      state:{
-        type:String
+      state: {
+        type: String,
       },
-      country:{
-        type:String
-      }
+      country: {
+        type: String,
+      },
     },
     profile: {
+      coverLetter: {
+        type: String,
+      },
       jobTagList: { type: [String] },
       bio: { type: String },
       experience: {
@@ -50,6 +53,9 @@ const userSchema = new mongoose.Schema(
           type: String,
         },
         duration: {
+          type: String,
+        },
+        experienceDetails: {
           type: String,
         },
       },
