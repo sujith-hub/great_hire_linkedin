@@ -430,10 +430,50 @@ export const updateProfile = async (req, res) => {
 };
 
 export const deleteAccount = async (req, res) => {
-  const { userId, userEmail, companyId } = req.body;
+  const { userEmail, companyId } = req.body;
+  const userId = req.id;
+
   try {
-    if (userEmail === company.adminEmail) {
-    } else {
+    // Find the company by ID
+    const company = await Company.findById(companyId);
+    if (!company) {
+      return res.status(404).json({ message: "Company not found" });
     }
-  } catch (err) {}
+
+    // Check if the userEmail is the adminEmail
+    if (userEmail === company.adminEmail) {
+      // Remove all users in the userId array from the User collection
+      await User.deleteMany({
+        _id: { $in: company.userId.map((u) => u.user) },
+      });
+
+      // Remove all jobs associated with the company
+      await Job.deleteMany({ company: companyId });
+
+      // Remove the company
+      await Company.findByIdAndDelete(companyId);
+
+      return res
+        .status(200)
+        .json({ message: "Company and all related data deleted successfully" });
+    } else {
+      // Remove the user from the userId array in the Company model
+      await Company.findByIdAndUpdate(
+        companyId,
+        { $pull: { userId: { user: userId } } },
+        { new: true }
+      );
+
+      // Remove the user from the User collection
+      await User.findByIdAndDelete(userId);
+
+      return res
+        .status(200)
+        .json({
+          message: "User removed from company and deleted successfully",
+        });
+    }
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
 };
