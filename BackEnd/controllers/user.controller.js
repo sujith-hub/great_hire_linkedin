@@ -39,7 +39,8 @@ export const register = async (req, res) => {
     // Check if user already exists
     let userExists =
       (await User.findOne({ "emailId.email": email })) ||
-      (await Recruiter.findOne({ "emailId.email": email })) || (await Admin.findOne({ "emailId.email": email }));
+      (await Recruiter.findOne({ "emailId.email": email })) ||
+      (await Admin.findOne({ "emailId.email": email }));
 
     if (userExists) {
       return res.status(200).json({
@@ -111,7 +112,8 @@ export const login = async (req, res) => {
     //check mail is correct or not...
     let user =
       (await User.findOne({ "emailId.email": email })) ||
-      (await Recruiter.findOne({ "emailId.email": email }));
+      (await Recruiter.findOne({ "emailId.email": email })) ||
+      (await Admin.findOne({ "emailId.email": email }));
 
     if (!user) {
       return res.status(200).json({
@@ -147,6 +149,7 @@ export const login = async (req, res) => {
       role: user.role,
       profile: user.profile,
       isVerify,
+      address: user.address,
       isCompanyCreated,
       position,
     };
@@ -198,6 +201,9 @@ export const googleLogin = async (req, res) => {
         "-password"
       )) ||
       (await Recruiter.findOne({ "emailId.email": googleUser.email }).select(
+        "-password"
+      )) ||
+      (await Admin.findOne({ "emailId.email": googleUser.email }).select(
         "-password"
       ));
 
@@ -353,14 +359,14 @@ export const updateProfile = async (req, res) => {
       : skills?.split(",").map((skill) => skill.trim()) || [];
 
     if (fullname && user.fullname !== fullname) user.fullname = fullname;
-    if (email && user.emailId.email !== email){
+    if (email && user.emailId.email !== email) {
       user.emailId.email = email;
-      user.emailId.isVerified = false; 
-    } 
-    if (phoneNumber && user.phoneNumber.number !== phoneNumber){
+      user.emailId.isVerified = false;
+    }
+    if (phoneNumber && user.phoneNumber.number !== phoneNumber) {
       user.phoneNumber = phoneNumber;
       user.phoneNumber.isVerified = false;
-    } 
+    }
     if (bio && user.profile.bio !== bio) user.profile.bio = bio;
     if (experience) {
       user.profile.experience = {
@@ -449,7 +455,8 @@ export const forgotPassword = async (req, res) => {
 
     let user =
       (await User.findOne({ "emailId.email": email })) ||
-      (await Recruiter.findOne({ "emailId.email": email }));
+      (await Recruiter.findOne({ "emailId.email": email })) ||
+      (await Admin.findOne({ "emailId.email": email }));
 
     if (!user) {
       return res.status(200).json({
@@ -529,7 +536,8 @@ export const resetPassword = async (req, res) => {
 
     let user =
       (await User.findById(decoded.userId)) ||
-      (await Recruiter.findById(decoded.userId));
+      (await Recruiter.findById(decoded.userId)) ||
+      (await Admin.findById(decoded.userId));
 
     if (!user) {
       return res.status(404).json({
@@ -580,7 +588,9 @@ export const deleteAccount = async (req, res) => {
     // Check if the user exists
     const user =
       (await User.findOne({ "emailId.email": email })) ||
-      (await Recruiter.findOne({ "emailId.email": email }));
+      (await Recruiter.findOne({ "emailId.email": email })) ||
+      (await Admin.findOne({ "emailId.email": email }));
+
     if (!user) {
       return res.status(404).json({
         message: "User not found.",

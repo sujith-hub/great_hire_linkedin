@@ -1,9 +1,13 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+
 import { Recruiter } from "../models/recruiter.model.js";
 import { User } from "../models/user.model.js";
-import { oauth2Client } from "../utils/googleConfig.js";
+import { Admin } from "../models/admin.model.js";
 import { Company } from "../models/company.model.js";
+import {Job} from '../models/job.model.js';
+
+import { oauth2Client } from "../utils/googleConfig.js";
 import axios from "axios";
 import nodemailer from "nodemailer";
 import getDataUri from "../utils/dataUri.js";
@@ -39,7 +43,8 @@ export const register = async (req, res) => {
     // Check if user already exists
     let userExists =
       (await Recruiter.findOne({ "emailId.email": email })) ||
-      (await User.findOne({ "emailId.email": email }));
+      (await User.findOne({ "emailId.email": email })) ||
+      (await Admin.findOne({ "emailId.email": email }));
 
     if (userExists) {
       return res.status(200).json({
@@ -124,7 +129,8 @@ export const googleLogin = async (req, res) => {
     // Check if user already exists
     let user =
       (await Recruiter.findOne({ "emailId.email": googleUser.email })) ||
-      (await User.findOne({ "emailId.email": googleUser.email }));
+      (await User.findOne({ "emailId.email": googleUser.email }))
+      || (await Admin.findOne({ "emailId.email": googleUser.email }));
 
     if (user) {
       if (role && role !== user.role) {
@@ -254,7 +260,7 @@ export const addRecruiterToCompany = async (req, res) => {
     // Check if recruiter email already exists
     const existingRecruiter =
       (await Recruiter.findOne({ "emailId.email": email })) ||
-      (await User.findOne({ "emailId.email": email }));
+      (await User.findOne({ "emailId.email": email })) || (await Admin.findOne({ "emailId.email": email }));
 
     if (existingRecruiter) {
       return res.status(400).json({
