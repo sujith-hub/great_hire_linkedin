@@ -28,12 +28,10 @@ const LatestJobs = () => {
       setLoading(false);
     }
   };
-
+  
   useEffect(() => {
-    if (jobs.length === 0) {
-      fetchJobs();
-    }
-  }, [jobs.length]);
+    fetchJobs();
+  },[]);
 
   return (
     <div className="max-w-7xl mx-auto my-20">

@@ -41,11 +41,6 @@ const adminSchema = new mongoose.Schema(
         default: "",
       },
     },
-    status: {
-      type: String,
-      enum: ["active", "inactive"],
-      default: "inactive",
-    },
   },
   { timestamps: true }
 );

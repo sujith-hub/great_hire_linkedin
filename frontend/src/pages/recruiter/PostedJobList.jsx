@@ -11,19 +11,42 @@ import {
 } from "@/components/ui/table";
 
 const initialJobs = [
-  { date: "07-12-2024", role: "Backend Developer", company: "TechCorp", status: "Opened" },
-  { date: "15-11-2024", role: "Frontend Developer", company: "Innovatech", status: "Expired" },
-  { date: "01-10-2024", role: "Full Stack Engineer", company: "DevWorks", status: "Closed" },
-  { date: "25-09-2024", role: "Data Analyst", company: "AnalyzeIT", status: "Opened" },
-  { date: "12-09-2024", role: "Mobile App Developer", company: "Appify", status: "Expired" },
+  {
+    date: "07-12-2024",
+    role: "Backend Developer",
+    company: "TechCorp",
+    status: "Active",
+  },
+  {
+    date: "15-11-2024",
+    role: "Frontend Developer",
+    company: "Innovatech",
+    status: "Expired",
+  },
+  {
+    date: "01-10-2024",
+    role: "Full Stack Engineer",
+    company: "DevWorks",
+    status: "Expired",
+  },
+  {
+    date: "25-09-2024",
+    role: "Data Analyst",
+    company: "AnalyzeIT",
+    status: "Active",
+  },
+  {
+    date: "12-09-2024",
+    role: "Mobile App Developer",
+    company: "Appify",
+    status: "Expired",
+  },
 ];
 
-const statusOptions = ["Opened", "Expired", "Closed", "Under Review"];
+const statusOptions = ["Active", "Expired"];
 const statusStyles = {
-  Opened: "bg-green-200 text-green-700 hover:bg-green-100",
+  Active: "bg-green-200 text-green-700 hover:bg-green-100",
   Expired: "bg-red-200 text-red-700 hover:bg-red-100",
-  Closed: "bg-gray-200 text-gray-700 hover:bg-gray-100",
-  "Under Review": "bg-yellow-200 text-yellow-700 hover:bg-yellow-100",
 };
 
 const PostedJobList = () => {
@@ -78,7 +101,9 @@ const PostedJobList = () => {
             >
               <TableCell className="text-gray-700">{index + 1}</TableCell>
               <TableCell className="text-gray-700">{job.date}</TableCell>
-              <TableCell className="text-gray-800 font-medium">{job.company}</TableCell>
+              <TableCell className="text-gray-800 font-medium">
+                {job.company}
+              </TableCell>
 
               <TableCell className="text-gray-800 font-medium">
                 {job.role}
@@ -87,17 +112,14 @@ const PostedJobList = () => {
                 {job.company}
               </TableCell>
               <TableCell className="text-right">
-                <select
-                  value={job.status}
-                  onChange={(e) => handleStatusChange(index, e.target.value)}
-                  className={`px-3 py-1 rounded-md text-sm cursor-pointer ${statusStyles[job.status]} transition`}
+                <div
+                  className={`px-3 py-1 rounded-md text-sm text-center ${
+                    statusStyles[job.status]
+                  } transition`}
                 >
-                  {statusOptions.map((status) => (
-                    <option key={status} value={status} className="text-black">
-                      {status}
-                    </option>
-                  ))}
-                </select>
+                  {job.status}
+                </div>
+                
               </TableCell>
             </TableRow>
           ))}

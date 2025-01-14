@@ -116,8 +116,13 @@ export const login = async (req, res) => {
     //check mail is correct or not...
     let user =
       (await User.findOne({ "emailId.email": email })) ||
-      (await Recruiter.findOne({ "emailId.email": email })) ||
-      (await Admin.findOne({ "emailId.email": email }));
+      (await Recruiter.findOne({
+        "emailId.email": email,
+        // isActive: true,
+      })) ||
+      (await Admin.findOne({
+        "emailId.email": email,
+      }));
 
     if (!user) {
       return res.status(200).json({
@@ -125,6 +130,7 @@ export const login = async (req, res) => {
         success: false,
       });
     }
+
     //checking password is correct or not...
     const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch) {
