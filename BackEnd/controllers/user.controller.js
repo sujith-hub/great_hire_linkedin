@@ -1,13 +1,17 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+
 import { User } from "../models/user.model.js";
 import { Recruiter } from "../models/recruiter.model.js";
 import { Admin } from "../models/admin.model.js";
+import { Contact } from "../models/contact.model.js";
+import { BlacklistToken } from "../models/blacklistedtoken.model.js";
+
 import cloudinary from "../utils/cloudinary.js";
 import getDataUri from "../utils/dataUri.js";
 import { oauth2Client } from "../utils/googleConfig.js";
 import axios from "axios";
-import { Contact } from "../models/contact.model.js";
+
 import nodemailer from "nodemailer";
 
 export const register = async (req, res) => {
@@ -290,6 +294,8 @@ export const googleLogin = async (req, res) => {
 // Logout Section
 export const logout = async (req, res) => {
   try {
+    const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+    await BlacklistToken.create({ token });
     return res
       .status(200)
       .cookie("token", "", {
