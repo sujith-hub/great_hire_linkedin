@@ -9,6 +9,7 @@ const contactSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true, // Email of the person contacting
+      match: [/.+@.+\..+/, "Please enter a valid email address"],
     },
     phoneNumber: {
       type: String,
