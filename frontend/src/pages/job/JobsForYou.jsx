@@ -44,6 +44,8 @@ const JobsForYou = ({ jobs }) => {
     }
   }, [jobs]);
 
+  
+
   const calculateActiveDays = (createdAt) => {
     const jobCreatedDate = new Date(createdAt); // Convert the 'createdAt' timestamp to a Date object
     const currentDate = new Date(); // Get the current date
@@ -206,6 +208,7 @@ const JobsForYou = ({ jobs }) => {
                 <button
                   className="flex items-center gap-1"
                   onClick={() => {
+
                     navigate("/apply");
                   }}
                 >

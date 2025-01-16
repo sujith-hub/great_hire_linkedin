@@ -325,6 +325,7 @@ export const logout = async (req, res) => {
 export const updateProfile = async (req, res) => {
   try {
     const { fullname, email, phoneNumber, bio, skills, experience } = req.body;
+
     const { profilePhoto, resume } = req.files; // Access files from req.files
     const userId = req.id;
 
