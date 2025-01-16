@@ -34,6 +34,10 @@ const PostedJobList = () => {
     navigate("/recruiter/dashboard/post-job"); // Navigate to the job form
   };
 
+  const handleJobClick = (jobId) => {
+    navigate(`/recruiter/dashboard/job-details/${jobId}`); // Navigate to the job details page
+  };
+
   const handleStatusChange = (index, newStatus) => {
     const updatedJobs = jobs.map((job, i) =>
       i === index ? { ...job, status: newStatus } : job
@@ -80,9 +84,14 @@ const PostedJobList = () => {
               <TableCell className="text-gray-700">{job.date}</TableCell>
               <TableCell className="text-gray-800 font-medium">{job.company}</TableCell>
 
-              <TableCell className="text-gray-800 font-medium">
+               {/* Clickable Job Role */}
+               <TableCell
+                className="text-blue-600 font-medium cursor-pointer hover:underline"
+                onClick={() => handleJobClick(job.id)}
+              >
                 {job.role}
               </TableCell>
+
               <TableCell className="text-gray-800 font-medium">
                 {job.company}
               </TableCell>
