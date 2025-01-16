@@ -33,6 +33,8 @@ import PostedJobList from "./pages/recruiter/PostedJobList";
 import RecruiterHome from "./pages/recruiter/RecruiterHome";
 import RecruiterPlans from "./pages/recruiter/RecruiterPlans";
 import RecruiterList from "./pages/recruiter/RecruiterList";
+import JobAndApplicantsDetail from "./pages/recruiter/JobAndApplicantsDetail";
+import RecruiterSuccess from "./pages/recruiter/RecruiterSuccess";
 
 // Admin Routes
 import AdminSignup from "./components/auth/admin/AdminSignup";
@@ -41,7 +43,6 @@ import AdminLogin from "./components/auth/admin/AdminLogin";
 import { useEffect } from "react";
 import { logOut } from "./redux/authSlice.js";
 import { useDispatch } from "react-redux";
-import RecruiterSuccess from "./pages/recruiter/RecruiterSuccess";
 
 import VerifyEmail from "./components/VerifyEmail";
 import VerifyNumber from "./components/VerifyNumber";
@@ -143,6 +144,7 @@ const appRouter = createBrowserRouter([
       { path: "company-details", element: <CompanyDetails /> },
       { path: "your-plans", element: <RecruiterPlans /> },
       { path: "recruiter-list", element: <RecruiterList /> },
+      { path: "job-details/:id", element: <JobAndApplicantsDetail />}, 
       { index: true, element: <RecruiterHome /> },
     ],
   },
