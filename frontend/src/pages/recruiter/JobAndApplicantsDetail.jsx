@@ -8,19 +8,9 @@ const JobAndApplicantsDetail = () => {
           <div className="max-w-5xl mx-auto my-10">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="font-bold text-xl">Title</h1>
-                <div className="flex items-center gap-2 mt-4">
-                  <Badge className={"text-blue-700 font-bold"} variant="ghost">
-                    {15 }
-                    Positions
-                  </Badge>
-                  <Badge className={"text-[#F83002] font-bold"} variant="ghost">
-                    jobType
-                  </Badge>
-                  <Badge className={"text-[#7209b7] font-bold"} variant="ghost">
-                    salaryLPA
-                  </Badge>
-                </div>
+                <h1 className="font-bold text-xl">Fullstack Developer</h1>
+                <h6 className="text-gray-sm">campany name</h6>
+                <h6 className="text-sm">address</h6>
               </div>
             </div>
             <h1 className="border-b-2 border-b-grey-300 font-medium py-4">Job Description</h1>
