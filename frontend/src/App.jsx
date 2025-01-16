@@ -45,6 +45,7 @@ import RecruiterSuccess from "./pages/recruiter/RecruiterSuccess";
 
 import VerifyEmail from "./components/VerifyEmail";
 import VerifyNumber from "./components/VerifyNumber";
+import DeleteAccount from "./pages/recruiter/DeleteAccount";
 
 const appRouter = createBrowserRouter([
   {
@@ -144,6 +145,7 @@ const appRouter = createBrowserRouter([
       { path: "jobs", element: <JobList /> },
       { path: "company-details", element: <CompanyDetails /> },
       { path: "your-plans", element: <RecruiterPlans /> },
+      {path: "delete-account",element: <DeleteAccount/>},
       { index: true, element: <RecruiterHome /> },
     ],
   },
