@@ -5,7 +5,7 @@ import { Recruiter } from "../models/recruiter.model.js";
 import { User } from "../models/user.model.js";
 import { Admin } from "../models/admin.model.js";
 import { Company } from "../models/company.model.js";
-import {Job} from '../models/job.model.js';
+import { Job } from "../models/job.model.js";
 
 import { oauth2Client } from "../utils/googleConfig.js";
 import axios from "axios";
@@ -128,9 +128,12 @@ export const googleLogin = async (req, res) => {
 
     // Check if user already exists
     let user =
-      (await Recruiter.findOne({ "emailId.email": googleUser.email })) ||
-      (await User.findOne({ "emailId.email": googleUser.email }))
-      || (await Admin.findOne({ "emailId.email": googleUser.email }));
+      (await Recruiter.findOne({
+        "emailId.email": googleUser.email,
+        isActive: true,
+      })) ||
+      (await User.findOne({ "emailId.email": googleUser.email })) ||
+      (await Admin.findOne({ "emailId.email": googleUser.email }));
 
     if (user) {
       if (role && role !== user.role) {
@@ -260,7 +263,8 @@ export const addRecruiterToCompany = async (req, res) => {
     // Check if recruiter email already exists
     const existingRecruiter =
       (await Recruiter.findOne({ "emailId.email": email })) ||
-      (await User.findOne({ "emailId.email": email })) || (await Admin.findOne({ "emailId.email": email }));
+      (await User.findOne({ "emailId.email": email })) ||
+      (await Admin.findOne({ "emailId.email": email }));
 
     if (existingRecruiter) {
       return res.status(400).json({
@@ -473,11 +477,9 @@ export const deleteAccount = async (req, res) => {
       // Remove the user from the User collection
       await User.findByIdAndDelete(userId);
 
-      return res
-        .status(200)
-        .json({
-          message: "User removed from company and deleted successfully",
-        });
+      return res.status(200).json({
+        message: "User removed from company and deleted successfully",
+      });
     }
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });

@@ -7,7 +7,12 @@ const adminSchema = new mongoose.Schema(
       required: true,
     },
     emailId: {
-      email: { type: String, required: true, unique: true },
+      email: {
+        type: String,
+        required: true,
+        unique: true,
+        match: [/.+@.+\..+/, "Please enter a valid email address"],
+      },
       isVerified: {
         type: Boolean,
         default: false,
@@ -35,10 +40,6 @@ const adminSchema = new mongoose.Schema(
         type: String,
         default: "",
       },
-    },
-    isVerifiedByOrganisation: {
-      type: Boolean,
-      default: false,
     },
   },
   { timestamps: true }

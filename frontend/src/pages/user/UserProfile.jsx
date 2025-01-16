@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import Navbar from "../../components/shared/Navbar";
 import { Avatar, AvatarImage } from "../../components/ui/avatar";
 import { Contact, Mail, Pen } from "lucide-react";
+import { FaRegAddressCard } from "react-icons/fa";
+import { LuPhoneIncoming } from "react-icons/lu";
 import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
 import AppliedJobTable from "../job/AppliedJobTable";
@@ -106,7 +108,7 @@ const UserProfile = () => {
                 )}
               </div>
               <div className="flex items-center gap-3">
-                <Contact className="text-gray-500" />
+                <LuPhoneIncoming size={25} className="text-gray-500" />
                 <span className="text-gray-700">
                   {user?.phoneNumber.number || "Not Provided"}
                 </span>
@@ -123,6 +125,13 @@ const UserProfile = () => {
                   </span>
                 )}
               </div>
+              <div className="flex items-center gap-3">
+                <FaRegAddressCard size={25} className="text-gray-500" />
+                <span className="text-gray-700">
+                  {user?.address ? `${user.address.city}, ${user.address.state}, ${user.address.country} ` : "Not Provided"}
+                </span>
+                
+              </div>
             </div>
           </div>
 
@@ -136,7 +145,7 @@ const UserProfile = () => {
                 user.profile.skills.map((skill, index) => (
                   <Badge
                     key={index}
-                    className="bg-gray-100 text-gray-700 border"
+                    className="bg-gray-300 px-4 py-2 text-gray-800 hover:bg-gray-200 rounded-lg font-bold text-sm"
                   >
                     {skill}
                   </Badge>

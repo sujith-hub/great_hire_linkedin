@@ -3,7 +3,11 @@ const orderSchema = new mongoose.Schema(
   {
     userDetails: {
       name: { type: String, required: true },
-      email: { type: String, required: true },
+      email: {
+        type: String,
+        required: true,
+        match: [/.+@.+\..+/, "Please enter a valid email address"],
+      },
       phone: { type: String, required: true },
     },
     planDetails: {

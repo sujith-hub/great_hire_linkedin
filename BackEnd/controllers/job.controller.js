@@ -108,8 +108,10 @@ export const postJob = async (req, res) => {
 //get all jobs.....
 export const getAllJobs = async (req, res) => {
   try {
-    // Retrieve all jobs from the database
+    // Current date for comparison
+    const currentDate = new Date();
 
+    // Retrieve all jobs from the database
     const jobs = await Job.find({})
       .populate({
         path: "company",
@@ -120,9 +122,22 @@ export const getAllJobs = async (req, res) => {
         select: "fullname emailId.email",
       });
 
-    // Respond with the list of all jobs
+    // Filter jobs to exclude expired ones
+    const validJobs = jobs.filter((job) => {
+      const createdAt = new Date(job.createdAt);
+      const jobValidity = parseInt(job.jobDetails.jobValidityInDays, 10);
+
+      // Calculate the expiration date
+      const expirationDate = new Date(createdAt);
+      expirationDate.setDate(expirationDate.getDate() + jobValidity);
+
+      // Return true if the job is not expired
+      return expirationDate >= currentDate;
+    });
+
+    // Respond with the list of valid jobs
     return res.status(200).json({
-      jobs,
+      jobs: validJobs,
       success: true,
     });
   } catch (error) {

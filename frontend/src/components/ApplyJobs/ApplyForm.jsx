@@ -1,16 +1,28 @@
-import React, { useState, useRef } from "react";
-import { ProgressBar } from "react-step-progress-bar";
+import React, { useState, useRef, useEffect } from "react";
+// import { ProgressBar } from "react-step-progress-bar";
 import { MdInfo } from "react-icons/md";
 import { BiArrowBack } from "react-icons/bi";
-import { BsFileEarmarkArrowUp } from "react-icons/bs";
+import { Viewer } from "@react-pdf-viewer/core";
+import "@react-pdf-viewer/core/lib/styles/index.css";
 import { CgFileRemove } from "react-icons/cg";
 import { FaFileSignature } from "react-icons/fa";
 import { TiTick } from "react-icons/ti";
 import ReviewPage from "./ReviewPage";
 import { Link } from "react-router-dom";
 import "react-step-progress-bar/styles.css";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const ApplyForm = ({ setRight }) => {
+  const { user } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user]);
+
   const [step1, setStep1] = useState(true);
   const [step2, setStep2] = useState(false);
   const [step3, setStep3] = useState(false);
@@ -18,14 +30,38 @@ const ApplyForm = ({ setRight }) => {
   const [review, setReview] = useState(false);
   const [coverLetter, setCoverLetter] = useState(true);
   const [coverLetterText, setCoverLetterText] = useState("");
-  const [resume, setResume] = useState("");
+  const [fileURL, setFileURL] = useState(null);
   const inputRef = useRef();
 
-  const [formData, setFormData] = useState({});
+  const [input, setInput] = useState({
+    fullname: user?.fullname,
+    number: user?.phoneNumber.number,
+    email: user?.emailId.email,
+    address:
+      user?.address?.city +
+      ", " +
+      user?.address?.state +
+      ", " +
+      user?.address?.country,
+    resume: user?.profile?.resume,
+  });
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];  
+    if (file) {
+      const fileUrl = URL.createObjectURL(file);
+      setInput((prevData) => ({
+        ...prevData,
+        resume: file,
+      }));
+      setFileURL(fileUrl)
+    }
+    
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setInput({ ...input, [name]: value });
   };
 
   const handleContinue1 = (e) => {
@@ -62,13 +98,7 @@ const ApplyForm = ({ setRight }) => {
     }
   };
 
-  // Handle file input change
-  const handleChange1 = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setResume(file.name); // Update the resume name
-    }
-  };
+  
 
   const handleCoverLetter = (option) => {
     if (option === "write") {
@@ -78,6 +108,20 @@ const ApplyForm = ({ setRight }) => {
       setCoverLetterText("");
     }
   };
+
+  const ProgressBar = ({ percent, unfilledBackground }) => {
+    return (
+      <div className="w-full bg-gray-200 rounded-full h-3 dark:bg-gray-700">
+        <div
+          className={`h-3 rounded-full ${
+            percent > 0 ? "bg-gradient-to-r from-blue-400 to-blue-700" : ""
+          }`}
+          style={{ width: `${percent}%` }}
+        ></div>
+      </div>
+    );
+  };
+
 
   return (
     <div>
@@ -92,29 +136,18 @@ const ApplyForm = ({ setRight }) => {
           </h4>
           <form>
             <label
-              htmlFor="firstName"
+              htmlFor="fullname"
               className="block text-sm font-medium text-gray-700"
             >
-              First name
+              Full Name
             </label>
             <input
               type="text"
-              name="firstName"
+              name="fullname"
               onChange={handleChange}
               className="mt-1 w-full p-2 border border-gray-300 rounded-md"
-            />
-
-            <label
-              htmlFor="lastName"
-              className="block text-sm font-medium text-gray-700 mt-4"
-            >
-              Last name
-            </label>
-            <input
-              type="text"
-              name="lastName"
-              onChange={handleChange}
-              className="mt-1 w-full p-2 border border-gray-300 rounded-md"
+              value={input.fullname}
+              readOnly
             />
 
             <label
@@ -128,6 +161,8 @@ const ApplyForm = ({ setRight }) => {
               name="phoneNumber"
               onChange={handleChange}
               className="mt-1 w-full p-2 border border-gray-300 rounded-md"
+              value={input.number}
+              readOnly
             />
             <label
               htmlFor="email"
@@ -140,6 +175,8 @@ const ApplyForm = ({ setRight }) => {
               name="email"
               onChange={handleChange}
               className="mt-1 w-full p-2 border border-gray-300 rounded-md"
+              value={input.email}
+              readOnly
             />
 
             <label
@@ -153,6 +190,7 @@ const ApplyForm = ({ setRight }) => {
               name="city"
               onChange={handleChange}
               className="mt-1 w-full p-2 border border-gray-300 rounded-md"
+              value={input.address}
             />
 
             <div className="flex items-start mt-4">
@@ -172,7 +210,7 @@ const ApplyForm = ({ setRight }) => {
               </Link>
               <button
                 onClick={handleContinue1}
-                className="bg-blue-500 text-white px-4 py-2 rounded-md"
+                className="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
               >
                 Continue
               </button>
@@ -181,7 +219,7 @@ const ApplyForm = ({ setRight }) => {
 
           <p className="text-sm text-gray-600 mt-4">
             Having an issue with this application?{" "}
-            <Link to="/contact" className="text-blue-500 cursor-pointer">
+            <Link to="/contact" className="text-blue-700 cursor-pointer">
               Tell us more
             </Link>
           </p>
@@ -191,7 +229,6 @@ const ApplyForm = ({ setRight }) => {
       {step2 && (
         <div className="w-full max-w-xl mx-auto p-6 bg-white shadow-md rounded-md">
           <ProgressBar percent={40} unfilledBackground="gray" />
-
           <div className="flex items-center mt-4">
             <BiArrowBack
               className="text-gray-600 cursor-pointer"
@@ -206,32 +243,47 @@ const ApplyForm = ({ setRight }) => {
             </h6>
           </div>
 
-          <h4 className="text-lg font-bold mt-6">Add a resume</h4>
-
-          {/* Hidden File Input */}
-          <input
-            type="file"
-            name="resume"
-            onChange={handleChange1}
-            ref={inputRef}
-            className="hidden"
-          />
-
-          {/* Resume Upload Section */}
-          <div
-            className="flex items-center mt-6 p-4 border border-gray-300 rounded-md cursor-pointer"
-            onClick={handleChoose}
-          >
-            <BsFileEarmarkArrowUp className="text-gray-500 mr-4" />
-            <section>
-              <h4 className="text-base font-semibold">
-                {resume ? resume : "Upload resume"}
-              </h4>
-              <p className="text-sm text-gray-500">
-                Use a pdf, docx, doc, rtf, or txt
-              </p>
-            </section>
-            {resume && <TiTick className="text-green-500 ml-auto" />}
+          <div className="mt-4 h-full w-full flex flex-col items-center justify-center ">
+            {fileURL || input.resume ? (
+              <div className="w-full h-full">
+                <Viewer fileUrl={fileURL || input.resume} />
+              </div>
+            ) : (
+              <div className="mt-2 border-2 border-dashed border-blue-700 p-6 rounded-lg text-center">
+                <input
+                  type="file"
+                  accept=".pdf,.doc,.docx,.txt"
+                  onChange={handleFileChange}
+                  className="hidden"
+                  id="resume-upload"
+                />
+                <label
+                  htmlFor="resume-upload"
+                  className="cursor-pointer flex flex-col items-center justify-center space-y-2 text-blue-700 hover:text-blue-600"
+                >
+                  <svg
+                    className="w-12 h-12 text-blue-700"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M7 16v1a3 3 0 003 3h4a3 3 0 003-3v-1M16 11l-4-4m0 0l-4 4m4-4v12"
+                    ></path>
+                  </svg>
+                  <span className="text-sm leading-4 font-medium">
+                    Drag & drop your resume here, or
+                  </span>
+                  <span className="px-3 py-2 border border-blue-700 text-blue-700 rounded-md bg-white hover:bg-indigo-50">
+                    Browse
+                  </span>
+                </label>
+              </div>
+            )}
           </div>
 
           <div className="flex justify-between items-center mt-6">
@@ -243,15 +295,14 @@ const ApplyForm = ({ setRight }) => {
             </Link>
             <button
               onClick={handleContinue2}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md"
+              className="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
             >
               Continue
             </button>
           </div>
-
           <p className="text-sm text-gray-600 mt-4">
             Having an issue with this application?{" "}
-            <Link to="/contact" className="text-blue-500 cursor-pointer">
+            <Link to="/contact" className="text-blue-700 cursor-pointer">
               Tell us more
             </Link>
           </p>
@@ -322,7 +373,7 @@ const ApplyForm = ({ setRight }) => {
             </Link>
             <button
               onClick={handleContinue3}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md"
+              className="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
             >
               Continue
             </button>
@@ -330,7 +381,7 @@ const ApplyForm = ({ setRight }) => {
 
           <p className="text-sm text-gray-600 mt-4">
             Having an issue with this application?{" "}
-            <Link to="/contact" className="text-blue-500 cursor-pointer">
+            <Link to="/contact" className="text-blue-700 cursor-pointer">
               Tell us more
             </Link>
           </p>
@@ -414,7 +465,7 @@ const ApplyForm = ({ setRight }) => {
             </Link>
             <button
               onClick={handleReview}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md"
+              className="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
             >
               Review your application
             </button>
@@ -422,7 +473,7 @@ const ApplyForm = ({ setRight }) => {
 
           <p className="text-sm text-gray-600 mt-4">
             Having an issue with this application?{" "}
-            <Link to="/contact" className="text-blue-500 cursor-pointer">
+            <Link to="/contact" className="text-blue-700 cursor-pointer">
               Tell us more
             </Link>
           </p>
@@ -430,7 +481,7 @@ const ApplyForm = ({ setRight }) => {
       )}
 
       {review && (
-        <ReviewPage formData={formData} handleReview1={handleReview1} />
+        <ReviewPage input={input} handleReview1={handleReview1} />
       )}
     </div>
   );
