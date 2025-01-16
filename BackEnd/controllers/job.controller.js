@@ -1,5 +1,8 @@
 import { Job } from "../models/job.model.js";
 import { Application } from "../models/application.model.js";
+import { User } from "../models/user.model.js";
+import cloudinary from "../utils/cloudinary.js";
+import getDataUri from "../utils/dataUri.js";
 
 export const postJob = async (req, res) => {
   try {
@@ -95,7 +98,6 @@ export const postJob = async (req, res) => {
     return res.status(201).json({
       success: true,
       message: "Job posted successfully.",
-      job: savedJob,
     });
   } catch (error) {
     console.error("Error posting job:", error);
@@ -109,8 +111,10 @@ export const postJob = async (req, res) => {
 //get all jobs.....
 export const getAllJobs = async (req, res) => {
   try {
-    // Retrieve all jobs from the database
+    // Current date for comparison
+    const currentDate = new Date();
 
+    // Retrieve all jobs from the database
     const jobs = await Job.find({})
       .populate({
         path: "company",
@@ -121,9 +125,22 @@ export const getAllJobs = async (req, res) => {
         select: "fullname emailId.email",
       });
 
-    // Respond with the list of all jobs
+    // Filter jobs to exclude expired ones
+    const validJobs = jobs.filter((job) => {
+      const createdAt = new Date(job.createdAt);
+      const jobValidity = parseInt(job.jobDetails.jobValidityInDays, 10);
+
+      // Calculate the expiration date
+      const expirationDate = new Date(createdAt);
+      expirationDate.setDate(expirationDate.getDate() + jobValidity);
+
+      // Return true if the job is not expired
+      return expirationDate >= currentDate;
+    });
+
+    // Respond with the list of valid jobs
     return res.status(200).json({
-      jobs,
+      jobs: validJobs,
       success: true,
     });
   } catch (error) {
@@ -155,6 +172,7 @@ export const getJobById = async (req, res) => {
   }
 };
 
+// particular recuriter job
 export const getJobForRecruiter = async (req, res) => {
   try {
     const recruiterId = req.id; // Assuming recruiter ID is coming from the request object (e.g., via middleware)
@@ -184,10 +202,10 @@ export const getJobForRecruiter = async (req, res) => {
   }
 };
 
+
 export const deleteJobById = async (req, res) => {
   try {
-    const { jobId } = req.params;
-
+    const jobId = req.params.id;
     // Check if the job exists
     const job = await Job.findById(jobId);
     if (!job) {
@@ -217,4 +235,84 @@ export const deleteJobById = async (req, res) => {
   }
 };
 
+// bookmark the job
+export const bookmarkJob = async (req, res) => {
+  try {
+    const jobId = req.params.id;
+    const userId = req.id; // Assuming req.id is the user ID
+
+    // Find the job by ID and update the saveJob field
+    const job = await Job.findByIdAndUpdate(
+      jobId,
+      { $addToSet: { saveJob: userId } }, // Using $addToSet to avoid duplicates
+      { new: true }
+    );
+
+    if (!job) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+
+    res.status(200).json({ message: "Job bookmarked successfully", job });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+// remove bookmark the job
+export const unBookmarkJob = async (req, res) => {
+  try {
+    const jobId = req.params.id;
+    const userId = req.id; // Assuming req.id is the user ID
+
+    // Find the job by ID and update the saveJob field
+    const job = await Job.findByIdAndUpdate(
+      jobId,
+      { $pull: { saveJob: userId } }, // Using $addToSet to avoid duplicates
+      { new: true }
+    );
+
+    if (!job) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+
+    res.status(200).json({ message: "Job unbookmarked successfully", job });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+// hide the job
+export const hideJob = async (req, res) => {
+  try {
+    const jobId = req.params.id;
+    const userId = req.id; // Assuming req.id is the user ID
+
+    // Find the job by ID and update the hiddenJob field
+    const job = await Job.findByIdAndUpdate(
+      jobId,
+      { $addToSet: { hiddenJob: userId } }, // Using $addToSet to avoid duplicates
+      { new: true }
+    );
+
+    if (!job) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+
+    res.status(200).json({ message: "Job hidden successfully", job });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
 export const updateJob = async (req, res) => {};
+
+export const applyJob = async (req, res) => {
+  try{
+    const userId = req.id;
+    const {fullname, email, number, address, jobId} = req.body;
+    const {resume} = req.files;
+
+  }catch(err){
+
+  }
+}

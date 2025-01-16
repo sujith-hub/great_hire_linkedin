@@ -45,6 +45,18 @@ const companySchema = new mongoose.Schema(
     bussinessFileName: {
       type: String,
     },
+    maxPostJobs: {
+      type: Number,
+      default: 10,
+    },
+    maxResumeDownload: {
+      type: Number,
+      default: 10,
+    },
+    haveSubscription: {
+      type: Boolean,
+      default: false,
+    },
     userId: [
       {
         user: {

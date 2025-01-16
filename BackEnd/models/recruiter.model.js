@@ -7,7 +7,12 @@ const recruiterSchema = new mongoose.Schema(
       required: true,
     },
     emailId: {
-      email: { type: String, required: true, unique: true },
+      email: {
+        type: String,
+        required: true,
+        unique: true,
+        match: [/.+@.+\..+/, "Please enter a valid email address"],
+      },
       isVerified: { type: Boolean, default: false },
     },
     phoneNumber: {
@@ -29,18 +34,7 @@ const recruiterSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    maxPostJobs: {
-      type: Number,
-      default: 10,
-    },
-    maxResumeDownload: {
-      type: Number,
-      default: 10,
-    },
-    haveSubscription: {
-      type: Boolean,
-      default: false,
-    },
+
     isVerify: {
       type: Number,
       default: 0,
@@ -54,6 +48,10 @@ const recruiterSchema = new mongoose.Schema(
         type: String,
         default: "",
       },
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
     },
   },
 

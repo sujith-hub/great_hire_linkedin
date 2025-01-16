@@ -7,7 +7,12 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
     emailId: {
-      email: { type: String, required: true, unique: true },
+      email: {
+        type: String,
+        required: true,
+        unique: true,
+        match: [/.+@.+\..+/, "Please enter a valid email address"],
+      },
       isVerified: {
         type: Boolean,
         default: false,
@@ -28,7 +33,21 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "student",
     },
+    address: {
+      city: {
+        type: String,
+      },
+      state: {
+        type: String,
+      },
+      country: {
+        type: String,
+      },
+    },
     profile: {
+      coverLetter: {
+        type: String,
+      },
       jobTagList: { type: [String] },
       bio: { type: String },
       experience: {
@@ -39,6 +58,9 @@ const userSchema = new mongoose.Schema(
           type: String,
         },
         duration: {
+          type: String,
+        },
+        experienceDetails: {
           type: String,
         },
       },

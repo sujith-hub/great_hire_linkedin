@@ -121,7 +121,7 @@ const VerifyEmail = ({setOpenEmailOTPModal}) => {
   return (
     <>
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div className="flex flex-col items-center justify-center h-screen p-6 space-y-3 animate-in fade-in duration-200">
+        <div className="bg-white flex flex-col items-center justify-center w-1/3 p-6 space-y-3 animate-in fade-in duration-200">
           <div className="w-full max-w-md">
             <h1 className="text-3xl font-bold text-center mb-6">
               Great<span className="text-blue-700">Hire</span>

@@ -9,11 +9,13 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { BsPersonPlus } from "react-icons/bs";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { IoSettingsOutline } from "react-icons/io5";
+import { FiUsers } from "react-icons/fi";
 import { useSelector } from "react-redux";
 
 const DashboardNavigations = () => {
   const { user } = useSelector((state) => state.auth);
   const { company } = useSelector((state) => state.company);
+  console.log(user);
 
   const navLinkClass = ({ isActive }) =>
     `flex items-center gap-2 px-2 py-2 rounded-lg w-full ${
@@ -123,6 +125,20 @@ const DashboardNavigations = () => {
           <span>Settings</span>
         </h2>
         <ul className="flex flex-col gap-4">
+          {/* Recruiter List */}
+          <NavLink
+            to="/recruiter/dashboard/recruiter-list"
+            className={navLinkClass}
+          >
+            {({ isActive }) => (
+              <>
+                <FiUsers size={25} className={iconClass(isActive)} />
+                <span>Recruiters</span>
+              </>
+            )}
+          </NavLink>
+
+          {/* Plans details */}
           <NavLink
             to="/recruiter/dashboard/your-plans"
             className={navLinkClass}
@@ -134,17 +150,20 @@ const DashboardNavigations = () => {
               </>
             )}
           </NavLink>
-          <NavLink
-            to="/recruiter/dashboard/delete-account"
-            className={navLinkClass}
-          >
-            {({ isActive }) => (
-              <>
-                <RiDeleteBin6Line size={25} className={iconClass(isActive)} />
-                <span>Delete Account</span>
-              </>
-            )}
-          </NavLink>
+
+          {user.emailId.email === company.adminEmail && (
+            <NavLink
+              to="/recruiter/dashboard/delete-account"
+              className={navLinkClass}
+            >
+              {({ isActive }) => (
+                <>
+                  <RiDeleteBin6Line size={25} className={iconClass(isActive)} />
+                  <span>Delete Account</span>
+                </>
+              )}
+            </NavLink>
+          )}
         </ul>
       </section>
     </div>

@@ -1,9 +1,13 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+
 import { Recruiter } from "../models/recruiter.model.js";
 import { User } from "../models/user.model.js";
-import { oauth2Client } from "../utils/googleConfig.js";
+import { Admin } from "../models/admin.model.js";
 import { Company } from "../models/company.model.js";
+import { Job } from "../models/job.model.js";
+
+import { oauth2Client } from "../utils/googleConfig.js";
 import axios from "axios";
 import nodemailer from "nodemailer";
 import getDataUri from "../utils/dataUri.js";
@@ -39,7 +43,8 @@ export const register = async (req, res) => {
     // Check if user already exists
     let userExists =
       (await Recruiter.findOne({ "emailId.email": email })) ||
-      (await User.findOne({ "emailId.email": email }));
+      (await User.findOne({ "emailId.email": email })) ||
+      (await Admin.findOne({ "emailId.email": email }));
 
     if (userExists) {
       return res.status(200).json({
@@ -123,8 +128,12 @@ export const googleLogin = async (req, res) => {
 
     // Check if user already exists
     let user =
-      (await Recruiter.findOne({ "emailId.email": googleUser.email })) ||
-      (await User.findOne({ "emailId.email": googleUser.email }));
+      (await Recruiter.findOne({
+        "emailId.email": googleUser.email,
+        isActive: true,
+      })) ||
+      (await User.findOne({ "emailId.email": googleUser.email })) ||
+      (await Admin.findOne({ "emailId.email": googleUser.email }));
 
     if (user) {
       if (role && role !== user.role) {
@@ -254,7 +263,8 @@ export const addRecruiterToCompany = async (req, res) => {
     // Check if recruiter email already exists
     const existingRecruiter =
       (await Recruiter.findOne({ "emailId.email": email })) ||
-      (await User.findOne({ "emailId.email": email }));
+      (await User.findOne({ "emailId.email": email })) ||
+      (await Admin.findOne({ "emailId.email": email }));
 
     if (existingRecruiter) {
       return res.status(400).json({
@@ -430,10 +440,48 @@ export const updateProfile = async (req, res) => {
 };
 
 export const deleteAccount = async (req, res) => {
-  const { userId, userEmail, companyId } = req.body;
+  const { userEmail, companyId } = req.body;
+  const userId = req.id;
+
   try {
-    if (userEmail === company.adminEmail) {
-    } else {
+    // Find the company by ID
+    const company = await Company.findById(companyId);
+    if (!company) {
+      return res.status(404).json({ message: "Company not found" });
     }
-  } catch (err) {}
+
+    // Check if the userEmail is the adminEmail
+    if (userEmail === company.adminEmail) {
+      // Remove all users in the userId array from the User collection
+      await User.deleteMany({
+        _id: { $in: company.userId.map((u) => u.user) },
+      });
+
+      // Remove all jobs associated with the company
+      await Job.deleteMany({ company: companyId });
+
+      // Remove the company
+      await Company.findByIdAndDelete(companyId);
+
+      return res
+        .status(200)
+        .json({ message: "Company and all related data deleted successfully" });
+    } else {
+      // Remove the user from the userId array in the Company model
+      await Company.findByIdAndUpdate(
+        companyId,
+        { $pull: { userId: { user: userId } } },
+        { new: true }
+      );
+
+      // Remove the user from the User collection
+      await User.findByIdAndDelete(userId);
+
+      return res.status(200).json({
+        message: "User removed from company and deleted successfully",
+      });
+    }
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
 };

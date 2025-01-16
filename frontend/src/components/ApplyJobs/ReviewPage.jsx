@@ -1,9 +1,52 @@
 import React from "react";
 import { BiArrowBack } from "react-icons/bi";
-import { VscFilePdf } from "react-icons/vsc";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { Viewer } from "@react-pdf-viewer/core";
+import "@react-pdf-viewer/core/lib/styles/index.css";
+import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
 
-const ReviewPage = ({ handleReview1, formData }) => {
+const ReviewPage = ({ handleReview1, input }) => {
+  const { user } = useSelector((state) => state.auth);
+  console.log(input);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    if (input.fullname !== user?.fullname)
+      formData.append("fullname", input.fullname);
+    if (input.email !== user.emailId.email)
+      formData.append("email", input.email);
+    if (input.phoneNumber !== user.phoneNumber.number)
+      formData.append("phoneNumber", input.phoneNumber);
+
+    if (input.resume) {
+      formData.append("resume", input.resume);
+    }
+
+    try {
+      setLoading(true);
+      const response = await axios.put(
+        `${JOB_API_END_POINT}/apply-job`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+          withCredentials: true,
+        }
+      );
+
+      if (response.data.success) {
+        dispatch(setUser(response.data.user));
+        toast.success("Profile updated successfully!");
+        setOpen(false);
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error(err.response?.data?.message || "Something went wrong!");
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="max-w-6xl justify-center mx-auto p-6 bg-white shadow-lg rounded-lg">
       <div className="flex items-center mb-6">
@@ -22,11 +65,11 @@ const ReviewPage = ({ handleReview1, formData }) => {
       <div className="space-y-4 mb-6">
         <div>
           <p className="text-sm text-gray-500">Full Name</p>
-          <h3 className="text-base font-semibold">{`${formData.firstName} ${formData.lastName}`}</h3>
+          <h3 className="text-base font-semibold">{`${input.fullname}`}</h3>
         </div>
         <div>
           <p className="text-sm text-gray-500">Email Address</p>
-          <h3 className="text-base font-semibold">{formData.email}</h3>
+          <h3 className="text-base font-semibold">{input.email}</h3>
           <small className="text-xs text-gray-500 block mt-2">
             To mitigate fraud, Great Hire may mask your email address. If
             masked, the employer will see an address like
@@ -36,35 +79,34 @@ const ReviewPage = ({ handleReview1, formData }) => {
         </div>
         <div>
           <p className="text-sm text-gray-500">City, State</p>
-          <h3 className="text-base font-semibold">{formData.city}</h3>
+          <h3 className="text-base font-semibold">{input.address}</h3>
         </div>
         <div>
           <p className="text-sm text-gray-500">Phone Number</p>
-          <h3 className="text-base font-semibold">{formData.phoneNumber}</h3>
+          <h3 className="text-base font-semibold">{input.number}</h3>
         </div>
       </div>
 
       <p className="text-sm text-gray-500">Resume</p>
-      <div className="flex items-center mb-6 space-x-4">
-        <VscFilePdf className="text-2xl text-gray-500" />
-        <h3 className="text-base font-semibold">{formData.resume}</h3>
+      <div className="w-full h-fit">
+        <Viewer fileUrl={input.resume} />
       </div>
 
       <h4 className="text-lg font-medium mb-4">Employee Questions</h4>
       <div className="space-y-4 mb-6">
         <div>
           <p className="text-sm text-gray-500">Job Profile</p>
-          <h3 className="text-base font-semibold">{formData.jobTitle}</h3>
+          <h3 className="text-base font-semibold">{input?.jobTitle}</h3>
         </div>
         <div>
           <p className="text-sm text-gray-500">Company Name</p>
-          <h3 className="text-base font-semibold">{formData.company}</h3>
+          <h3 className="text-base font-semibold">{input?.company}</h3>
         </div>
         <div>
           <p className="text-sm text-gray-500">
             How many years of total work experience do you have?
           </p>
-          <h3 className="text-base font-semibold">{formData.experience}</h3>
+          <h3 className="text-base font-semibold">{input?.experience}</h3>
         </div>
       </div>
 
@@ -87,11 +129,14 @@ const ReviewPage = ({ handleReview1, formData }) => {
         </div>
         <small className="text-xs text-gray-500 block">
           By creating a job alert, you agree to our{" "}
-          <Link to="/policy/privacy-policy" className="underline cursor-pointer">
-          Terms
-        </Link>. You can
-          change your consent settings at any time by unsubscribing or as
-          detailed in our terms.
+          <Link
+            to="/policy/privacy-policy"
+            className="underline cursor-pointer"
+          >
+            Terms
+          </Link>
+          . You can change your consent settings at any time by unsubscribing or
+          as detailed in our terms.
         </small>
       </div>
 
@@ -109,7 +154,7 @@ const ReviewPage = ({ handleReview1, formData }) => {
       </small>
 
       <div className="text-center mb-6">
-        <button className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600">
+        <button className="bg-blue-700 hover:bg-blue-600 text-white px-6 py-2 rounded-md ">
           <Link to="/success" className="text-white no-underline">
             Submit your application
           </Link>
@@ -118,7 +163,7 @@ const ReviewPage = ({ handleReview1, formData }) => {
 
       <p className="text-center text-sm text-gray-500">
         Having an issue with this application?{" "}
-        <Link to="/contact" className="underline text-blue-500 cursor-pointer">
+        <Link to="/contact" className="underline text-blue-700 cursor-pointer">
           Tell us more
         </Link>
       </p>
