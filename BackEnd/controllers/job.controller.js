@@ -1,5 +1,8 @@
 import { Job } from "../models/job.model.js";
 import { Application } from "../models/application.model.js";
+import { User } from "../models/user.model.js";
+import cloudinary from "../utils/cloudinary.js";
+import getDataUri from "../utils/dataUri.js";
 
 export const postJob = async (req, res) => {
   try {
@@ -169,6 +172,7 @@ export const getJobById = async (req, res) => {
   }
 };
 
+// particular recuriter job
 export const getJobForRecruiter = async (req, res) => {
   try {
     const recruiterId = req.id; // Assuming recruiter ID is coming from the request object (e.g., via middleware)
@@ -197,6 +201,7 @@ export const getJobForRecruiter = async (req, res) => {
     });
   }
 };
+
 
 export const deleteJobById = async (req, res) => {
   try {
@@ -300,3 +305,14 @@ export const hideJob = async (req, res) => {
 };
 
 export const updateJob = async (req, res) => {};
+
+export const applyJob = async (req, res) => {
+  try{
+    const userId = req.id;
+    const {fullname, email, number, address, jobId} = req.body;
+    const {resume} = req.files;
+
+  }catch(err){
+
+  }
+}

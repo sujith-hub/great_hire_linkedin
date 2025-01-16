@@ -32,6 +32,7 @@ import CreateCompany from "./pages/recruiter/CreateCompany";
 import PostedJobList from "./pages/recruiter/PostedJobList";
 import RecruiterHome from "./pages/recruiter/RecruiterHome";
 import RecruiterPlans from "./pages/recruiter/RecruiterPlans";
+import RecruiterList from "./pages/recruiter/RecruiterList";
 
 // Admin Routes
 import AdminSignup from "./components/auth/admin/AdminSignup";
@@ -141,6 +142,7 @@ const appRouter = createBrowserRouter([
       { path: "jobs", element: <PostedJobList /> },
       { path: "company-details", element: <CompanyDetails /> },
       { path: "your-plans", element: <RecruiterPlans /> },
+      { path: "recruiter-list", element: <RecruiterList /> },
       { index: true, element: <RecruiterHome /> },
     ],
   },

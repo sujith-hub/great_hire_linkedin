@@ -180,6 +180,7 @@ export const sendVerificationStatus = async (req, res) => {
             ...(recruiterData.phoneNumber?.number && {
               "phoneNumber.isVerified": true, // Conditionally set phone isVerified to true if phone number exists
             }),
+            isVerify: status,
           },
         }
       );
