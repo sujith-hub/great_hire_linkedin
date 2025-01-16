@@ -6,11 +6,19 @@ import { COMPANY_API_END_POINT } from "@/utils/ApiEndPoint";
 import axios from "axios";
 import { addCompany } from "@/redux/companySlice";
 import DashboardNavigations from "./DashboardNavigations";
+import { fetchRecruiters } from "@/redux/RecruiterSlice";
 
 const RecruiterDashboard = () => {
   const { user } = useSelector((state) => state.auth);
+  const { company } = useSelector((state) => state.company);
+  const { recruiters } = useSelector((state) => state.recruiters);
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user.isVerify && user.isCompanyCreated && recruiters?.length === 0)
+      dispatch(fetchRecruiters(company._id));
+  }, [company?._id]);
 
   useEffect(() => {
     const fetchCompanyByUserId = async () => {
@@ -44,7 +52,9 @@ const RecruiterDashboard = () => {
       {/* Main Content */}
       <div className="flex">
         <DashboardNavigations />
-        <div className="ml-52 w-full p-4 "> {/* Adjust margin for sidebar */}
+        <div className="ml-52 w-full p-4 ">
+          {" "}
+          {/* Adjust margin for sidebar */}
           {loading ? (
             <div className="text-center text-gray-500">Loading...</div>
           ) : (

@@ -1,4 +1,3 @@
-// src/redux/authSlice.js
 import { createSlice } from "@reduxjs/toolkit";
 
 const jobSlice = createSlice({
@@ -13,18 +12,20 @@ const jobSlice = createSlice({
       state.loading = action.payload;
     },
     setJobs: (state, action) => {
-      state.jobs = action.payload;
+      state.jobs.push(action.payload);
     },
     removeJobs: (state) => {
       state.jobs = [];
     },
+    // Remove all jobs where recruiter id matches
+    removeJobsByRecruiterId: (state, action) => {
+      state.jobs = state.jobs.filter(
+        (job) => job.created_by.toString() !== action.payload
+      );
+    },
   },
 });
 
-export const {
-  setLoading,
-  setJobs,
-  removeJobs
-} = jobSlice.actions;
+export const { setLoading, setJobs, removeJobs, removeJobsByRecruiterId } = jobSlice.actions;
 
 export default jobSlice.reducer;

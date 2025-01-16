@@ -4,7 +4,7 @@ const companySlice = createSlice({
   name: "company",
   initialState: {
     loading: false,
-    company: null, // Initial state is an empty array
+    company: null, // Initial state is null
     searchedQuery: "", // Added searchedQuery field
   },
   reducers: {
@@ -12,20 +12,23 @@ const companySlice = createSlice({
     setLoading: (state, action) => {
       state.loading = action.payload;
     },
-    // Updated addCompany to handle array state
     addCompany: (state, action) => {
       state.company = action.payload;
     },
     removeCompany: (state) => {
       state.company = null;
     },
-    // New action for searchedQuery
-    setSearchedQuery: (state, action) => {
-      state.searchedQuery = action.payload;
+    // Remove user from company by user ID
+    removeUserFromCompany: (state, action) => {
+      if (state.company) {
+        state.company.userId = state.company.userId.filter(
+          (user) => user.user.toString() !== action.payload
+        );
+      }
     },
   },
 });
 
-export const { setLoading, addCompany, removeCompany, setSearchedQuery } = companySlice.actions;
+export const { setLoading, addCompany, removeCompany, removeUserFromCompany } = companySlice.actions;
 
 export default companySlice.reducer;
