@@ -46,13 +46,10 @@ const RecruiterDashboard = () => {
           { userId: user?._id }, // Pass user ID in the request body
           { withCredentials: true }
         );
-<<<<<<< HEAD
         if (response?.data.success) {
           dispatch(addCompany(response?.data.company));
-=======
         if (response.data.success) {
           dispatch(addCompany(response.data.company)); // Update Redux store with company data
->>>>>>> cb27fb92310b7efad127842e050597ee62a9caca
         }
       } catch (err) {
         console.error(`Error fetching company by user: ${err}`);

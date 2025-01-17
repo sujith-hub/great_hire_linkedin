@@ -148,15 +148,12 @@ const appRouter = createBrowserRouter([
       { path: "your-plans", element: <RecruiterPlans /> },
       {path: "delete-account",element: <DeleteAccount/>},
       { path: "recruiter-list", element: <RecruiterList /> },
-<<<<<<< HEAD
       { path: "job-details/:id", element: <JobAndApplicantsDetail /> },
       {
         path: "recruiter-details/:recruiterId",
         element: <RecruitersDetails />,
       },
-=======
       { path: "job-details/:id", element: <JobDetail />}, 
->>>>>>> cb27fb92310b7efad127842e050597ee62a9caca
       { index: true, element: <RecruiterHome /> },
     ],
   },
