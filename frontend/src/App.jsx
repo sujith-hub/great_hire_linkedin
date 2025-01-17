@@ -32,7 +32,7 @@ import CreateCompany from "./pages/recruiter/CreateCompany";
 import PostedJobList from "./pages/recruiter/PostedJobList";
 import RecruiterHome from "./pages/recruiter/RecruiterHome";
 import RecruiterPlans from "./pages/recruiter/RecruiterPlans";
-import JobAndApplicantsDetail from "./pages/recruiter/JobAndApplicantsDetail";
+import JobAndApplicantsDetail from "./pages/recruiter/JobDetail";
 import RecruiterSuccess from "./pages/recruiter/RecruiterSuccess";
 
 // Admin Routes
