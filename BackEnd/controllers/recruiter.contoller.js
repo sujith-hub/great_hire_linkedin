@@ -218,7 +218,7 @@ export const getAllRecruiters = async (req, res) => {
     const { companyId } = req.body;
 
     const company = await Company.findById(companyId);
-    const recruiterIds = company.userId.map((userObj) => userObj.user._id);
+    const recruiterIds = company?.userId.map((userObj) => userObj.user._id);
     const recruiters = await Recruiter.find({ _id: { $in: recruiterIds } });
 
     return res.status(200).json({
@@ -230,6 +230,29 @@ export const getAllRecruiters = async (req, res) => {
     return res
       .status(500)
       .json({ success: false, message: "Internal server error." });
+  }
+};
+
+export const getRecruiterById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Find the recruiter by ID
+    const recruiter = await Recruiter.findById(id);
+
+    if (!recruiter) {
+      return res.status(404).json({ message: "Recruiter not found" });
+    }
+
+    res.status(200).json({
+      message: "Recruiter fetched successfully",
+      recruiter,
+      success: true,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, message: "Server error", error: error.message });
   }
 };
 
@@ -418,9 +441,12 @@ export const updateProfile = async (req, res) => {
       user.profile.profilePhoto = cloudResponse.secure_url;
     }
 
-    if (fullname) user.fullname = fullname;
-    if (phoneNumber) user.phoneNumber = phoneNumber;
-    if (position) user.position = position;
+    if (fullname && user.fullname !== fullname) user.fullname = fullname;
+    if (phoneNumber && user.phoneNumber.number !== phoneNumber) {
+      user.phoneNumber.number = phoneNumber;
+      user.phoneNumber.isVerified = false;
+    }
+    if (position && user.position !== position) user.position = position;
     await user.save();
 
     const updatedUser = await Recruiter.findById(userId).select("-password");

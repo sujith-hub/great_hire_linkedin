@@ -3,6 +3,7 @@ import {
   register,
   googleLogin,
   getAllRecruiters,
+  getRecruiterById,
   addRecruiterToCompany,
   updateProfile,
   deleteAccount,
@@ -19,6 +20,7 @@ router
   .put(isAuthenticated, singleUpload, updateProfile);
 
 router.route("/recruiters").post(isAuthenticated, getAllRecruiters);
+router.route("/recruiter-by-id/:id").get(isAuthenticated, getRecruiterById);
 router.route("/add-recruiter").post(isAuthenticated, addRecruiterToCompany);
 
 router.route("/delete").delete(isAuthenticated, deleteAccount);

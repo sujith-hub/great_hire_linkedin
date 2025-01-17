@@ -2,20 +2,26 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { FaTrash, FaToggleOn, FaToggleOff } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
-import { removeRecruiter, toggleActiveStatus } from "@/redux/RecruiterSlice";
+import { removeRecruiter,toggleActiveStatus } from "@/redux/RecruiterSlice.js";
+
 import { removeUserFromCompany } from "@/redux/companySlice";
-import { removeJobsByRecruiterId } from "@/redux/jobSlice";
 import { toast } from "react-hot-toast";
 import { RECRUITER_API_END_POINT } from "@/utils/ApiEndPoint";
+import { useNavigate } from "react-router-dom";
 
 const RecruiterList = () => {
   const { recruiters } = useSelector((state) => state.recruiters);
+  const navigate = useNavigate();
   const [loading, setLoading] = useState({});
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const { company } = useSelector((state) => state.company);
+
+  useEffect(() => {
+    if (!user || user?.role !== "recruiter") navigate("/login");
+  }, [user]);
 
   const toggleActive = async (event, recruiterId, isActive) => {
     event.stopPropagation();
@@ -56,7 +62,6 @@ const RecruiterList = () => {
       });
 
       if (response.data.success) {
-        dispatch(removeJobsByRecruiterId(recruiterId));
         dispatch(removeUserFromCompany(recruiterId));
         dispatch(removeRecruiter(recruiterId));
         toast.success(response.data.message);
@@ -98,12 +103,12 @@ const RecruiterList = () => {
           placeholder="Search by name, email, or phone"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="p-2 w-64 border border-gray-300 rounded-sm"
+          className="p-2 w-64 border border-gray-400 rounded-sm"
         />
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
-          className="p-2 border border-gray-300 rounded"
+          className="p-2 border border-gray-400 rounded"
         >
           <option value="all">All</option>
           <option value="active">Active</option>
@@ -125,7 +130,7 @@ const RecruiterList = () => {
             <th className="py-3 px-6 bg-gray-200 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
               Position
             </th>
-            {user.emailId.email === company.adminEmail && (
+            {user?.emailId.email === company?.adminEmail && (
               <>
                 <th className="py-3 px-6 bg-gray-200 text-center text-sm font-medium text-gray-600 uppercase tracking-wider">
                   Active
@@ -141,14 +146,22 @@ const RecruiterList = () => {
         <tbody>
           {filteredRecruiters.length !== 0 ? (
             filteredRecruiters.map((recruiter) => (
-              <tr key={recruiter._id} className="border-b cursor-pointer">
+              <tr
+                key={recruiter?._id}
+                className="border-b cursor-pointer"
+                onClick={() =>
+                  navigate(
+                    `/recruiter/dashboard/recruiter-details/${recruiter?._id}`
+                  )
+                }
+              >
                 <td className="py-3 px-6">{recruiter.fullname}</td>
                 <td className="py-3 px-6">{recruiter.emailId.email}</td>
                 <td className="py-3 px-6">
                   {recruiter.phoneNumber?.number || "N/A"}
                 </td>
                 <td className="py-3 px-6">{recruiter.position}</td>
-                {user.emailId.email === company?.adminEmail && (
+                {user?.emailId.email === company?.adminEmail && (
                   <>
                     {recruiter?.emailId.email === company?.adminEmail ? (
                       <>

@@ -16,8 +16,8 @@ const RecruiterDashboard = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (user.isVerify && user.isCompanyCreated && recruiters?.length === 0)
-      dispatch(fetchRecruiters(company._id));
+    if (user?.isVerify && user?.isCompanyCreated && recruiters?.length === 0)
+      dispatch(fetchRecruiters(company?._id));
   }, [company?._id]);
 
   useEffect(() => {
@@ -29,8 +29,8 @@ const RecruiterDashboard = () => {
           { userId: user?._id },
           { withCredentials: true }
         );
-        if (response.data.success) {
-          dispatch(addCompany(response.data.company));
+        if (response?.data.success) {
+          dispatch(addCompany(response?.data.company));
         }
       } catch (err) {
         console.error(`Error fetching company by user: ${err}`);

@@ -73,9 +73,9 @@ const jobSchema = new mongoose.Schema(
         type: String, // If it's a text field (e.g., "Monday to Friday")
         required: true,
       },
-      jobValidityInDays: {
-        type: String, // Assuming this is a number but stored as string
-        required: true,
+      isActive: {
+        type: Boolean, // Assuming this is a number but stored as string
+        default:true,
       },
     },
     saveJob: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],

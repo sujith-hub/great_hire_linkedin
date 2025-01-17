@@ -12,9 +12,11 @@ import { BsFlagFill } from "react-icons/bs";
 import JobMajorDetails from "./JobMajorDetails";
 import { useNavigate } from "react-router-dom";
 import { useJobDetails } from "@/context/JobDetailsContext";
+import { useSelector } from "react-redux";
 
-const JobsForYou = ({ jobs }) => {
+const JobsForYou = () => {
   const {
+    jobs,
     selectedJob,
     setSelectedJob,
     updateSkillStatus,

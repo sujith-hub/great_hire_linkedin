@@ -30,7 +30,6 @@ const PostJob = () => {
       numberOfOpening: "",
       respondTime: "",
       duration: "",
-      jobValidityInDays: "",
     },
     validationSchema: Yup.object({
       urgentHiring: Yup.string().required("This field is required"),
@@ -48,9 +47,6 @@ const PostJob = () => {
       benefits: Yup.string().required("Benefits are required"),
       qualifications: Yup.string().required("Qualification is required"),
       responsibilities: Yup.string().required("Responsibility is required"),
-      jobValidityInDays: Yup.string().required(
-        "Job validity in days is required"
-      ),
     }),
 
     onSubmit: (values) => {
@@ -64,7 +60,7 @@ const PostJob = () => {
       ["companyName", "urgentHiring", "title", "details"], // Step 0
       ["skills", "benefits", "qualifications", "responsibilities"], // Step 1
       ["experience", "salary", "jobType", "location"], // Step 2
-      ["numberOfOpening", "respondTime", "duration", "jobValidityInDays"], // Step 3
+      ["numberOfOpening", "respondTime", "duration"], // Step 3
     ][step];
     // Mark the current step fields as touched to trigger validation messages
     const touchedFields = {};
@@ -102,7 +98,12 @@ const PostJob = () => {
   return (
     <div className="w-full max-w-3xl mx-auto p-6 bg-white shadow-md rounded-md">
       <div className="mb-10">
-        <Stepper steps={steps} activeStep={step} activeColor="blue" completeColor="green" />
+        <Stepper
+          steps={steps}
+          activeStep={step}
+          activeColor="blue"
+          completeColor="green"
+        />
       </div>
 
       <form onSubmit={formik.handleSubmit}>
@@ -507,28 +508,6 @@ const PostJob = () => {
               )}
             </div>
 
-            {/* Job Validity (in Days) */}
-            <div className="mb-6">
-              <Label className="block text-gray-700 mb-1">
-                Job Validity (in Days)
-                <span className="text-red-500 ml-1">*</span>
-              </Label>
-              <input
-                name="jobValidityInDays"
-                type="number"
-                placeholder="Enter job validity in days (e.g. 15, 30)"
-                className="w-full p-2 border border-gray-300 rounded"
-                onChange={formik.handleChange}
-                value={formik.values.jobValidityInDays}
-              />
-              {formik.touched.jobValidityInDays &&
-                formik.errors.jobValidityInDays && (
-                  <div className="text-red-500 text-sm">
-                    {formik.errors.jobValidityInDays}
-                  </div>
-                )}
-            </div>
-
             <div className="flex justify-between">
               <button
                 type="button"
@@ -608,10 +587,7 @@ const PostJob = () => {
               <div className="mb-2">
                 <strong>Duration:</strong> {formik.values.duration || "N/A"}
               </div>
-              <div className="mb-2">
-                <strong>Job Validity (in days):</strong>{" "}
-                {formik.values.jobValidityInDays || "N/A"}
-              </div>
+
               <p className="text-sm text-gray-500 mb-6">
                 If you notice an error in your job post, please <br />
                 <Link to="/contact" className="underline cursor-pointer">

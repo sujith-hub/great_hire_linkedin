@@ -27,7 +27,7 @@ export const postJob = async (req, res) => {
       numberOfOpening,
       respondTime,
       duration,
-      jobValidityInDays,
+
       companyId,
     } = req.body;
 
@@ -45,7 +45,6 @@ export const postJob = async (req, res) => {
       !numberOfOpening ||
       !respondTime ||
       !duration ||
-      !jobValidityInDays ||
       !companyId
     ) {
       return res.status(400).json({
@@ -85,7 +84,6 @@ export const postJob = async (req, res) => {
         numberOfOpening,
         respondTime,
         duration,
-        jobValidityInDays,
       },
       created_by: recruiterId,
       company: companyId,
@@ -109,42 +107,83 @@ export const postJob = async (req, res) => {
 };
 
 //get all jobs.....
+// export const getAllJobs = async (req, res) => {
+//   try {
+//     // Retrieve all jobs from the database, sorted by createdAt in descending order
+//     const jobs = await Job.find({}).sort({ createdAt: -1 });
+
+//     // Respond with the list of jobs
+//     return res.status(200).json({
+//       jobs,
+//       success: true,
+//     });
+//   } catch (error) {
+//     console.error("Error fetching all jobs:", error);
+//     return res.status(500).json({
+//       success: false,
+//       message: "Internal server error.",
+//     });
+//   }
+// };
 export const getAllJobs = async (req, res) => {
+  res.setHeader("Content-Type", "application/json");
+  res.setHeader("Cache-Control", "no-cache");
+
   try {
-    // Current date for comparison
-    const currentDate = new Date();
+    // Using cursor to stream the data in LIFO order (newest to oldest)
+    const cursor = Job.find().sort({ createdAt: -1 }).cursor();
 
-    // Retrieve all jobs from the database
-    const jobs = await Job.find({})
-      .populate({
-        path: "company",
-        select: "name address",
-      })
-      .populate({
-        path: "created_by",
-        select: "fullname emailId.email",
-      });
+    res.write('['); // Start the JSON array
 
-    // Filter jobs to exclude expired ones
-    const validJobs = jobs.filter((job) => {
-      const createdAt = new Date(job.createdAt);
-      const jobValidity = parseInt(job.jobDetails.jobValidityInDays, 10);
-
-      // Calculate the expiration date
-      const expirationDate = new Date(createdAt);
-      expirationDate.setDate(expirationDate.getDate() + jobValidity);
-
-      // Return true if the job is not expired
-      return expirationDate >= currentDate;
+    let isFirst = true;
+    cursor.on('data', (doc) => {
+      if (!isFirst) {
+        res.write(',');
+      } else {
+        isFirst = false;
+      }
+      res.write(JSON.stringify(doc));
     });
 
-    // Respond with the list of valid jobs
+    cursor.on('end', () => {
+      res.write(']'); // End the JSON array
+      res.end();
+    });
+
+    cursor.on('error', (error) => {
+      console.error("Error streaming jobs:", error);
+      res.status(500).json({ message: "Internal server error" });
+    });
+  } catch (error) {
+    console.error("Error fetching jobs:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+//get job by recruiter id...
+export const getJobByRecruiterId = async (req, res) => {
+  try {
+    const recruiterId = req.params.id;
+
+    // Fetch jobs with only the required fields
+    const jobs = await Job.find({ created_by: recruiterId }).select(
+      "jobDetails.companyName jobDetails.title jobDetails.location jobDetails.jobType jobDetails.isActive"
+    );
+
+    if (jobs.length === 0) {
+      return res.status(404).json({
+        message: "No jobs found for this recruiter.",
+        success: false,
+      });
+    }
+
     return res.status(200).json({
-      jobs: validJobs,
+      jobs,
       success: true,
     });
   } catch (error) {
-    console.error("Error fetching all jobs:", error);
+    console.error("Error fetching jobs by recruiter ID:", error);
     return res.status(500).json({
       success: false,
       message: "Internal server error.",
@@ -300,6 +339,38 @@ export const hideJob = async (req, res) => {
     res.status(200).json({ message: "Job hidden successfully", job });
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+export const toggleActive = async (req, res) => {
+  try {
+    const { jobId, isActive } = req.body;
+
+    // Find the job by its ID and update the isActive field
+    const job = await Job.findByIdAndUpdate(
+      jobId,
+      { "jobDetails.isActive": isActive },
+      { new: true } // Return the updated document
+    );
+
+    if (!job) {
+      return res.status(404).json({
+        success: false,
+        message: "Job not found.",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Job status updated successfully.",
+      job,
+    });
+  } catch (error) {
+    console.error("Error toggling job status:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error.",
+    });
   }
 };
 

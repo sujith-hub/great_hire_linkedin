@@ -34,6 +34,7 @@ import RecruiterHome from "./pages/recruiter/RecruiterHome";
 import RecruiterPlans from "./pages/recruiter/RecruiterPlans";
 import RecruiterList from "./pages/recruiter/RecruiterList";
 import JobAndApplicantsDetail from "./pages/recruiter/JobAndApplicantsDetail";
+import RecruitersDetails from "./pages/recruiter/rec_job_details/RecruitersDetails";
 import RecruiterSuccess from "./pages/recruiter/RecruiterSuccess";
 
 // Admin Routes
@@ -144,7 +145,11 @@ const appRouter = createBrowserRouter([
       { path: "company-details", element: <CompanyDetails /> },
       { path: "your-plans", element: <RecruiterPlans /> },
       { path: "recruiter-list", element: <RecruiterList /> },
-      { path: "job-details/:id", element: <JobAndApplicantsDetail />}, 
+      { path: "job-details/:id", element: <JobAndApplicantsDetail /> },
+      {
+        path: "recruiter-details/:recruiterId",
+        element: <RecruitersDetails />,
+      },
       { index: true, element: <RecruiterHome /> },
     ],
   },

@@ -6,6 +6,7 @@ import { removeCompany } from "@/redux/companySlice";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
+import { cleanRecruiterRedux } from "@/redux/RecruiterSlice";
 
 const Navbar = () => {
   const { user } = useSelector((state) => state.auth);
@@ -70,7 +71,11 @@ const Navbar = () => {
       });
       if (response.data.success) {
         dispatch(logOut());
-        dispatch(removeCompany());
+        if (user.role === "recruiter") {
+          dispatch(removeCompany());
+          dispatch(cleanRecruiterRedux());
+        }
+
         setIsProfileMenuOpen(false);
         setIsMenuOpen(false);
         toast.success(response.data.message);
@@ -221,7 +226,7 @@ const Navbar = () => {
                       >
                         {isRecruiter ? "Recruiter" : "User"} Profile
                       </Link>
-                      
+
                       <button
                         onClick={handleLogout}
                         className="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors text-red-600"

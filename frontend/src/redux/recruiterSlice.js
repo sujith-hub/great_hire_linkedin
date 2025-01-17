@@ -32,6 +32,9 @@ const recruiterSlice = createSlice({
     addRecruiter: (state, action) => {
       state.recruiters.push(action.payload);
     },
+    getRecruiterDetailsById:(action, state) => {
+      // complete this
+    },
     toggleActiveStatus: (state, action) => {
       const { recruiterId, isActive } = action.payload;
       const recruiter = state.recruiters.find((r) => r._id === recruiterId);
@@ -42,10 +45,14 @@ const recruiterSlice = createSlice({
     //remove recruiter by recruiter id
     removeRecruiter: (state, action) => {
       state.recruiters = state.recruiters.filter(
-        recruiter => recruiter._id !== action.payload
+        (recruiter) => recruiter._id !== action.payload
       );
     },
+    cleanRecruiterRedux: (state, action) => {
+      state.recruiters = [];
+    },
   },
+
   extraReducers: (builder) => {
     builder
       .addCase(fetchRecruiters.pending, (state) => {
@@ -62,7 +69,11 @@ const recruiterSlice = createSlice({
   },
 });
 
-export const { addRecruiter, toggleActiveStatus, removeRecruiter } =
-  recruiterSlice.actions;
+export const {
+  addRecruiter,
+  toggleActiveStatus,
+  removeRecruiter,
+  cleanRecruiterRedux,
+} = recruiterSlice.actions;
 
 export default recruiterSlice.reducer;
