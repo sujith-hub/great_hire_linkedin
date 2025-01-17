@@ -212,23 +212,24 @@ export const googleLogin = async (req, res) => {
   }
 };
 
-// recruiter details by id
-export const getRecruiterById = async (req, res) => {
+// recruiters list
+export const getAllRecruiters = async (req, res) => {
   try {
-    const { recruiterId } = req.body;
-    const recruiter = await Recruiter.findById(recruiterId);
-    if (!recruiter) {
-      return res.status(404).json({
-        message: "Recruiter not found.",
-        Success: false,
-      });
-    }
+    const { companyId } = req.body;
+
+    const company = await Company.findById(companyId);
+    const recruiterIds = company.userId.map((userObj) => userObj.user._id);
+    const recruiters = await Recruiter.find({ _id: { $in: recruiterIds } });
+
     return res.status(200).json({
-      recruiter,
+      recruiters,
       success: true,
     });
   } catch (error) {
-    console.log(error);
+    console.error("Error in fetching recruiters:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error." });
   }
 };
 
@@ -371,7 +372,7 @@ export const addRecruiterToCompany = async (req, res) => {
     return res.status(201).json({
       success: true,
       message: "Recruiter added. credentials send to recruiter mail. ",
-      recruiterId: recruiter._id,
+      recruiter,
     });
   } catch (err) {
     console.error("Error adding recruiter:", err);
@@ -441,7 +442,8 @@ export const updateProfile = async (req, res) => {
 
 export const deleteAccount = async (req, res) => {
   const { userEmail, companyId } = req.body;
-  const userId = req.id;
+  let user = await Recruiter.findOne({ "emailId.email": userEmail });
+  const userId = user?._id;
 
   try {
     // Find the company by ID
@@ -452,20 +454,28 @@ export const deleteAccount = async (req, res) => {
 
     // Check if the userEmail is the adminEmail
     if (userEmail === company.adminEmail) {
-      // Remove all users in the userId array from the User collection
-      await User.deleteMany({
+      // Remove all recruiters in the userId array from the Recruiter collection
+      await Recruiter.deleteMany({
         _id: { $in: company.userId.map((u) => u.user) },
       });
 
       // Remove all jobs associated with the company
-      await Job.deleteMany({ company: companyId });
+      const jobs = await Job.deleteMany({ company: companyId });
+
+      // Remove applications associated with the deleted jobs
+      if (jobs.deletedCount > 0) {
+        await Application.deleteMany({
+          job: { $in: jobs.map((job) => job._id) },
+        });
+      }
 
       // Remove the company
       await Company.findByIdAndDelete(companyId);
 
-      return res
-        .status(200)
-        .json({ message: "Company and all related data deleted successfully" });
+      return res.status(200).json({
+        success: true,
+        message: "Company and all related data deleted successfully",
+      });
     } else {
       // Remove the user from the userId array in the Company model
       await Company.findByIdAndUpdate(
@@ -474,14 +484,54 @@ export const deleteAccount = async (req, res) => {
         { new: true }
       );
 
-      // Remove the user from the User collection
-      await User.findByIdAndDelete(userId);
+      // Remove the recruiter from the Recruiter collection
+      await Recruiter.findByIdAndDelete(userId);
+
+      // Remove jobs created by this recruiter
+      const jobs = await Job.deleteMany({ created_by: userId });
+
+      // Remove applications associated with the deleted jobs
+      if (jobs.deletedCount > 0) {
+        await Application.deleteMany({
+          job: { $in: jobs.map((job) => job._id) },
+        });
+      }
 
       return res.status(200).json({
-        message: "User removed from company and deleted successfully",
+        success: true,
+        message: "Recruiter removed",
       });
     }
   } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
+    res
+      .status(500)
+      .json({ success: true, message: "Server error", error: err.message });
+  }
+};
+
+export const toggleActive = async (req, res) => {
+  const { recruiterId, isActive } = req.body;
+
+  try {
+    // Find the recruiter by ID and update the isActive field
+    const updatedRecruiter = await Recruiter.findByIdAndUpdate(
+      recruiterId,
+      { isActive },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedRecruiter) {
+      return res.status(404).json({ message: "Recruiter not found" });
+    }
+
+    res.status(200).json({
+      message: "Recruiter status updated successfully",
+      recruiter: updatedRecruiter,
+      success: true,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, message: "Server error", error: error.message });
   }
 };

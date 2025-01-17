@@ -15,7 +15,7 @@ import { useSelector } from "react-redux";
 const DashboardNavigations = () => {
   const { user } = useSelector((state) => state.auth);
   const { company } = useSelector((state) => state.company);
-  console.log(user);
+
 
   const navLinkClass = ({ isActive }) =>
     `flex items-center gap-2 px-2 py-2 rounded-lg w-full ${
@@ -81,7 +81,7 @@ const DashboardNavigations = () => {
                     )}
                   </NavLink>
                 )}
-              {user?.isVerify === 1 && user?.isCompanyCreated && (
+              {user?.isVerify === 1 && user?.isCompanyCreated && user?.isActive && (
                 <NavLink
                   to="/recruiter/dashboard/post-job"
                   className={navLinkClass}
@@ -151,7 +151,7 @@ const DashboardNavigations = () => {
             )}
           </NavLink>
 
-          {user.emailId.email === company.adminEmail && (
+          {user?.emailId.email === company?.adminEmail && (
             <NavLink
               to="/recruiter/dashboard/delete-account"
               className={navLinkClass}

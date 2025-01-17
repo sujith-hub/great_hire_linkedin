@@ -118,7 +118,7 @@ export const login = async (req, res) => {
       (await User.findOne({ "emailId.email": email })) ||
       (await Recruiter.findOne({
         "emailId.email": email,
-        // isActive: true,
+        isActive: true,
       })) ||
       (await Admin.findOne({
         "emailId.email": email,
@@ -149,6 +149,7 @@ export const login = async (req, res) => {
     const isVerify = user.isVerify || 0;
     const isCompanyCreated = user.isCompanyCreated || false;
     const position = user.position || "";
+    const isActive = user.isActive || null;
 
     //return user
     user = {
@@ -162,6 +163,7 @@ export const login = async (req, res) => {
       address: user.address,
       isCompanyCreated,
       position,
+      isActive
     };
 
     // cookies strict used...

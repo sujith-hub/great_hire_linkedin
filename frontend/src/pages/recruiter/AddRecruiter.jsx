@@ -4,12 +4,12 @@ import { toast } from "react-hot-toast";
 import axios from "axios";
 import Navbar from "@/components/shared/Navbar";
 import { RECRUITER_API_END_POINT } from "@/utils/ApiEndPoint";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { addRecruiter } from "@/redux/RecruiterSlice";
 
 const AddRecruiter = () => {
-  const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
   const { company } = useSelector((state) => state.company);
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "", // Changed from fullname to fullName
@@ -40,16 +40,20 @@ const AddRecruiter = () => {
         { withCredentials: true }
       );
 
-      toast.success(response.data.message);
+      if (response.data.success) {
+        dispatch(addRecruiter(response.data.recruiter));
+        toast.success(response.data.message);
 
-      setFormData({
-        fullName: "",
-        email: "",
-        phoneNumber: "",
-        position: "",
-        password: "",
-      });
-
+        setFormData({
+          fullName: "",
+          email: "",
+          phoneNumber: "",
+          position: "",
+          password: "",
+        });
+      } else {
+        toast.error(response.data.message);
+      }
     } catch (err) {
       console.error(err);
       const errorMessage =
