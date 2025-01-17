@@ -45,7 +45,7 @@ const RecruitersDetails = () => {
         <div className="text-xl font-semibold">Loading...</div>
       ) : recruiterDetails ? (
         <>
-          <div className=" bg-white p-8 rounded-lg shadow-lg flex flex-col space-y-2 h-fit">
+          <div className=" bg-white p-8 w-1/3 rounded-lg shadow-lg flex flex-col space-y-2 h-fit">
             <div>
               <img
                 src={
@@ -123,7 +123,7 @@ const RecruitersDetails = () => {
               <strong>Role:</strong> {recruiterDetails?.role}
             </p>
           </div>
-          <div>
+          <div className="w-2/3">
             <RecruiterJobs recruiterId={recruiterId}/>
           </div>
         </>

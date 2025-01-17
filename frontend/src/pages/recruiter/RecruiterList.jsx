@@ -95,7 +95,7 @@ const RecruiterList = () => {
   });
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="container mx-auto p-4">
       <h2 className="text-2xl font-semibold mb-4">Recruiter List</h2>
       <div className="mb-4 flex justify-between px-2">
         <input

@@ -5,7 +5,7 @@ import axios from "axios";
 import Navbar from "@/components/shared/Navbar";
 import { RECRUITER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { useSelector, useDispatch } from "react-redux";
-import { addRecruiter } from "@/redux/RecruiterSlice";
+import { addRecruiter } from "@/redux/recruiterSlice";
 
 const AddRecruiter = () => {
   const dispatch = useDispatch();
@@ -67,9 +67,9 @@ const AddRecruiter = () => {
   return (
     <>
       <Navbar />
-      <div className="mt-4 flex items-center justify-center bg-gradient-to-r">
+      <div className="flex items-center justify-center ">
         <form className="w-1/2 space-y-4" onSubmit={handleSubmit}>
-          <h1 className="text-3xl font-bold text-center text-blue-600">
+          <h1 className="text-3xl font-bold text-center text-blue-700">
             {company?.companyName}
           </h1>
           <h1 className="text-3xl font-bold text-center">
@@ -132,7 +132,7 @@ const AddRecruiter = () => {
           </div>
           <button
             type="submit"
-            className={`w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+            className={`w-full bg-blue-700 text-white py-2 rounded-lg hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 ${
               loading ? "cursor-not-allowed" : ""
             }`}
             disabled={loading}

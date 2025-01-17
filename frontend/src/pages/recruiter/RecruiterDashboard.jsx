@@ -52,7 +52,7 @@ const RecruiterDashboard = () => {
       {/* Main Content */}
       <div className="flex">
         <DashboardNavigations />
-        <div className="ml-52 w-full p-4 ">
+        <div className="ml-52 w-full ">
           {" "}
           {/* Adjust margin for sidebar */}
           {loading ? (

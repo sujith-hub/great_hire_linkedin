@@ -128,7 +128,7 @@ const RecruiterJob = ({ recruiterId }) => {
   });
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="container">
       <h2 className="text-2xl font-semibold mb-4">Jobs Created By You</h2>
       <div className="mb-4 flex justify-between px-2">
         <input
