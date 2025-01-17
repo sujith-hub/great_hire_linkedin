@@ -34,7 +34,7 @@ import RecruiterHome from "./pages/recruiter/RecruiterHome";
 import RecruiterPlans from "./pages/recruiter/RecruiterPlans";
 import JobDetail from "./pages/recruiter/JobDetail";
 import RecruiterList from "./pages/recruiter/RecruiterList";
-import JobAndApplicantsDetail from "./pages/recruiter/JobAndApplicantsDetail";
+// import JobAndApplicantsDetail from "./pages/recruiter/JobAndApplicantsDetail";
 import RecruitersDetails from "./pages/recruiter/rec_job_details/RecruitersDetails";
 import RecruiterSuccess from "./pages/recruiter/RecruiterSuccess";
 
@@ -148,7 +148,7 @@ const appRouter = createBrowserRouter([
       { path: "your-plans", element: <RecruiterPlans /> },
       {path: "delete-account",element: <DeleteAccount/>},
       { path: "recruiter-list", element: <RecruiterList /> },
-      { path: "job-details/:id", element: <JobAndApplicantsDetail /> },
+      // { path: "job-details/:id", element: <JobAndApplicantsDetail /> },
       {
         path: "recruiter-details/:recruiterId",
         element: <RecruitersDetails />,
