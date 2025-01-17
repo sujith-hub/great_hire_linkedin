@@ -102,7 +102,7 @@ const PostJob = () => {
   return (
     <div className="w-full max-w-3xl mx-auto p-6 bg-white shadow-md rounded-md">
       <div className="mb-10">
-        <Stepper steps={steps} activeStep={step} />
+        <Stepper steps={steps} activeStep={step} activeColor="blue" completeColor="green" />
       </div>
 
       <form onSubmit={formik.handleSubmit}>
@@ -201,7 +201,7 @@ const PostJob = () => {
               <button
                 type="button"
                 onClick={handleNext}
-                className="bg-blue-500 text-white p-2 rounded"
+                className="bg-blue-700 text-white p-2 rounded"
               >
                 Next
               </button>
@@ -246,7 +246,7 @@ const PostJob = () => {
               <textarea
                 id="benefits"
                 name="benefits"
-                placeholder="Enter benefits separated by new lines"
+                placeholder="Enter benefits separated by new lines (eg. PF or allowance)"
                 className="w-full p-2 border border-gray-300 rounded"
                 onChange={formik.handleChange}
                 value={formik.values.benefits}
@@ -269,7 +269,7 @@ const PostJob = () => {
               <textarea
                 id="qualifications"
                 name="qualifications"
-                placeholder="Enter qualifications separated by new lines"
+                placeholder="Enter qualifications separated by new lines (eg. Bechelor, Master or diploma)"
                 className="w-full p-2 border border-gray-300 rounded"
                 onChange={formik.handleChange}
                 value={formik.values.qualifications}
@@ -293,7 +293,7 @@ const PostJob = () => {
               <textarea
                 id="responsibilities"
                 name="responsibilities"
-                placeholder="Enter responsibilities separated by new lines"
+                placeholder="Enter responsibilities separated by new lines (eg. candidate role, or tasks perfom in job)"
                 className="w-full p-2 border border-gray-300 rounded"
                 onChange={formik.handleChange}
                 value={formik.values.responsibilities}
@@ -318,7 +318,7 @@ const PostJob = () => {
               <button
                 type="button"
                 onClick={handleNext}
-                className="bg-blue-500 text-white p-2 rounded"
+                className="bg-blue-700 text-white p-2 rounded"
               >
                 Next
               </button>
@@ -430,7 +430,7 @@ const PostJob = () => {
               <button
                 type="button"
                 onClick={handleNext}
-                className="bg-blue-500 text-white p-2 rounded"
+                className="bg-blue-700 text-white p-2 rounded"
               >
                 Next
               </button>
@@ -540,7 +540,7 @@ const PostJob = () => {
               <button
                 type="button"
                 onClick={handleNext}
-                className="bg-blue-500 text-white p-2 rounded"
+                className="bg-blue-700 text-white p-2 rounded"
               >
                 Next
               </button>
@@ -655,7 +655,7 @@ const PostJob = () => {
               </button>
               <button
                 type="submit"
-                className="bg-green-500 text-white p-2 rounded"
+                className="bg-blue-700 text-white p-2 rounded"
               >
                 <Link
                   to="/recruiter/success"
