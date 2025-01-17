@@ -1,92 +1,100 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 
 const RecruiterHome = () => {
   const { company } = useSelector((state) => state.company);
 
+  const cards = [
+    { 
+      title: "Recruiters", 
+      count: 3, 
+      gradient: "from-blue-500 to-indigo-500", 
+      description: "Manage and oversee your team of recruiters effectively."
+    },
+    { 
+      title: "Posted Jobs", 
+      count: 3, 
+      gradient: "from-green-500 to-teal-500", 
+      description: "Track the jobs you have posted and their status."
+    },
+    { 
+      title: "Max Post Jobs", 
+      count: 10, 
+      gradient: "from-gray-500 to-gray-700", 
+      description: "View the maximum number of jobs you can post."
+    },
+    { 
+      title: "Active Jobs", 
+      count: 3, 
+      gradient: "from-purple-500 to-pink-500", 
+      description: "Monitor jobs that are currently active and open."
+    },
+    { 
+      title: "Expired Jobs", 
+      count: 0, 
+      gradient: "from-orange-500 to-yellow-500", 
+      description: "Review jobs that have expired and are no longer active."
+    },
+    { 
+      title: "Applicants", 
+      count: 100, 
+      gradient: "from-red-500 to-pink-500", 
+      description: "Analyze the total number of applicants for your jobs."
+    },
+    { 
+      title: "Selected Candidates", 
+      count: 0, 
+      gradient: "from-teal-500 to-blue-500", 
+      description: "Keep track of candidates who have been selected."
+    },
+    { 
+      title: "Downloaded Resumes", 
+      count: 50, 
+      gradient: "from-indigo-500 to-red-500", 
+      description: "Check the number of resumes you have downloaded."
+    },
+    { 
+      title: "Max Download Resumes", 
+      count: 100, 
+      gradient: "from-cyan-500 to-indigo-500", 
+      description: "View the limit for downloading resumes from the portal."
+    },
+  ];
+
   return (
-    <div className=" min-h-screen p-6">
-      <h1 className="text-3xl font-bold text-center text-blue-700 mb-8 animate-bounce">
-        {company?.companyName}
-      </h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {/* Number of recruiter */}
-        <div className="bg-white shadow-lg rounded-lg overflow-hidden hover:scale-105 transition-transform duration-300 ease-in-out">
-          <div className=" h-40 bg-gradient-to-r from-blue-500 to-indigo-500 flex flex-col space-y-2 items-center justify-center">
-            <h2 className="text-white text-2xl font-bold"> Recruiters</h2>
-            <h2 className="text-white text-2xl font-semibold">3</h2>
-          </div>
-        </div>
+    <div className="min-h-screen bg-gray-100 p-8">
+      {/* Header Section */}
+      <header className="text-center mb-8">
+        <h1 className="text-4xl font-bold text-gray-800">
+          Welcome, {company?.name || "Recruiter"}
+        </h1>
+        <p className="text-gray-600 mt-2">
+          Empower your hiring process with key insights and metrics at a glance.
+        </p>
+      </header>
 
-        {/* Number of posted job */}
-        <div className="bg-white shadow-lg rounded-lg overflow-hidden hover:scale-105 transition-transform duration-300 ease-in-out">
-          <div className="h-40 bg-gradient-to-r from-green-500 to-teal-500 flex flex-col space-y-2 items-center justify-center">
-            <h2 className="text-white text-2xl font-bold">Posted Job</h2>
-            <h2 className="text-white text-2xl font-semibold">3</h2>
+      {/* Cards Section */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+        {cards.map((card, index) => (
+          <div
+            key={index}
+            className="bg-white shadow-xl rounded-lg overflow-hidden hover:scale-105 transition-transform duration-300 ease-in-out"
+          >
+            <div
+              className={`h-48 bg-gradient-to-r ${card.gradient} flex flex-col items-center justify-center`}
+            >
+              <h2 className="text-white text-xl font-semibold text-center">
+                {card.title}
+              </h2>
+              <h2 className="text-white text-4xl font-bold mt-2">{card.count}</h2>
+            </div>
+            <div className="p-4">
+              <p className="text-gray-600 text-sm text-center">
+                {card.description}
+              </p>
+            </div>
           </div>
-        </div>
-
-        {/* Max job post */}
-        <div className="bg-white shadow-lg rounded-lg overflow-hidden hover:scale-105 transition-transform duration-300 ease-in-out">
-          <div className="h-40 bg-gradient-to-r from-gray-500 to-gray-700 flex flex-col space-y-2 items-center justify-center">
-            <h2 className="text-white text-2xl font-bold">Max Post Job</h2>
-            <h2 className="text-white text-2xl font-semibold">10</h2>
-          </div>
-        </div>
-
-        {/* Number of active job */}
-        <div className="bg-white shadow-lg rounded-lg overflow-hidden hover:scale-105 transition-transform duration-300 ease-in-out">
-          <div className="h-40 bg-gradient-to-r from-purple-500 to-pink-500 flex flex-col space-y-2 items-center justify-center">
-            <h2 className="text-white text-2xl font-bold">Active Job</h2>
-            <h2 className="text-white text-2xl font-semibold">3</h2>
-          </div>
-        </div>
-
-        {/* Number of expired job */}
-        <div className="bg-white shadow-lg rounded-lg overflow-hidden hover:scale-105 transition-transform duration-300 ease-in-out">
-          <div className="h-40 bg-gradient-to-r from-orange-500 to-yellow-500 flex flex-col space-y-2 items-center justify-center">
-            <h2 className="text-white text-2xl font-bold">Expired Job</h2>
-            <h2 className="text-white text-2xl font-semibold">0</h2>
-          </div>
-        </div>
-
-        {/* Total Applicants */}
-        <div className="bg-white shadow-lg rounded-lg overflow-hidden hover:scale-105 transition-transform duration-300 ease-in-out">
-          <div className="h-40 bg-gradient-to-r from-red-500 to-pink-500 flex flex-col space-y-2 items-center justify-center">
-            <h2 className="text-white text-2xl font-bold">Applicants</h2>
-            <h2 className="text-white text-2xl font-semibold">100</h2>
-          </div>
-        </div>
-
-        {/* Selected */}
-        <div className="bg-white shadow-lg rounded-lg overflow-hidden hover:scale-105 transition-transform duration-300 ease-in-out">
-          <div className="h-40 bg-gradient-to-r from-teal-500 to-blue-500 flex flex-col space-y-2 items-center justify-center">
-            <h2 className="text-white text-2xl font-bold">
-              Selected Candidates
-            </h2>
-            <h2 className="text-white text-2xl font-semibold">0</h2>
-          </div>
-        </div>
-
-        {/* Downloaded Resume */}
-        <div className="bg-white shadow-lg rounded-lg overflow-hidden hover:scale-105 transition-transform duration-300 ease-in-out">
-          <div className="h-40 bg-gradient-to-r from-indigo-500 to-red-500 flex flex-col space-y-2 items-center justify-center">
-            <h2 className="text-white text-2xl font-bold">Downloaded Resume</h2>
-            <h2 className="text-white text-2xl font-semibold">50</h2>
-          </div>
-        </div>
-
-        {/* Max Resume download */}
-        <div className="bg-white shadow-lg rounded-lg overflow-hidden hover:scale-105 transition-transform duration-300 ease-in-out">
-          <div className="h-40 bg-gradient-to-r from-cyan-500 to-indigo-500 flex flex-col space-y-2 items-center justify-center">
-            <h2 className="text-white text-2xl font-bold text-center">
-              {" "}
-              <p>Max Download</p>
-              <p className="text-center">Resume</p>
-            </h2>
-            <h2 className="text-white text-2xl font-semibold">100</h2>
-          </div>
-        </div>
+        ))}
       </div>
     </div>
   );

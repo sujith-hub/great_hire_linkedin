@@ -1,11 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
+import axios from "axios";
 
 const CompanyDetails = () => {
   const { user } = useSelector((state) => state.auth);
   const { company } = useSelector((state) => state.company);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(company);
+
+  // Fetch company data on mount
+  useEffect(() => {
+    if (!company) {
+      fetchCompanyData();
+    }
+  }, [company]);
+
+  const fetchCompanyData = async () => {
+    try {
+      const response = await axios.get("/api/company");
+      setFormData(response.data);
+    } catch (error) {
+      console.error("Error fetching company data", error);
+    }
+  };
 
   const toggleEdit = () => {
     setIsEditing(!isEditing);
@@ -27,19 +44,27 @@ const CompanyDetails = () => {
     });
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
-    // Assuming a function exists to save updated company data
-    // setCompany(formData);
-    setIsEditing(false);
-    alert("Company details updated successfully!");
+    try {
+      await axios.put("/api/company", formData); // API call to save company data
+      setIsEditing(false);
+      alert("Company details updated successfully!");
+    } catch (error) {
+      console.error("Error updating company details", error);
+      alert("Failed to update company details");
+    }
   };
 
-  const handleDeleteCompany = () => {
+  const handleDeleteCompany = async () => {
     if (window.confirm("Are you sure you want to delete this company?")) {
-      // Assuming a function exists to delete company data
-      // setCompany(null);
-      alert("Company deleted successfully!");
+      try {
+        await axios.delete("/api/company"); // API call to delete company data
+        alert("Company deleted successfully!");
+      } catch (error) {
+        console.error("Error deleting company", error);
+        alert("Failed to delete company");
+      }
     }
   };
 
@@ -222,8 +247,10 @@ const CompanyDetails = () => {
             >
               Save Changes
             </button>
+
             <button
               onClick={toggleEdit}
+              type="button"
               className="px-6 py-3 text-white bg-gray-600 rounded-md hover:bg-gray-700 transition duration-200"
             >
               Cancel

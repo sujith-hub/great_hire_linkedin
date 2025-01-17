@@ -1,7 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Login from "./components/auth/Login";
 import Signup from "./components/auth/user/Signup.jsx";
-import RecrutierSignup from "./components/auth/recruiter/Signup.jsx";
+import RecruiterSignup from "./components/auth/recruiter/Signup.jsx";
 import Contact from "./pages/services/Contact";
 import Home from "./pages/Home";
 import JobDescription from "./pages/job/JobDescription";
@@ -32,6 +32,7 @@ import CreateCompany from "./pages/recruiter/CreateCompany";
 import PostedJobList from "./pages/recruiter/PostedJobList";
 import RecruiterHome from "./pages/recruiter/RecruiterHome";
 import RecruiterPlans from "./pages/recruiter/RecruiterPlans";
+import JobDetail from "./pages/recruiter/JobDetail";
 import RecruiterList from "./pages/recruiter/RecruiterList";
 import JobAndApplicantsDetail from "./pages/recruiter/JobAndApplicantsDetail";
 import RecruitersDetails from "./pages/recruiter/rec_job_details/RecruitersDetails";
@@ -47,6 +48,7 @@ import { useDispatch } from "react-redux";
 
 import VerifyEmail from "./components/VerifyEmail";
 import VerifyNumber from "./components/VerifyNumber";
+import DeleteAccount from "./pages/recruiter/DeleteAccount";
 import { Worker } from "@react-pdf-viewer/core";
 
 const appRouter = createBrowserRouter([
@@ -130,7 +132,7 @@ const appRouter = createBrowserRouter([
   },
   {
     path: "/recruiter/signup",
-    element: <RecrutierSignup />,
+    element: <RecruiterSignup />,
   },
 
   {
@@ -144,12 +146,17 @@ const appRouter = createBrowserRouter([
       { path: "jobs", element: <PostedJobList /> },
       { path: "company-details", element: <CompanyDetails /> },
       { path: "your-plans", element: <RecruiterPlans /> },
+      {path: "delete-account",element: <DeleteAccount/>},
       { path: "recruiter-list", element: <RecruiterList /> },
+<<<<<<< HEAD
       { path: "job-details/:id", element: <JobAndApplicantsDetail /> },
       {
         path: "recruiter-details/:recruiterId",
         element: <RecruitersDetails />,
       },
+=======
+      { path: "job-details/:id", element: <JobDetail />}, 
+>>>>>>> cb27fb92310b7efad127842e050597ee62a9caca
       { index: true, element: <RecruiterHome /> },
     ],
   },
