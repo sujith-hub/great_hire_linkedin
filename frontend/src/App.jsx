@@ -1,7 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Login from "./components/auth/Login";
 import Signup from "./components/auth/user/Signup.jsx";
-import RecrutierSignup from "./components/auth/recruiter/Signup.jsx";
+import RecruiterSignup from "./components/auth/recruiter/Signup.jsx";
 import Contact from "./pages/services/Contact";
 import Home from "./pages/Home";
 import JobDescription from "./pages/job/JobDescription";
