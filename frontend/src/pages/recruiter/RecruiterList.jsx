@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { FaTrash, FaToggleOn, FaToggleOff } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
-import { removeRecruiter,toggleActiveStatus } from "@/redux/RecruiterSlice.js";
+import { removeRecruiter,toggleActiveStatus } from "@/redux/recruiterSlice.js";
 
 import { removeUserFromCompany } from "@/redux/companySlice";
 import { toast } from "react-hot-toast";

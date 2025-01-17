@@ -6,7 +6,7 @@ import { removeCompany } from "@/redux/companySlice";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
-import { cleanRecruiterRedux } from "@/redux/RecruiterSlice";
+import { cleanRecruiterRedux } from "@/redux/recruiterSlice";
 
 const Navbar = () => {
   const { user } = useSelector((state) => state.auth);

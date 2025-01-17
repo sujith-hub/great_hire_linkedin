@@ -6,7 +6,7 @@ import { COMPANY_API_END_POINT } from "@/utils/ApiEndPoint";
 import axios from "axios";
 import { addCompany } from "@/redux/companySlice";
 import DashboardNavigations from "./DashboardNavigations";
-import { fetchRecruiters } from "@/redux/RecruiterSlice";
+import { fetchRecruiters } from "@/redux/recruiterSlice";
 
 const RecruiterDashboard = () => {
   const { user } = useSelector((state) => state.auth);
