@@ -39,7 +39,7 @@ const RecruiterDashboard = () => {
       }
     };
 
-    if (user?.isVerify === 1) {
+    if (!company) {
       fetchCompanyByUserId();
     }
   }, [user, dispatch]);

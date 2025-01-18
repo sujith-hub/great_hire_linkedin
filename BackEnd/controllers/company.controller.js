@@ -21,7 +21,7 @@ export const registerCompany = async (req, res) => {
       phone,
       CIN,
       recruiterPosition,
-      userEmail
+      userEmail,
     } = req.body;
 
     // CIN validation function
@@ -36,7 +36,7 @@ export const registerCompany = async (req, res) => {
         success: false,
       });
     }
-    
+
     // Check if a company already exists with this email and CIN
     let company = await Company.findOne({ email, CIN });
     if (company) {
@@ -257,5 +257,57 @@ export const updateCompany = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const changeAdmin = async (req, res) => {
+  const { email, companyId, adminEmail } = req.body;
+  const userId = req.id;
+
+  try {
+    // Find the company by ID
+    const company = await Company.findById(companyId);
+
+    if (!company) {
+      return res.status(404).json({
+        message: "Company not found.",
+        success: false,
+      });
+    }
+
+    // Check if the userEmail is equal to the company's admin email
+    if (email !== company.adminEmail) {
+      return res.status(403).json({
+        message: "You are not authorized to change the admin.",
+        success: false,
+      });
+    }
+
+    // Check if the userId exists in the company's userId array
+    const userExists = company.userId.some(
+      (user) => user.user.toString() === userId
+    );
+
+    if (!userExists) {
+      return res.status(404).json({
+        message: "You are not found in the company.",
+        success: false,
+      });
+    }
+
+    // Change the company's admin email
+    company.adminEmail = adminEmail;
+    await company.save();
+
+    return res.status(200).json({
+      message: "Admin email changed successfully.",
+      success: true,
+    });
+  } catch (error) {
+    console.error("Error changing admin:", error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+      success: false,
+    });
   }
 };

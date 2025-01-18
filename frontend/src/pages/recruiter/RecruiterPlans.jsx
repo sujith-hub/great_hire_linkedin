@@ -144,6 +144,6 @@ function RecruiterPlans() {
       </div>
     </div>
   );
-}
+};
 
-export default RecruiterPlans;
+export default RecruiterUpdateProfile;

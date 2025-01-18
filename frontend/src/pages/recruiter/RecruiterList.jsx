@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { FaTrash, FaToggleOn, FaToggleOff } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
-import { removeRecruiter,toggleActiveStatus } from "@/redux/recruiterSlice.js";
+import { removeRecruiter, toggleActiveStatus } from "@/redux/recruiterSlice.js";
 
 import { removeUserFromCompany } from "@/redux/companySlice";
 import { toast } from "react-hot-toast";
@@ -95,146 +95,160 @@ const RecruiterList = () => {
   });
 
   return (
-    <div className="container mx-auto p-4">
-      <h2 className="text-2xl font-semibold mb-4">Recruiter List</h2>
-      <div className="mb-4 flex justify-between px-2">
-        <input
-          type="text"
-          placeholder="Search by name, email, or phone"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="p-2 w-64 border border-gray-400 rounded-sm"
-        />
-        <select
-          value={filterStatus}
-          onChange={(e) => setFilterStatus(e.target.value)}
-          className="p-2 border border-gray-400 rounded"
-        >
-          <option value="all">All</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-        </select>
-      </div>
-      <table className="min-w-full bg-white border border-gray-200 rounded-lg">
-        <thead>
-          <tr>
-            <th className="py-3 px-6 bg-gray-200 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
-              Full Name
-            </th>
-            <th className="py-3 px-6 bg-gray-200 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
-              Email
-            </th>
-            <th className="py-3 px-6 bg-gray-200 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
-              Phone
-            </th>
-            <th className="py-3 px-6 bg-gray-200 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
-              Position
-            </th>
-            {user?.emailId.email === company?.adminEmail && (
-              <>
-                <th className="py-3 px-6 bg-gray-200 text-center text-sm font-medium text-gray-600 uppercase tracking-wider">
-                  Active
+    <>
+      {company && user?.isVerify ? (
+        <div className="container mx-auto p-4">
+          <h2 className="text-2xl font-semibold mb-4">Recruiter List</h2>
+          <div className="mb-4 flex justify-between px-2">
+            <input
+              type="text"
+              placeholder="Search by name, email, or phone"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="p-2 w-64 border border-gray-400 rounded-sm"
+            />
+            <select
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+              className="p-2 border border-gray-400 rounded"
+            >
+              <option value="all">All</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+          <table className="min-w-full bg-white border border-gray-200 rounded-lg">
+            <thead>
+              <tr>
+                <th className="py-3 px-6 bg-gray-200 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
+                  Full Name
                 </th>
-                <th className="py-3 px-6 bg-gray-200 text-center text-sm font-medium text-gray-600 uppercase tracking-wider">
-                  Actions
+                <th className="py-3 px-6 bg-gray-200 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
+                  Email
                 </th>
-              </>
-            )}
-          </tr>
-        </thead>
-
-        <tbody>
-          {filteredRecruiters.length !== 0 ? (
-            filteredRecruiters.map((recruiter) => (
-              <tr
-                key={recruiter?._id}
-                className="border-b cursor-pointer"
-                onClick={() =>
-                  navigate(
-                    `/recruiter/dashboard/recruiter-details/${recruiter?._id}`
-                  )
-                }
-              >
-                <td className="py-3 px-6">{recruiter.fullname}</td>
-                <td className="py-3 px-6">{recruiter.emailId.email}</td>
-                <td className="py-3 px-6">
-                  {recruiter.phoneNumber?.number || "N/A"}
-                </td>
-                <td className="py-3 px-6">{recruiter.position}</td>
+                <th className="py-3 px-6 bg-gray-200 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
+                  Phone
+                </th>
+                <th className="py-3 px-6 bg-gray-200 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
+                  Position
+                </th>
                 {user?.emailId.email === company?.adminEmail && (
                   <>
-                    {recruiter?.emailId.email === company?.adminEmail ? (
-                      <>
-                        <td className="py-3 px-6">-----</td>
-                        <td className="py-3 px-6">-----</td>
-                      </>
-                    ) : (
-                      <>
-                        <td className="py-3 px-6">
-                          {loading[recruiter._id] ? (
-                            "loading..."
-                          ) : recruiter.isActive ? (
-                            <FaToggleOn
-                              className="text-green-500 cursor-pointer"
-                              onClick={(event) =>
-                                toggleActive(
-                                  event,
-                                  recruiter._id,
-                                  !recruiter.isActive
-                                )
-                              }
-                              size={30}
-                            />
-                          ) : (
-                            <FaToggleOff
-                              className="text-red-500 cursor-pointer"
-                              onClick={(event) =>
-                                toggleActive(
-                                  event,
-                                  recruiter._id,
-                                  !recruiter.isActive
-                                )
-                              }
-                              size={30}
-                            />
-                          )}
-                        </td>
-
-                        <td className="py-3 px-6">
-                          {loading[recruiter._id] ? (
-                            "loading..."
-                          ) : (
-                            <button
-                              onClick={(event) =>
-                                deleteRecruiter(
-                                  event,
-                                  recruiter._id,
-                                  recruiter.emailId.email,
-                                  company._id
-                                )
-                              }
-                              className="text-red-500 hover:text-red-700"
-                            >
-                              <FaTrash size={20} />
-                            </button>
-                          )}
-                        </td>
-                      </>
-                    )}
+                    <th className="py-3 px-6 bg-gray-200 text-center text-sm font-medium text-gray-600 uppercase tracking-wider">
+                      Active
+                    </th>
+                    <th className="py-3 px-6 bg-gray-200 text-center text-sm font-medium text-gray-600 uppercase tracking-wider">
+                      Actions
+                    </th>
                   </>
                 )}
               </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="6" className="py-3 px-6 text-center">
-                No Recruiter Data found
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-    </div>
+            </thead>
+
+            <tbody>
+              {filteredRecruiters.length !== 0 ? (
+                filteredRecruiters.map((recruiter) => (
+                  <tr
+                    key={recruiter?._id}
+                    className="border-b cursor-pointer"
+                    onClick={() =>
+                      navigate(
+                        `/recruiter/dashboard/recruiter-details/${recruiter?._id}`
+                      )
+                    }
+                  >
+                    <td className="py-3 px-6">{recruiter.fullname}</td>
+                    <td className="py-3 px-6">{recruiter.emailId.email}</td>
+                    <td className="py-3 px-6">
+                      {recruiter.phoneNumber?.number || "N/A"}
+                    </td>
+                    <td className="py-3 px-6">{recruiter.position}</td>
+                    {user?.emailId.email === company?.adminEmail && (
+                      <>
+                        {recruiter?.emailId.email === company?.adminEmail ? (
+                          <>
+                            <td className="py-3 px-6">-----</td>
+                            <td className="py-3 px-6">-----</td>
+                          </>
+                        ) : (
+                          <>
+                            <td className="py-3 px-6">
+                              {loading[recruiter._id] ? (
+                                "loading..."
+                              ) : recruiter.isActive ? (
+                                <FaToggleOn
+                                  className="text-green-500 cursor-pointer"
+                                  onClick={(event) =>
+                                    toggleActive(
+                                      event,
+                                      recruiter._id,
+                                      !recruiter.isActive
+                                    )
+                                  }
+                                  size={30}
+                                />
+                              ) : (
+                                <FaToggleOff
+                                  className="text-red-500 cursor-pointer"
+                                  onClick={(event) =>
+                                    toggleActive(
+                                      event,
+                                      recruiter._id,
+                                      !recruiter.isActive
+                                    )
+                                  }
+                                  size={30}
+                                />
+                              )}
+                            </td>
+
+                            <td className="py-3 px-6">
+                              {loading[recruiter._id] ? (
+                                "loading..."
+                              ) : (
+                                <button
+                                  onClick={(event) =>
+                                    deleteRecruiter(
+                                      event,
+                                      recruiter._id,
+                                      recruiter.emailId.email,
+                                      company._id
+                                    )
+                                  }
+                                  className="text-red-500 hover:text-red-700"
+                                >
+                                  <FaTrash size={20} />
+                                </button>
+                              )}
+                            </td>
+                          </>
+                        )}
+                      </>
+                    )}
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6" className="py-3 px-6 text-center">
+                    No Recruiter Data found
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      ) : !company ? (
+        <p className="h-screen flex items-center justify-center">
+          <span className="text-4xl text-gray-400">Company not created</span>
+        </p>
+      ) : (
+        <p className="h-screen flex items-center justify-center">
+          <span className="text-4xl text-gray-400">
+            You are not verified by your company
+          </span>
+        </p>
+      )}
+    </>
   );
 };
 
