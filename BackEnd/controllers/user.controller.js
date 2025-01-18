@@ -5,7 +5,6 @@ import { User } from "../models/user.model.js";
 import { Recruiter } from "../models/recruiter.model.js";
 import { Admin } from "../models/admin.model.js";
 import { Contact } from "../models/contact.model.js";
-import { Application } from "../models/application.model";
 import { BlacklistToken } from "../models/blacklistedtoken.model.js";
 
 import cloudinary from "../utils/cloudinary.js";
@@ -14,7 +13,7 @@ import { oauth2Client } from "../utils/googleConfig.js";
 import axios from "axios";
 
 import nodemailer from "nodemailer";
-import { Application } from "../models/application.model";
+import { Application } from "../models/application.model.js";
 
 export const register = async (req, res) => {
   try {
@@ -588,11 +587,7 @@ export const resetPassword = async (req, res) => {
       success: false,
     });
   }
-};
-
-import mongoose from "mongoose";
-import { User } from "../models/User";
-import { Application } from "../models/Application";
+}; 
 
 export const deleteAccount = async (req, res) => {
   const { email } = req.body;
