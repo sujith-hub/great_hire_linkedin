@@ -8,6 +8,7 @@ import axios from "axios";
 import { RECRUITER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { setUser } from "@/redux/authSlice";
 import { toast } from "react-hot-toast";
+
 const RecruiterUpdateProfile = ({ open, setOpen }) => {
   const [loading, setLoading] = useState(false);
   const { user } = useSelector((store) => store.auth);
@@ -33,6 +34,10 @@ const RecruiterUpdateProfile = ({ open, setOpen }) => {
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        toast.error("Image size should be less than 5MB.");
+        return;
+      }
       const reader = new FileReader();
       reader.onloadend = () => setPreviewImage(reader.result);
       reader.readAsDataURL(file);
@@ -71,7 +76,7 @@ const RecruiterUpdateProfile = ({ open, setOpen }) => {
       toast.success(res.data.message);
     } catch (error) {
       console.log(error);
-      toast.error(response?.data?.message || "Something went wrong!");
+      toast.error(error?.response?.data?.message || "Something went wrong!");
     } finally {
       setLoading(false);
     }
@@ -168,7 +173,7 @@ const RecruiterUpdateProfile = ({ open, setOpen }) => {
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="bio" className="text-right">
+              <Label htmlFor="position" className="text-right">
                 Position
               </Label>
               <Input

@@ -90,7 +90,7 @@ function RecruiterPlans() {
                   plan.popular
                     ? 'shadow-xl ring-2 ring-indigo-500 hover:shadow-2xl'
                     : 'shadow-lg hover:shadow-xl'
-                }`}
+                } ${plan.name === 'Basic' || plan.name === 'Premium' ? 'border-2 border-gray-400' : ''}`}
               >
                 {plan.popular && (
                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-indigo-600 to-indigo-500 text-white px-3 py-1 rounded-full text-xs font-semibold tracking-wide shadow-md">
