@@ -1,10 +1,6 @@
 import React, { useState } from "react";
-import { RiShareBoxFill } from "react-icons/ri";
-import { BiDownArrowAlt } from "react-icons/bi";
 import { BsPersonWorkspace } from "react-icons/bs";
 import { HiLightBulb } from "react-icons/hi";
-import { FaBookOpen } from "react-icons/fa6";
-import { GrLanguage } from "react-icons/gr";
 import { PiMoneyWavyFill } from "react-icons/pi";
 import { FaToolbox } from "react-icons/fa";
 import { BsFlagFill } from "react-icons/bs";
@@ -12,41 +8,9 @@ import { useNavigate } from "react-router-dom";
 
 const JobMajorDetails = ({
   selectedJob,
-  onUpdateSkill,
-  onUpdateEducation,
-  onUpdateLanguage,
-  onUpdateJob,
 }) => {
-  // const [currentSkillIndex, setCurrentSkillIndex] = useState(0);
-  // const [currentEducationIndex, setCurrentEducationIndex] = useState(0);
-  // const [currentLanguageIndex, setCurrentLanguageIndex] = useState(0);
-  const navigate = useNavigate();
   
-
-  // const handleSkillSelection = (skill, status) => {
-  //   onUpdateSkill(skill, status);
-  //   if (currentSkillIndex < selectedJob.skills.length) {
-  //     setCurrentSkillIndex(currentSkillIndex + 1);
-  //   }
-  // };
-
-  // const handleEducationSelection = (edu, status) => {
-  //   onUpdateEducation(edu, status);
-  //   if (currentEducationIndex < selectedJob.educations.length) {
-  //     setCurrentEducationIndex(currentEducationIndex + 1);
-  //   }
-  // };
-
-  // const handleLanguageSelection = (lan, status) => {
-  //   onUpdateLanguage(lan, status);
-  //   if (currentLanguageIndex < selectedJob.languages.length) {
-  //     setCurrentLanguageIndex(currentLanguageIndex + 1);
-  //   }
-  // };
-
-  // const handleJobSelection = (status) => {
-  //   onUpdateJob(status);
-  // };
+  const navigate = useNavigate();
 
   return (
     <div>
@@ -54,10 +18,6 @@ const JobMajorDetails = ({
       <div className="p-4 flex flex-col justify-center gap-4 border-b-2 border-gray-200 ">
         <div>
           <h1 className="text-xl font-bold">Profile Insight</h1>
-          {/* <p className="flex items-center gap-1 text-gray-500">
-            Here’s how the job qualifications align with your profile{" "}
-            <RiShareBoxFill />{" "}
-          </p> */}
         </div>
 
         {/* Skills Section */}
@@ -66,13 +26,7 @@ const JobMajorDetails = ({
             <HiLightBulb />
             <span className="text-xl font-bold text-black">Skills</span>
           </h3>
-          {/* ${
-                  skill.status === ""
-                    ? "bg-slate-200"
-                    : skill.status === "Yes"
-                    ? "bg-green-200"
-                    : "bg-red-200"
-                } */}
+  
           <div className="flex flex-wrap gap-2 mt-2">
             {selectedJob?.jobDetails?.skills.map((skill, index) => (
               <div
@@ -90,10 +44,7 @@ const JobMajorDetails = ({
       <div className="p-4 flex flex-col justify-center gap-4 border-b-2 border-gray-200">
         <div>
           <h1 className="text-xl font-bold">Job details</h1>
-          {/* <p className="flex items-center gap-1 text-gray-500">
-            Here’s how the job details align with your profile{" "}
-            <RiShareBoxFill />{" "}
-          </p> */}
+          
         </div>
 
         {/* Pay Section */}

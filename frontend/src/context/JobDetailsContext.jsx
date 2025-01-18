@@ -1,13 +1,13 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
 
-
 const JobDetailsContext = createContext();
 
 export const useJobDetails = () => useContext(JobDetailsContext);
 
 export const JobDetailsProvider = ({ children }) => {
   const [jobsList, setJobsList] = useState([]);
+  const [originalJobsList, setOriginalJobsList] = useState([]); // State for original job list
   const [selectedJob, setSelectedJob] = useState(null);
   const [error, setError] = useState(null);
 
@@ -20,6 +20,7 @@ export const JobDetailsProvider = ({ children }) => {
         }
         const jobs = await response.json();
         setJobsList(jobs);
+        setOriginalJobsList(jobs); // Store the original job list
         setSelectedJob(jobs[0] || null); // Set the first job as selected by default
       } catch (err) {
         console.error("Error fetching jobs:", err);
@@ -29,43 +30,6 @@ export const JobDetailsProvider = ({ children }) => {
 
     fetchJobs();
   }, []);
-
-  const updateSkillStatus = (skillName, response) => {
-    setSelectedJob((prev) => {
-      const updatedSkills = prev.skills.map((skill) =>
-        skill.skill === skillName ? { ...skill, status: response } : skill
-      );
-      return { ...prev, skills: updatedSkills };
-    });
-  };
-
-  const updateEducationStatus = (educationName, response) => {
-    setSelectedJob((prev) => {
-      const updatedEducation = prev.educations.map((edu) =>
-        edu.edu === educationName ? { ...edu, status: response } : edu
-      );
-      return { ...prev, educations: updatedEducation };
-    });
-  };
-
-  const updateLanguageStatus = (languageName, response) => {
-    setSelectedJob((prev) => {
-      const updatedLanguages = prev.languages.map((lang) =>
-        lang.lan === languageName ? { ...lang, status: response } : lang
-      );
-      return { ...prev, languages: updatedLanguages };
-    });
-  };
-
-  const updateJobStatus = (status) => {
-    setSelectedJob((prevJob) => ({
-      ...prevJob,
-      jobType: {
-        ...prevJob.jobType,
-        status,
-      },
-    }));
-  };
 
   const changeBookmarkStatus = () => {
     setSelectedJob((prevJob) => ({
@@ -79,21 +43,44 @@ export const JobDetailsProvider = ({ children }) => {
       ...prevJob,
       isBlock: true,
     }));
-    setJobsList(jobsList.filter((job) => job.id !== prevJob.id));
+    setJobsList((prevJobsList) =>
+      prevJobsList.filter((job) => job.id !== prevJob.id)
+    );
+    setOriginalJobsList((prevJobsList) =>
+      prevJobsList.filter((job) => job.id !== prevJob.id)
+    );
   };
 
   const filterJobs = (titleKeyword, location) => {
-    const filteredJobs = jobsList.filter((job) => {
+    const filteredJobs = originalJobsList.filter((job) => {
+      const { jobDetails } = job;
+
+      if (!jobDetails) {
+        return false;
+      }
+
       const isTitleMatch = titleKeyword
-        ? [job.title, job.companyName, job.location, job.jobType.type]
-            .map((field) => field.toLowerCase())
-            .some((field) => field.includes(titleKeyword.toLowerCase()))
+        ? [
+            jobDetails.title,
+            jobDetails.companyName,
+            jobDetails.location,
+            jobDetails.details, // Including details for a broader match
+          ]
+            .map((field) => (field ? field.toLowerCase().trim() : ""))
+            .some((field) => field.includes(titleKeyword.toLowerCase().trim()))
         : true;
+
       const isLocationMatch = location
-        ? [job.location, job.jobType.type]
-            .map((field) => field.toLowerCase())
-            .some((field) => field.includes(location.toLowerCase()))
+        ? jobDetails.location
+            .toLowerCase()
+            .trim()
+            .includes(location.toLowerCase().trim()) ||
+          location
+            .toLowerCase()
+            .trim()
+            .includes(jobDetails.location.toLowerCase().trim())
         : true;
+
       return isTitleMatch && isLocationMatch;
     });
 
@@ -102,8 +89,8 @@ export const JobDetailsProvider = ({ children }) => {
   };
 
   const resetFilter = () => {
-    setJobsList(jobsList);
-    setSelectedJob(jobsList[0]);
+    setJobsList(originalJobsList); // Reset to original jobs list
+    setSelectedJob(originalJobsList[0] || null); // Reset selected job
   };
 
   return (
@@ -112,10 +99,6 @@ export const JobDetailsProvider = ({ children }) => {
         jobs: jobsList,
         selectedJob,
         setSelectedJob,
-        updateSkillStatus,
-        updateEducationStatus,
-        updateLanguageStatus,
-        updateJobStatus,
         filterJobs,
         resetFilter,
         changeBookmarkStatus,

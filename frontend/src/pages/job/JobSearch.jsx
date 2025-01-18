@@ -4,7 +4,7 @@ import LocationSearch from "@/pages/job/LocationSearch";
 import { useJobDetails } from "@/context/JobDetailsContext";
 
 const JobSearch = ({ searchInfo }) => {
-  const { filterJobs,resetFilter } = useJobDetails(); // Access functions from context
+  const { filterJobs, resetFilter } = useJobDetails(); // Access functions from context
   const handleLocationSelect = (selectedLocation) => {
     searchInfo.setLocation(selectedLocation);
   };
@@ -13,7 +13,6 @@ const JobSearch = ({ searchInfo }) => {
     // Call filter function on search button click
     filterJobs(searchInfo.titleKeyword, searchInfo.location);
   };
-
 
   return (
     <div className="flex flex-col justify-center items-center  w-full mt-5">
@@ -29,10 +28,12 @@ const JobSearch = ({ searchInfo }) => {
             value={searchInfo.titleKeyword}
             onChange={(e) => {
               searchInfo.setTitleKeyword(e.target.value);
-              if(e.target.value === "")
+
+              if (e.target.value === "") {
                 resetFilter();
-              else
-                filterJobs(searchInfo.titleKeyword, searchInfo.location);
+              } else {
+                filterJobs(e.target.value, searchInfo.location);
+              }
             }}
           />
         </div>

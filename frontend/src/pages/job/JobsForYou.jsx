@@ -12,17 +12,12 @@ import { BsFlagFill } from "react-icons/bs";
 import JobMajorDetails from "./JobMajorDetails";
 import { useNavigate } from "react-router-dom";
 import { useJobDetails } from "@/context/JobDetailsContext";
-import { useSelector } from "react-redux";
 
 const JobsForYou = () => {
   const {
     jobs,
     selectedJob,
     setSelectedJob,
-    updateSkillStatus,
-    updateEducationStatus,
-    updateLanguageStatus,
-    updateJobStatus,
     changeBookmarkStatus,
     changeBlockStatus,
   } = useJobDetails(); // Access functions from context
@@ -237,10 +232,6 @@ const JobsForYou = () => {
           <div className="overflow-y-scroll scrollbar-hide h-screen">
             <JobMajorDetails
               selectedJob={selectedJob}
-              onUpdateSkill={updateSkillStatus}
-              onUpdateEducation={updateEducationStatus}
-              onUpdateLanguage={updateLanguageStatus}
-              onUpdateJob={updateJobStatus}
             />
           </div>
         </div>
