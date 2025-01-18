@@ -7,7 +7,7 @@ import {
   addRecruiterToCompany,
   updateProfile,
   deleteAccount,
-  toggleActive
+  toggleActive,
 } from "../controllers/recruiter.contoller.js";
 import { singleUpload } from "../middlewares/multer.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
@@ -20,7 +20,7 @@ router
   .put(isAuthenticated, singleUpload, updateProfile);
 
 router.route("/recruiters").post(isAuthenticated, getAllRecruiters);
-router.route("/recruiter-by-id/:id").get(isAuthenticated, getRecruiterById);
+router.route("/recruiter-by-id/:id").get(getRecruiterById);
 router.route("/add-recruiter").post(isAuthenticated, addRecruiterToCompany);
 
 router.route("/delete").delete(isAuthenticated, deleteAccount);

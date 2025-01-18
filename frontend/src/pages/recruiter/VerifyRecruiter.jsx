@@ -24,6 +24,7 @@ const VerifyRecruiter = () => {
   const [decoded, setDecoded] = useState(null);
   const [recruiterData, setRecruiterData] = useState(null);
   const [companyData, setCompanyData] = useState(null);
+  console.log(companyData, recruiterData);
 
   useEffect(() => {
     const verifyToken = async () => {
@@ -49,9 +50,8 @@ const VerifyRecruiter = () => {
     if (decoded) {
       const fetchDetails = async () => {
         try {
-          const recruiterResponse = await axios.post(
-            `${RECRUITER_API_END_POINT}/recruiter-by-id`,
-            { recruiterId: decoded.recruiterId }
+          const recruiterResponse = await axios.get(
+            `${RECRUITER_API_END_POINT}/recruiter-by-id/${decoded.recruiterId}`
           );
           setRecruiterData(recruiterResponse.data.recruiter);
 

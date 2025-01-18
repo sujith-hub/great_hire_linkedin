@@ -6,6 +6,7 @@ import { User } from "../models/user.model.js";
 import { Admin } from "../models/admin.model.js";
 import { Company } from "../models/company.model.js";
 import { Job } from "../models/job.model.js";
+import { Application } from "../models/application.model.js";
 
 import { oauth2Client } from "../utils/googleConfig.js";
 import axios from "axios";
@@ -468,32 +469,33 @@ export const updateProfile = async (req, res) => {
 
 export const deleteAccount = async (req, res) => {
   const { userEmail, companyId } = req.body;
-  let user = await Recruiter.findOne({ "emailId.email": userEmail });
-  const userId = user?._id;
 
   try {
-    // Find the company by ID
+    const user = await Recruiter.findOne({ "emailId.email": userEmail });
+    const userId = user?._id;
+
     const company = await Company.findById(companyId);
     if (!company) {
       return res.status(404).json({ message: "Company not found" });
     }
 
-    // Check if the userEmail is the adminEmail
     if (userEmail === company.adminEmail) {
-      // Remove all recruiters in the userId array from the Recruiter collection
-      await Recruiter.deleteMany({
-        _id: { $in: company.userId.map((u) => u.user) },
-      });
+      // Fetch jobs before deleting
+      const jobs = await Job.find({ company: companyId });
 
-      // Remove all jobs associated with the company
-      const jobs = await Job.deleteMany({ company: companyId });
+      // Delete all jobs associated with the company
+      await Job.deleteMany({ company: companyId });
 
       // Remove applications associated with the deleted jobs
-      if (jobs.deletedCount > 0) {
-        await Application.deleteMany({
-          job: { $in: jobs.map((job) => job._id) },
-        });
+      if (jobs.length > 0) {
+        const jobIds = jobs.map(job => job._id);
+        await Application.deleteMany({ job: { $in: jobIds } });
       }
+
+      // Remove all recruiters associated with the company
+      await Recruiter.deleteMany({
+        _id: { $in: company.userId.map(u => u.user) },
+      });
 
       // Remove the company
       await Company.findByIdAndDelete(companyId);
@@ -513,14 +515,16 @@ export const deleteAccount = async (req, res) => {
       // Remove the recruiter from the Recruiter collection
       await Recruiter.findByIdAndDelete(userId);
 
-      // Remove jobs created by this recruiter
-      const jobs = await Job.deleteMany({ created_by: userId });
+      // Fetch jobs created by this recruiter before deleting
+      const jobs = await Job.find({ created_by: userId });
+
+      // Delete jobs created by this recruiter
+      await Job.deleteMany({ created_by: userId });
 
       // Remove applications associated with the deleted jobs
-      if (jobs.deletedCount > 0) {
-        await Application.deleteMany({
-          job: { $in: jobs.map((job) => job._id) },
-        });
+      if (jobs.length > 0) {
+        const jobIds = jobs.map(job => job._id);
+        await Application.deleteMany({ job: { $in: jobIds } });
       }
 
       return res.status(200).json({
@@ -529,11 +533,11 @@ export const deleteAccount = async (req, res) => {
       });
     }
   } catch (err) {
-    res
-      .status(500)
-      .json({ success: true, message: "Server error", error: err.message });
+    console.error("Error deleting account:", err);
+    res.status(500).json({ success: false, message: "Server error", error: err.message });
   }
 };
+
 
 export const toggleActive = async (req, res) => {
   const { recruiterId, isActive } = req.body;
