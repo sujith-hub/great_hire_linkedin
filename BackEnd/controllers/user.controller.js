@@ -5,6 +5,7 @@ import { User } from "../models/user.model.js";
 import { Recruiter } from "../models/recruiter.model.js";
 import { Admin } from "../models/admin.model.js";
 import { Contact } from "../models/contact.model.js";
+import { Application } from "../models/application.model";
 import { BlacklistToken } from "../models/blacklistedtoken.model.js";
 
 import cloudinary from "../utils/cloudinary.js";
@@ -13,6 +14,7 @@ import { oauth2Client } from "../utils/googleConfig.js";
 import axios from "axios";
 
 import nodemailer from "nodemailer";
+import { Application } from "../models/application.model";
 
 export const register = async (req, res) => {
   try {
@@ -163,7 +165,7 @@ export const login = async (req, res) => {
       address: user.address,
       isCompanyCreated,
       position,
-      isActive
+      isActive,
     };
 
     // cookies strict used...
@@ -588,6 +590,10 @@ export const resetPassword = async (req, res) => {
   }
 };
 
+import mongoose from "mongoose";
+import { User } from "../models/User";
+import { Application } from "../models/Application";
+
 export const deleteAccount = async (req, res) => {
   const { email } = req.body;
 
@@ -601,10 +607,7 @@ export const deleteAccount = async (req, res) => {
     }
 
     // Check if the user exists
-    const user =
-      (await User.findOne({ "emailId.email": email })) ||
-      (await Recruiter.findOne({ "emailId.email": email })) ||
-      (await Admin.findOne({ "emailId.email": email }));
+    const user = await User.findOne({ "emailId.email": email });
 
     if (!user) {
       return res.status(404).json({
@@ -612,6 +615,9 @@ export const deleteAccount = async (req, res) => {
         success: false,
       });
     }
+
+    // Remove all applications associated with the user
+    await Application.deleteMany({ applicant: user._id });
 
     // Delete the user
     await User.findOneAndDelete({ "emailId.email": email });

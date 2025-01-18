@@ -488,22 +488,29 @@ export const deleteAccount = async (req, res) => {
 
       // Remove applications associated with the deleted jobs
       if (jobs.length > 0) {
-        const jobIds = jobs.map(job => job._id);
+        const jobIds = jobs.map((job) => job._id);
         await Application.deleteMany({ job: { $in: jobIds } });
       }
 
       // Remove all recruiters associated with the company
       await Recruiter.deleteMany({
-        _id: { $in: company.userId.map(u => u.user) },
+        _id: { $in: company.userId.map((u) => u.user) },
       });
 
       // Remove the company
       await Company.findByIdAndDelete(companyId);
 
-      return res.status(200).json({
-        success: true,
-        message: "Company and all related data deleted successfully",
-      });
+      return res
+        .status(200)
+        .cookie("token", "", {
+          maxAge: 0,
+          httpOnly: true,
+          sameSite: "strict",
+        })
+        .json({
+          success: true,
+          message: "Company deleted successfully",
+        });
     } else {
       // Remove the user from the userId array in the Company model
       await Company.findByIdAndUpdate(
@@ -523,7 +530,7 @@ export const deleteAccount = async (req, res) => {
 
       // Remove applications associated with the deleted jobs
       if (jobs.length > 0) {
-        const jobIds = jobs.map(job => job._id);
+        const jobIds = jobs.map((job) => job._id);
         await Application.deleteMany({ job: { $in: jobIds } });
       }
 
@@ -534,10 +541,11 @@ export const deleteAccount = async (req, res) => {
     }
   } catch (err) {
     console.error("Error deleting account:", err);
-    res.status(500).json({ success: false, message: "Server error", error: err.message });
+    res
+      .status(500)
+      .json({ success: false, message: "Server error", error: err.message });
   }
 };
-
 
 export const toggleActive = async (req, res) => {
   const { recruiterId, isActive } = req.body;
