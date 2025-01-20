@@ -7,7 +7,6 @@ import getDataUri from "../utils/dataUri.js";
 
 export const postJob = async (req, res) => {
   try {
-    
     const {
       companyName,
       urgentHiring,
@@ -186,9 +185,11 @@ export const getJobByRecruiterId = async (req, res) => {
     const recruiterId = req.params.id;
 
     // Fetch jobs with only the required fields
-    const jobs = await Job.find({ created_by: recruiterId }).select(
-      "jobDetails.companyName jobDetails.title jobDetails.location jobDetails.jobType jobDetails.isActive"
-    );
+    const jobs = await Job.find({ created_by: recruiterId })
+      .select(
+        "jobDetails.companyName jobDetails.title jobDetails.location jobDetails.jobType jobDetails.isActive"
+      )
+      .sort({ createdAt: -1 });
 
     if (jobs.length === 0) {
       return res.status(404).json({
@@ -528,7 +529,7 @@ export const applyJob = async (req, res) => {
 
 export const getJobsStatistics = async (req, res) => {
   try {
-    const  companyId  = req.params.id; // Accessing companyId from the URL params
+    const companyId = req.params.id; // Accessing companyId from the URL params
     const userId = req.id; // Assuming the user ID is stored in req.id after authentication
 
     // Find the company by ID
