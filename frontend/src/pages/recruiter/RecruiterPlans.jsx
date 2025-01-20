@@ -1,176 +1,206 @@
 import React, { useState } from "react";
-import { Check, Shield, Rocket, Diamond, Star } from "lucide-react";
-import { useSelector } from "react-redux";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+import { RECRUITER_API_END_POINT } from "@/utils/ApiEndPoint";
+import { setUser } from "@/redux/authSlice";
+import { toast } from "react-hot-toast";
 
-function RecruiterPlans() {
-  const [selectedPlan, setSelectedPlan] = useState(null);
-  const { user } = useSelector((state) => state.auth);
-  const { company } = useSelector((state) => state.company);
+const RecruiterUpdateProfile = ({ open, setOpen }) => {
+  const [loading, setLoading] = useState(false);
+  const { user } = useSelector((store) => store.auth);
+  
+  const [input, setInput] = useState({
+    fullname: user?.fullname || "",
+    email: user?.emailId.email || "",
+    phoneNumber: user?.phoneNumber.number || "",
+    position: user?.position || "",
+    profilePhoto: user?.profile?.profilePhoto || "",
+  });
 
-  const plans = [
-    {
-      name: "Basic",
-      icon: Shield,
-      price: "₹499",
-      color: "blue",
-      features: [
-        "Up to 10 active job posts",
-        "Basic candidate matching",
-        "Email & chat support",
-        "Basic analytics",
-      ],
-      popular: false,
-    },
-    {
-      name: "Standard",
-      icon: Rocket,
-      price: "₹999",
-      color: "indigo",
-      features: [
-        "Up to 25 active job posts",
-        "Advanced AI matching",
-        "Priority 24/7 support",
-        "Advanced analytics suite",
-      ],
-      popular: true,
-    },
-    {
-      name: "Premium",
-      icon: Diamond,
-      price: "₹1,499",
-      color: "purple",
-      features: [
-        "Unlimited job posts",
-        "Custom AI solutions",
-        "Dedicated success manager",
-        "Custom API integration",
-      ],
-      popular: false,
-    },
-  ];
+  const [previewImage, setPreviewImage] = useState(
+    user?.profile?.profilePhoto || ""
+  );
 
-  const handleSelectPlan = (plan) => {
-    setSelectedPlan(plan);
-    console.log(`Selected ${plan.name} plan`);
+  const dispatch = useDispatch();
+
+  const changeEventHandler = (e) => {
+    setInput({ ...input, [e.target.name]: e.target.value });
   };
 
-  const getButtonClasses = (color, popular) => {
-    const baseClasses =
-      "mt-4 w-full py-2.5 text-sm font-semibold rounded-lg transition-all duration-300 hover:shadow-lg active:scale-98";
-    const colorStyles = {
-      blue: popular
-        ? "bg-gradient-to-r from-blue-600 to-blue-500 text-white"
-        : "bg-blue-50 text-blue-600 hover:bg-blue-100",
-      indigo: popular
-        ? "bg-gradient-to-r from-indigo-600 to-indigo-500 text-white"
-        : "bg-indigo-50 text-indigo-600 hover:bg-indigo-100",
-      purple: popular
-        ? "bg-gradient-to-r from-purple-600 to-purple-500 text-white"
-        : "bg-purple-50 text-purple-600 hover:bg-purple-100",
-    };
-    return `${baseClasses} ${colorStyles[color]}`;
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        toast.error("Image size should be less than 5MB.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => setPreviewImage(reader.result);
+      reader.readAsDataURL(file);
+      setInput((prev) => ({ ...prev, profilePhoto: file }));
+    }
   };
+
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("fullname", input.fullname);
+    formData.append("phoneNumber", input.phoneNumber);
+    formData.append("position", input.position);
+
+    if (input.profilePhoto) {
+      formData.append("profilePhoto", input.profilePhoto);
+    }
+
+    try {
+      setLoading(true);
+      const res = await axios.put(
+        `${RECRUITER_API_END_POINT}/profile/update`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          withCredentials: true,
+        }
+      );
+      console.log(res.data.user);
+      if (res.data.success) {
+        dispatch(setUser(res.data.user));
+        setOpen(false);
+      }
+      toast.success(res.data.message);
+    } catch (error) {
+      console.log(error);
+      toast.error(error?.response?.data?.message || "Something went wrong!");
+    } finally {
+      setLoading(false);
+    }
+    setOpen(false);
+  };
+
+  if (!open) return null; // Return null if the modal is not open
 
   return (
-    <>
-      {company && user?.isVerify ? (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4 flex items-center justify-center">
-          <div className="w-full max-w-6xl">
-            <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-gray-900 mb-3">
-                Select Your Recruitment Solution
-              </h1>
-              <p className="text-gray-600 text-sm mb-6">
-                Scale your hiring process with our industry-leading platform
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-5">
-              {plans.map((plan) => {
-                const Icon = plan.icon;
-                return (
-                  <div
-                    key={plan.name}
-                    className={`relative bg-white rounded-2xl p-6 transition-all duration-300 ${
-                      plan.popular
-                        ? "shadow-xl ring-2 ring-indigo-500 hover:shadow-2xl"
-                        : "shadow-lg hover:shadow-xl"
-                    }`}
-                  >
-                    {plan.popular && (
-                      <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-indigo-600 to-indigo-500 text-white px-3 py-1 rounded-full text-xs font-semibold tracking-wide shadow-md">
-                        MOST POPULAR
-                      </div>
-                    )}
-
-                    <div className="flex items-center justify-between mb-5">
-                      <div>
-                        <h2 className="text-xl font-bold text-gray-900 mb-1">
-                          {plan.name}
-                        </h2>
-                        <p className="text-2xl font-bold text-gray-900">
-                          {plan.price}
-                          <span className="text-sm font-normal text-gray-500 ml-1">
-                            /mo
-                          </span>
-                        </p>
-                      </div>
-                      <div className={`p-2.5 rounded-xl bg-${plan.color}-50`}>
-                        <Icon className={`h-6 w-6 text-${plan.color}-500`} />
-                      </div>
-                    </div>
-
-                    <ul className="space-y-3 mb-6">
-                      {plan.features.map((feature, index) => (
-                        <li key={index} className="flex items-start space-x-3">
-                          <div
-                            className={`p-0.5 rounded-full bg-${plan.color}-50 mt-0.5`}
-                          >
-                            <Check
-                              className={`h-3.5 w-3.5 text-${plan.color}-500`}
-                            />
-                          </div>
-                          <span className="text-sm text-gray-600">
-                            {feature}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-
-                    <button
-                      onClick={() => handleSelectPlan(plan)}
-                      className={getButtonClasses(plan.color, plan.popular)}
-                    >
-                      Get Started
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="mt-8 text-center">
-              <div className="inline-flex items-center space-x-4 bg-white rounded-full px-6 py-2 shadow-sm">
-                <Star className="h-4 w-4 text-yellow-400" />
-                <span className="text-sm text-gray-600">
-                  Trusted by 10,000+ recruitment teams worldwide
-                </span>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+      onClick={() => setOpen(false)} // Close modal on background click
+    >
+      <div
+        className="bg-white sm:max-w-[500px] w-full p-6 rounded-lg shadow-lg"
+        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
+      >
+        <div className="flex justify-between items-center">
+          <h2 className="text-lg font-semibold">Update Profile</h2>
+          <button
+            type="button"
+            onClick={() => setOpen(false)}
+            className="text-gray-500 hover:text-gray-700 focus:outline-none"
+            aria-label="Close"
+          >
+            ✖
+          </button>
+        </div>
+        <form onSubmit={submitHandler} className="space-y-4 mt-4">
+          <div className="grid gap-2 py-2">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="profilePhoto" className="text-right">
+                Profile Image
+              </Label>
+              <div className="col-span-3 space-y-2">
+                {previewImage ? (
+                  <img
+                    src={previewImage}
+                    alt="Preview"
+                    className="w-20 h-20 rounded-full object-cover border"
+                  />
+                ) : (
+                  <p>No image uploaded</p>
+                )}
+                <Input
+                  id="profilePhoto"
+                  name="profilePhoto"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
               </div>
             </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="fullname" className="text-right">
+                Name
+              </Label>
+              <Input
+                id="fullname"
+                name="fullname"
+                type="text"
+                value={input.fullname}
+                onChange={changeEventHandler}
+                className="col-span-3"
+                placeholder="Enter your name"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="email" className="text-right">
+                Email
+              </Label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                value={input.email}
+                onChange={changeEventHandler}
+                className="col-span-3"
+                placeholder="Enter your email"
+                disabled
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="phoneNumber" className="text-right">
+                Phone
+              </Label>
+              <Input
+                id="phoneNumber"
+                name="phoneNumber"
+                value={input.phoneNumber}
+                onChange={changeEventHandler}
+                className="col-span-3"
+                placeholder="Enter your phone number"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="position" className="text-right">
+                Position
+              </Label>
+              <Input
+                id="position"
+                name="position"
+                value={input.position}
+                onChange={changeEventHandler}
+                className="col-span-3"
+                placeholder="Enter Your Position"
+              />
+            </div>
           </div>
-        </div>
-      ) : !company ? (
-        <p className="h-screen flex items-center justify-center">
-          <span className="text-4xl text-gray-400">Company not created</span>
-        </p>
-      ) : (
-        <p className="h-screen flex items-center justify-center">
-          <span className="text-4xl text-gray-400">
-            You are not verified by your company
-          </span>
-        </p>
-      )}
-    </>
+          <div>
+            {loading ? (
+              <Button className="w-full my-4" disabled>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait
+              </Button>
+            ) : (
+              <Button type="submit" className="w-full my-4">
+                Update
+              </Button>
+            )}
+          </div>
+        </form>
+      </div>
+    </div>
   );
-}
+};
 
-export default RecruiterPlans;
+export default RecruiterUpdateProfile;

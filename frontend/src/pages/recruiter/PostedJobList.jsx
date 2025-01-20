@@ -73,7 +73,7 @@ const PostedJobList = () => {
   };
 
   const handleApplicantsClick = (jobId) => {
-    navigate(`/recruiter/dashboard/applicants/${jobId}`);
+    navigate(`/recruiter/dashboard/applicants-details/${jobId}`);
   };
 
   const filteredJobs = jobs.filter((job) => {

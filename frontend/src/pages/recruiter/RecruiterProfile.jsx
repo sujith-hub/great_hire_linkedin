@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Navbar from "@/components/shared/Navbar";
 import { Avatar, AvatarImage } from "../../components/ui/avatar";
-import { Contact, Mail, Pen } from "lucide-react";
+import { Contact, Mail, Pen, Trash2 } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import RecruiterUpdateProfile from "./RecruiterUpdateProfile";
 import { useSelector } from "react-redux";
@@ -13,17 +13,14 @@ const RecruiterProfile = () => {
   const [open, setOpen] = useState(false);
   const { user } = useSelector((store) => store.auth);
 
-  const toggleSubscriptionStatus = () => {
+  const toggleSubscriptionStatus = () =>
     setSubscriptionStatus((prevStatus) => (prevStatus === "No" ? "Yes" : "No"));
-  };
 
-  const incrementPostedJobs = () => {
+  const incrementPostedJobs = () =>
     setPostedJobs((prevJobs) => prevJobs + 1);
-  };
 
-  const decrementPostedJobs = () => {
+  const decrementPostedJobs = () =>
     setPostedJobs((prevJobs) => (prevJobs > 0 ? prevJobs - 1 : 0));
-  };
 
   const handleDeleteAccount = () => {
     const confirmDelete = window.confirm(
@@ -31,108 +28,123 @@ const RecruiterProfile = () => {
     );
     if (confirmDelete) {
       console.log("Account deletion logic goes here.");
-      // Add API call or deletion logic here
     }
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Navbar */}
       <Navbar />
 
       {/* Main Content */}
-      <div className="flex-grow max-w-5xl mx-auto bg-white shadow-lg rounded-lg mt-10 p-8">
-        {/* User Info Section */}
-        <div className="flex flex-col items-center text-center border-b pb-8">
-          <Avatar className="h-24 w-24">
-            <AvatarImage
-              src={user?.profile?.profilePhoto || "https://github.com/shadcn.png"}
-              alt="Profile Photo"
-            />
-          </Avatar>
-          <h1 className="mt-4 text-2xl font-bold">{user?.fullname || "User"}</h1>
-          <p className="text-gray-600">{user?.position}</p>
-          <Button
-            onClick={() => setOpen(true)}
-            variant="outline"
-            className="mt-4 flex items-center gap-2"
-          >
-            <Pen className="h-4 w-4" />
-            Edit Profile
-          </Button>
-        </div>
-
-        {/* Contact Information Section */}
-        <div className="mt-6">
-          <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
-            Contact Information
-          </h2>
-          <div className="mt-4 space-y-2">
-            <div className="flex items-center gap-3">
-              <Mail className="text-gray-500" />
-              <span className="text-gray-700">{user?.emailId.email || "No Email"}</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <Contact className="text-gray-500" />
-              <span className="text-gray-700">
-                {user?.phoneNumber.number || "No Phone Number"}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Subscription Status Section */}
-        <div className="mt-6">
-          <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
-            Subscription Status
-          </h2>
-          <div className="mt-4 gap-4">
-            <span>Have You Subscribed?</span>
+      <div className="flex-grow flex justify-center items-center py-10">
+        <div className="w-full max-w-6xl bg-white shadow-lg rounded-lg p-10">
+          {/* Header Section */}
+          <div className="flex flex-col items-center border-b pb-6">
+            <Avatar className="h-28 w-28 shadow-lg">
+              <AvatarImage
+                src={user?.profile?.profilePhoto || "https://github.com/shadcn.png"}
+                alt="Profile Photo"
+              />
+            </Avatar>
+            <h1 className="mt-4 text-3xl font-semibold text-gray-800">
+              {user?.fullname || "User"}
+            </h1>
+            <p className="text-gray-600 text-lg">
+              {user?.position || "Recruiter"}
+            </p>
             <Button
-              onClick={toggleSubscriptionStatus}
-              className={`rounded-md ${
-                subscriptionStatus === "No"
-                  ? "bg-red-500 text-white hover:bg-red-600"
-                  : "bg-blue-500 text-white hover:bg-blue-600"
-              }`}
+              onClick={() => setOpen(true)}
+              variant="outline"
+              className="mt-4 flex items-center gap-2 hover:bg-gray-100"
             >
-              {subscriptionStatus}
+              <Pen className="h-4 w-4" />
+              Edit Profile
             </Button>
           </div>
-        </div>
 
-        {/* Posted Jobs Section */}
-        <div className="mt-6">
-          <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
-            Posted Jobs
-          </h2>
-          <div className="mt-4 flex items-center gap-4">
-            <span className="text-gray-700">
-              Number of Posted Jobs: {postedJobs}
-            </span>
-            <button
-              onClick={incrementPostedJobs}
-              className="bg-green-500 text-white rounded-md hover:bg-green-600 px-2 py-1"
-            >
-              ↑
-            </button>
-            <button
-              onClick={decrementPostedJobs}
-              className="bg-red-500 text-white rounded-md hover:bg-red-600 px-2 py-1"
-            >
-              ↓
-            </button>
+          {/* Contact Information */}
+          <div className="mt-8">
+            <h2 className="text-xl font-bold text-gray-800 mb-4">
+              Contact Information
+            </h2>
+            <div className="space-y-3">
+              <div className="flex items-center gap-4">
+                <Mail className="text-blue-500" />
+                <span className="text-gray-700 text-lg">
+                  {user?.emailId?.email || "No Email"}
+                </span>
+              </div>
+              <div className="flex items-center gap-4">
+                <Contact className="text-green-500" />
+                <span className="text-gray-700 text-lg">
+                  {user?.phoneNumber?.number || "No Phone Number"}
+                </span>
+              </div>
+            </div>
           </div>
-        </div>
 
-        {/* Delete Account Button */}
-        <div className="flex justify-center mt-10">
-          <Button
-            onClick={handleDeleteAccount}
-            className="bg-red-500 text-white rounded-md hover:bg-red-600 px-6 py-2"
-          >
-            Delete Account
-          </Button>
+          {/* Subscription Status */}
+          <div className="mt-8">
+            <h2 className="text-xl font-bold text-gray-800 mb-4">
+              Subscription Status
+            </h2>
+            <div className="flex items-center gap-6">
+              <span className="text-lg text-gray-700">
+                Subscribed:
+              </span>
+              <Button
+                onClick={toggleSubscriptionStatus}
+                className={`rounded-md px-4 py-2 text-white ${
+                  subscriptionStatus === "No"
+                    ? "bg-red-500 hover:bg-red-600"
+                    : "bg-blue-500 hover:bg-blue-600"
+                }`}
+              >
+                {subscriptionStatus}
+              </Button>
+            </div>
+          </div>
+
+          {/* Posted Jobs */}
+          <div className="mt-8">
+            <h2 className="text-xl font-bold text-gray-800 mb-4">
+              Posted Jobs
+            </h2>
+            <div className="flex items-center gap-6">
+              <span className="text-lg text-gray-700">
+                Number of Jobs Posted:
+              </span>
+              <span className="text-lg font-semibold text-gray-900">
+                {postedJobs}
+              </span>
+              <div className="flex gap-3">
+                <Button
+                  onClick={incrementPostedJobs}
+                  className="bg-green-500 text-white hover:bg-green-600 px-3 py-2"
+                >
+                  +
+                </Button>
+                <Button
+                  onClick={decrementPostedJobs}
+                  className="bg-red-500 text-white hover:bg-red-600 px-3 py-2"
+                >
+                  −
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Delete Account */}
+          <div className="mt-10 text-center">
+            <Button
+              onClick={handleDeleteAccount}
+              className="bg-red-600 text-white px-6 py-3 hover:bg-red-700 rounded-md flex items-center gap-2"
+            >
+              <Trash2 className="h-5 w-5" />
+              Delete Account
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -140,14 +152,9 @@ const RecruiterProfile = () => {
       <RecruiterUpdateProfile open={open} setOpen={setOpen} />
 
       {/* Footer */}
-      <Footer className="mt-auto" />
+      <Footer />
     </div>
   );
 };
 
 export default RecruiterProfile;
-
-
-
-
-
