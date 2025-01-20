@@ -54,12 +54,7 @@ const RecruiterHome = () => {
       gradient: "from-indigo-500 to-red-500", 
       description: "Check the number of resumes you have downloaded."
     },
-    { 
-      title: "Max Download Resumes", 
-      count: 100, 
-      gradient: "from-cyan-500 to-indigo-500", 
-      description: "View the limit for downloading resumes from the portal."
-    },
+   
   ];
 
   return (
