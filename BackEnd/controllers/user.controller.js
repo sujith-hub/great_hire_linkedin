@@ -13,6 +13,7 @@ import { oauth2Client } from "../utils/googleConfig.js";
 import axios from "axios";
 
 import nodemailer from "nodemailer";
+import { Application } from "../models/application.model.js";
 
 export const register = async (req, res) => {
   try {
@@ -163,7 +164,7 @@ export const login = async (req, res) => {
       address: user.address,
       isCompanyCreated,
       position,
-      isActive
+      isActive,
     };
 
     // cookies strict used...
@@ -586,7 +587,7 @@ export const resetPassword = async (req, res) => {
       success: false,
     });
   }
-};
+}; 
 
 export const deleteAccount = async (req, res) => {
   const { email } = req.body;
@@ -601,10 +602,7 @@ export const deleteAccount = async (req, res) => {
     }
 
     // Check if the user exists
-    const user =
-      (await User.findOne({ "emailId.email": email })) ||
-      (await Recruiter.findOne({ "emailId.email": email })) ||
-      (await Admin.findOne({ "emailId.email": email }));
+    const user = await User.findOne({ "emailId.email": email });
 
     if (!user) {
       return res.status(404).json({
@@ -612,6 +610,9 @@ export const deleteAccount = async (req, res) => {
         success: false,
       });
     }
+
+    // Remove all applications associated with the user
+    await Application.deleteMany({ applicant: user._id });
 
     // Delete the user
     await User.findOneAndDelete({ "emailId.email": email });

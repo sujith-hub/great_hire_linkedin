@@ -18,10 +18,7 @@ const RecruitersDetails = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `${RECRUITER_API_END_POINT}/recruiter-by-id/${recruiterId}`,
-        {
-          withCredentials: true,
-        }
+        `${RECRUITER_API_END_POINT}/recruiter-by-id/${recruiterId}`
       );
       setRecruiterDetails(response.data.recruiter);
     } catch (err) {
@@ -77,7 +74,13 @@ const RecruitersDetails = () => {
                 {recruiterDetails?.phoneNumber.number || "N/A"}
               </span>
               {recruiterDetails?.phoneNumber.number && (
-                <span className={`${recruiterDetails?.phoneNumber.isVerified?"text-green-600":"text-red-600"}`}>
+                <span
+                  className={`${
+                    recruiterDetails?.phoneNumber.isVerified
+                      ? "text-green-600"
+                      : "text-red-600"
+                  }`}
+                >
                   {recruiterDetails?.phoneNumber.isVerified ? (
                     <MdOutlineVerified size={25} />
                   ) : (
@@ -124,7 +127,7 @@ const RecruitersDetails = () => {
             </p>
           </div>
           <div className="w-2/3">
-            <RecruiterJobs recruiterId={recruiterId}/>
+            <RecruiterJobs recruiterId={recruiterId} />
           </div>
         </>
       ) : (

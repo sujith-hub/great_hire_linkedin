@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 
 const RecruiterHome = () => {
   const { company } = useSelector((state) => state.company);
+  const {user} = useSelector((state) => state.auth);
 
   const cards = [
     { 
@@ -62,11 +63,12 @@ const RecruiterHome = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
+    <>
+      {company && user?.isVerify?<div className="min-h-screen bg-gray-100 p-8">
       {/* Header Section */}
       <header className="text-center mb-8">
         <h1 className="text-4xl font-bold text-gray-800">
-          Welcome, {company?.name || "Recruiter"}
+          Welcome, {company?.companyName || "Recruiter"}
         </h1>
         <p className="text-gray-600 mt-2">
           Empower your hiring process with key insights and metrics at a glance.
@@ -96,7 +98,9 @@ const RecruiterHome = () => {
           </div>
         ))}
       </div>
-    </div>
+    </div>:!company?<p className="h-screen flex items-center justify-center"><span className="text-4xl text-gray-400">Company not created</span></p>:<p className="h-screen flex items-center justify-center"><span className="text-4xl text-gray-400">You are not verified by your company</span></p>}
+    </>
+    
   );
 };
 

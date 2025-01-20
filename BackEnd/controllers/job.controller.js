@@ -133,24 +133,24 @@ export const getAllJobs = async (req, res) => {
     // Using cursor to stream the data in LIFO order (newest to oldest)
     const cursor = Job.find().sort({ createdAt: -1 }).cursor();
 
-    res.write('['); // Start the JSON array
+    res.write("["); // Start the JSON array
 
     let isFirst = true;
-    cursor.on('data', (doc) => {
+    cursor.on("data", (doc) => {
       if (!isFirst) {
-        res.write(',');
+        res.write(",");
       } else {
         isFirst = false;
       }
       res.write(JSON.stringify(doc));
     });
 
-    cursor.on('end', () => {
-      res.write(']'); // End the JSON array
+    cursor.on("end", () => {
+      res.write("]"); // End the JSON array
       res.end();
     });
 
-    cursor.on('error', (error) => {
+    cursor.on("error", (error) => {
       console.error("Error streaming jobs:", error);
       res.status(500).json({ message: "Internal server error" });
     });
@@ -159,7 +159,6 @@ export const getAllJobs = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
 
 //get job by recruiter id...
 export const getJobByRecruiterId = async (req, res) => {

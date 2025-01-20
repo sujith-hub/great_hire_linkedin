@@ -8,12 +8,12 @@ import { useNavigate } from "react-router-dom";
 
 const RecruiterJob = ({ recruiterId }) => {
   const [jobs, setJobs] = useState([]);
-  
   const navigate = useNavigate();
   const [loading, setLoading] = useState({});
   const { user } = useSelector((state) => state.auth);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
+
 
   useEffect(() => {
     if (!user || user?.role !== "recruiter") navigate("/login");
@@ -163,12 +163,16 @@ const RecruiterJob = ({ recruiterId }) => {
             <th className="py-3 px-6 bg-gray-200 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
               Job Type
             </th>
-            <th className="py-3 px-6 bg-gray-200 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
-              Status
-            </th>
-            <th className="py-3 px-6 bg-gray-200 text-center text-sm font-medium text-gray-600 uppercase tracking-wider">
-              Actions
-            </th>
+            {recruiterId === user?._id && (
+              <>
+                <th className="py-3 px-6 bg-gray-200 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="py-3 px-6 bg-gray-200 text-center text-sm font-medium text-gray-600 uppercase tracking-wider">
+                  Actions
+                </th>
+              </>
+            )}
           </tr>
         </thead>
 
@@ -184,39 +188,51 @@ const RecruiterJob = ({ recruiterId }) => {
                 <td className="py-3 px-6">{job.jobDetails.companyName}</td>
                 <td className="py-3 px-6">{job.jobDetails.location}</td>
                 <td className="py-3 px-6">{job.jobDetails.jobType}</td>
-                <td className="py-3 px-6">
-                  {loading[job._id] ? (
-                    "loading..."
-                  ) : job.jobDetails.isActive ? (
-                    <FaToggleOn
-                      className="text-green-500 cursor-pointer"
-                      onClick={(event) =>
-                        toggleActive(event, job._id, !job.jobDetails.isActive)
-                      }
-                      size={30}
-                    />
-                  ) : (
-                    <FaToggleOff
-                      className="text-red-500 cursor-pointer"
-                      onClick={(event) =>
-                        toggleActive(event, job._id, !job.jobDetails.isActive)
-                      }
-                      size={30}
-                    />
-                  )}
-                </td>
-                <td className="py-3 px-6">
-                  {loading[job._id] ? (
-                    "loading..."
-                  ) : (
-                    <button
-                      onClick={(event) => deleteJob(event, job._id)}
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      <FaTrash size={20} />
-                    </button>
-                  )}
-                </td>
+                {recruiterId === user?._id && (
+                  <>
+                    <td className="py-3 px-6">
+                      {loading[job._id] ? (
+                        "loading..."
+                      ) : job.jobDetails.isActive ? (
+                        <FaToggleOn
+                          className="text-green-500 cursor-pointer"
+                          onClick={(event) =>
+                            toggleActive(
+                              event,
+                              job._id,
+                              !job.jobDetails.isActive
+                            )
+                          }
+                          size={30}
+                        />
+                      ) : (
+                        <FaToggleOff
+                          className="text-red-500 cursor-pointer"
+                          onClick={(event) =>
+                            toggleActive(
+                              event,
+                              job._id,
+                              !job.jobDetails.isActive
+                            )
+                          }
+                          size={30}
+                        />
+                      )}
+                    </td>
+                    <td className="py-3 px-6">
+                      {loading[job._id] ? (
+                        "loading..."
+                      ) : (
+                        <button
+                          onClick={(event) => deleteJob(event, job._id)}
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          <FaTrash size={20} />
+                        </button>
+                      )}
+                    </td>
+                  </>
+                )}
               </tr>
             ))
           ) : (
