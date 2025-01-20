@@ -5,6 +5,8 @@ import Stepper from "react-stepper-horizontal";
 import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { JOB_API_END_POINT } from "@/utils/ApiEndPoint"; 
+import axios from "axios";  
 
 const PostJob = () => {
   const [step, setStep] = useState(0);
@@ -49,11 +51,26 @@ const PostJob = () => {
       responsibilities: Yup.string().required("Responsibility is required"),
     }),
 
-    onSubmit: (values) => {
-      console.log("Form Submitted:", values);
-      // Send data to the backend via an API call
+    onSubmit: async (values, { resetForm }) => {
+      try {
+        const response = await axios.post(`${JOB_API_END_POINT}/post-job`, values, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        console.log("Job posted successfully:", response.data);
+        resetForm();
+        alert("Job posted successfully!");
+      } catch (error) {
+        console.error("Error posting job:", error.response?.data || error.message);
+        if (error.response) {
+          alert(`Failed to post job: ${error.response.data.message || "Unknown error"}`);
+        } else {
+          alert("Failed to post job. Please check your internet connection.");
+        }
+      }
     },
-  });
+  })   
 
   const handleNext = async () => {
     const currentStepFields = [

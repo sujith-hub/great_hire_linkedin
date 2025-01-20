@@ -70,7 +70,7 @@ const PostedJobList = () => {
   };
 
   const handleApplicantsClick = (jobId) => {
-    navigate(`/recruiter/dashboard/applicants/${jobId}`);
+    navigate(`/recruiter/dashboard/applicants-details/${jobId}`);
   };
 
   const filteredJobs = jobs.filter((job) => {
@@ -94,7 +94,7 @@ const PostedJobList = () => {
       </div>
 
       <Table className="w-full border-collapse border border-gray-200">
-        <TableCaption className="underline mb-6 text-gray-800 text-lg font-bold text-center caption-top">
+        <TableCaption className="mb-6 text-gray-800 text-lg font-bold text-center caption-top underline">
           Posted Job List
         </TableCaption>
       </Table>
@@ -155,13 +155,13 @@ const PostedJobList = () => {
                 <TableCell className="text-right space-x-2">
                   <button
                     onClick={() => handleJobDetailsClick(job.id)}
-                    className="bg-blue-500 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-600 transition"
+                    className="bg-blue-500 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-700 transition"
                   >
                     Job Details
                   </button>
                   <button
                     onClick={() => handleApplicantsClick(job.id)}
-                    className="bg-green-500 text-white px-3 py-1 rounded-md text-sm hover:bg-green-600 transition"
+                    className="bg-green-500 text-white px-3 py-1 rounded-md text-sm hover:bg-green-700 transition"
                   >
                     Applicants Details
                   </button>
