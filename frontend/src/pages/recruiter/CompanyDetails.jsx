@@ -5,6 +5,9 @@ import { COMPANY_API_END_POINT } from "@/utils/ApiEndPoint";
 import { RECRUITER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { toast } from "react-hot-toast";
 import { addCompany } from "@/redux/companySlice";
+import { cleanRecruiterRedux } from "@/redux/recruiterSlice";
+import { removeCompany } from "@/redux/companySlice";
+import { logOut } from "@/redux/authSlice";
 
 const CompanyDetails = () => {
   const { user } = useSelector((state) => state.auth);
