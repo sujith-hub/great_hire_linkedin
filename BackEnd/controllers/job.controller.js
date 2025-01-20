@@ -7,8 +7,7 @@ import getDataUri from "../utils/dataUri.js";
 
 export const postJob = async (req, res) => {
   try {
-    // Extract job details from the request body
-
+    
     const {
       companyName,
       urgentHiring,
@@ -33,7 +32,27 @@ export const postJob = async (req, res) => {
     } = req.body;
 
     // Extract recruiter ID from the request (assuming it's added to the request during authentication)
-    const recruiterId = req.id;
+    const userId = req.id;
+
+    // Find the company by ID
+    const company = await Company.findById(companyId);
+    if (!company) {
+      return res.status(404).json({
+        message: "Company not found.",
+        success: false,
+      });
+    }
+
+    // Check if the user is associated with the company
+    const isUserAssociated = company.userId.some(
+      (userObj) => userObj.user.toString() === userId
+    );
+    if (!isUserAssociated) {
+      return res.status(403).json({
+        message: "You are not authorized",
+        success: false,
+      });
+    }
 
     // Validate required fields
     if (
@@ -86,7 +105,7 @@ export const postJob = async (req, res) => {
         respondTime,
         duration,
       },
-      created_by: recruiterId,
+      created_by: userId,
       company: companyId,
     });
 
