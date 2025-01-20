@@ -1,6 +1,7 @@
 import { Job } from "../models/job.model.js";
 import { Application } from "../models/application.model.js";
 import { User } from "../models/user.model.js";
+import { Company } from "../models/company.model.js";
 import cloudinary from "../utils/cloudinary.js";
 import getDataUri from "../utils/dataUri.js";
 
@@ -210,6 +211,46 @@ export const getJobById = async (req, res) => {
   }
 };
 
+export const getJobByCompanyId = async (req, res) => {
+  try {
+    const companyId = req.params.id;
+    const userId = req.id;
+
+    // Find the company by ID
+    const company = await Company.findById(companyId);
+    if (!company) {
+      return res.status(404).json({
+        message: "Company not found.",
+        success: false,
+      });
+    }
+
+    // Check if the user is associated with the company
+    const isUserAssociated = company.userId.some(
+      (userObj) => userObj.user.toString() === userId
+    );
+    if (!isUserAssociated) {
+      return res.status(403).json({
+        message: "You are not authorized.",
+        success: false,
+      });
+    }
+
+    // Fetch jobs by company ID
+    const jobs = await Job.find({ company: companyId });
+    if (jobs.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No jobs found for this company" });
+    }
+    return res.status(200).json({ jobs, success: true });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Server error", error: err.message });
+  }
+};
+
 // particular recuriter job
 export const getJobForRecruiter = async (req, res) => {
   try {
@@ -343,7 +384,28 @@ export const hideJob = async (req, res) => {
 
 export const toggleActive = async (req, res) => {
   try {
-    const { jobId, isActive } = req.body;
+    const { jobId, isActive, companyId } = req.body;
+    const userId = req.id;
+
+    // Find the company by ID
+    const company = await Company.findById(companyId);
+    if (!company) {
+      return res.status(404).json({
+        message: "Company not found.",
+        success: false,
+      });
+    }
+
+    // Check if the user is associated with the company
+    const isUserAssociated = company.userId.some(
+      (userObj) => userObj.user.toString() === userId
+    );
+    if (!isUserAssociated) {
+      return res.status(403).json({
+        message: "You are not authorized",
+        success: false,
+      });
+    }
 
     // Find the job by its ID and update the isActive field
     const job = await Job.findByIdAndUpdate(

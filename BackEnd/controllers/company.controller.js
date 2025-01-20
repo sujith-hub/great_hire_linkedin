@@ -238,7 +238,7 @@ export const updateCompany = async (req, res) => {
   try {
     const { companyWebsite, address, industry, email, phone } = req.body;
     const companyId = req.params.id;
-    const userId = req.id; // Assuming `req.id` contains the user's ID
+    const userId = req.id; 
 
     // Find the company by ID
     const company = await Company.findById(companyId);

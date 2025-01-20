@@ -1,5 +1,5 @@
 import express from "express";
-import { postJob, getAllJobs, getJobById, getJobForRecruiter, deleteJobById, updateJob, hideJob, bookmarkJob, unBookmarkJob, getJobByRecruiterId, toggleActive } from '../controllers/job.controller.js';
+import { postJob, getAllJobs, getJobById, getJobForRecruiter, deleteJobById, updateJob, hideJob, bookmarkJob, unBookmarkJob, getJobByRecruiterId, toggleActive, getJobByCompanyId } from '../controllers/job.controller.js';
 import isAuthenticated from '../middlewares/isAuthenticated.js';
 
 const router = express.Router();
@@ -14,6 +14,7 @@ router.route("/get").get(getAllJobs);
 router.route("/get-recruiter-jobs").get(isAuthenticated, getJobForRecruiter);
 router.route("/get/:id").get(isAuthenticated, getJobById);
 router.route("/jobs/:id").get(isAuthenticated, getJobByRecruiterId);
+router.route("/jobs-list/:id").get(isAuthenticated, getJobByCompanyId);
 
 router.route("/delete/:id").delete(isAuthenticated, deleteJobById);
 router.route("/update-job").put(isAuthenticated, updateJob);

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Table,
@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/table";
 import { FiSearch } from "react-icons/fi";
 import { useSelector } from "react-redux";
+import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
+import axios from "axios";
 
 const initialJobs = [
   {
@@ -58,11 +60,12 @@ const statusStyles = {
 
 const PostedJobList = () => {
   const navigate = useNavigate();
-  const [jobs, setJobs] = useState(initialJobs);
+  const [jobs, setJobs] = useState([]);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const { user } = useSelector((state) => state.auth);
   const { company } = useSelector((state) => state.company);
+  const [loading, setLoading] = useState(false);
 
   const handlePostJob = () => {
     navigate("/recruiter/dashboard/post-job");
@@ -76,11 +79,38 @@ const PostedJobList = () => {
     navigate(`/recruiter/dashboard/applicants-details/${jobId}`);
   };
 
+  const fetchAllJobs = async (companyId) => {
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        `${JOB_API_END_POINT}/jobs-list/${companyId}`,
+        {
+          withCredentials: true,
+        }
+      );
+      if (response.data.success) {
+        setJobs(response.data.jobs);
+      }
+    } catch (error) {
+      console.error("Error fetching jobs:", error);
+    } finally {
+      setLoading(true);
+    }
+  };
+
   const filteredJobs = jobs.filter((job) => {
-    const matchesSearch = job.role.toLowerCase().includes(search.toLowerCase());
-    const matchesStatus = statusFilter === "All" || job.status === statusFilter;
-    return matchesSearch && matchesStatus;
+    // const matchesSearch = job.role.toLowerCase().includes(search.toLowerCase());
+    // const matchesStatus = statusFilter === "All" || job.status === statusFilter;
+    // return matchesSearch && matchesStatus;
   });
+
+  useEffect(() => {
+    if (user && company) {
+      fetchAllJobs(company?._id);
+    }
+  }, [user]);
+
+  console.log(jobs);
 
   return (
     <>

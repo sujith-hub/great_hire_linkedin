@@ -10,10 +10,11 @@ const RecruiterJob = ({ recruiterId }) => {
   const [jobs, setJobs] = useState([]);
   const navigate = useNavigate();
   const [loading, setLoading] = useState({});
+  const [dloading, dsetLoading] = useState({});
   const { user } = useSelector((state) => state.auth);
+  const { company } = useSelector((state) => state.company);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
-
 
   useEffect(() => {
     if (!user || user?.role !== "recruiter") navigate("/login");
@@ -43,7 +44,7 @@ const RecruiterJob = ({ recruiterId }) => {
   };
 
   useEffect(() => {
-    if (recruiterId) {
+    if (recruiterId && jobs.length === 0) {
       getJobsByRecruiter(recruiterId);
     }
   }, [recruiterId]);
@@ -57,6 +58,7 @@ const RecruiterJob = ({ recruiterId }) => {
         {
           jobId,
           isActive,
+          companyId: company?._id,
         },
         { withCredentials: true }
       );
@@ -87,7 +89,7 @@ const RecruiterJob = ({ recruiterId }) => {
   const deleteJob = async (event, jobId) => {
     event.stopPropagation();
     try {
-      setLoading((prevLoading) => ({ ...prevLoading, [jobId]: true }));
+      dsetLoading((prevLoading) => ({ ...prevLoading, [jobId]: true }));
       const response = await axios.delete(
         `${JOB_API_END_POINT}/delete/${jobId}`,
         {
@@ -107,7 +109,7 @@ const RecruiterJob = ({ recruiterId }) => {
         "There was an error deleting the job. Please try again later."
       );
     } finally {
-      setLoading((prevLoading) => ({ ...prevLoading, [jobId]: false }));
+      dsetLoading((prevLoading) => ({ ...prevLoading, [jobId]: false }));
     }
   };
 
@@ -188,7 +190,8 @@ const RecruiterJob = ({ recruiterId }) => {
                 <td className="py-3 px-6">{job.jobDetails.companyName}</td>
                 <td className="py-3 px-6">{job.jobDetails.location}</td>
                 <td className="py-3 px-6">{job.jobDetails.jobType}</td>
-                {recruiterId === user?._id && (
+                {(recruiterId === user?._id ||
+                  user?.emailId.email === company?.adminEmail) && (
                   <>
                     <td className="py-3 px-6">
                       {loading[job._id] ? (
@@ -220,7 +223,7 @@ const RecruiterJob = ({ recruiterId }) => {
                       )}
                     </td>
                     <td className="py-3 px-6">
-                      {loading[job._id] ? (
+                      {dloading[job._id] ? (
                         "loading..."
                       ) : (
                         <button
