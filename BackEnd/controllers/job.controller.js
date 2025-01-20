@@ -506,3 +506,78 @@ export const applyJob = async (req, res) => {
     });
   }
 };
+
+export const getJobsStatistics = async (req, res) => {
+  try {
+    const  companyId  = req.params.id; // Accessing companyId from the URL params
+    const userId = req.id; // Assuming the user ID is stored in req.id after authentication
+
+    // Find the company by ID
+    const company = await Company.findById(companyId);
+    if (!company) {
+      return res.status(404).json({
+        message: "Company not found.",
+        success: false,
+      });
+    }
+
+    // Check if the user is associated with the company
+    const isUserAssociated = company.userId.some(
+      (userObj) => userObj.user.toString() === userId
+    );
+    if (!isUserAssociated) {
+      return res.status(403).json({
+        message: "You are not authorized",
+        success: false,
+      });
+    }
+
+    // Get the total number of jobs posted by the company
+    const totalJobs = await Job.countDocuments({ company: companyId });
+
+    // Get the number of active jobs posted by the company
+    const activeJobs = await Job.countDocuments({
+      company: companyId,
+      isActive: true,
+    });
+
+    // Get the number of inactive jobs posted by the company
+    const inactiveJobs = await Job.countDocuments({
+      company: companyId,
+      isActive: false,
+    });
+
+    // Get the total number of applicants for the company
+    const totalApplicants = await Application.countDocuments({
+      company: companyId,
+    });
+
+    // Get the number of selected candidates for the company
+    const selectedCandidates = await Application.countDocuments({
+      company: companyId,
+      status: "selected",
+    });
+
+    // Format the response
+    const statistics = {
+      totalJobs,
+      activeJobs,
+      inactiveJobs,
+      totalApplicants,
+      selectedCandidates,
+    };
+
+    return res.status(200).json({
+      message: "Statistics fetched successfully",
+      success: true,
+      statistics,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      message: "Server error",
+      success: false,
+      error: err.message,
+    });
+  }
+};

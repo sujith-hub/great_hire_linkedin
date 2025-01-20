@@ -7,14 +7,22 @@ import axios from "axios";
 import { addCompany } from "@/redux/companySlice";
 import DashboardNavigations from "./DashboardNavigations";
 import { fetchRecruiters } from "@/redux/recruiterSlice";
+import { useNavigate } from "react-router-dom";
 
 const RecruiterDashboard = () => {
   const { user } = useSelector((state) => state.auth);
   const { company } = useSelector((state) => state.company);
   const { recruiters } = useSelector((state) => state.recruiters);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, []);
+  
   useEffect(() => {
     if (user?.isVerify && user?.isCompanyCreated && recruiters?.length === 0)
       dispatch(fetchRecruiters(company?._id));
