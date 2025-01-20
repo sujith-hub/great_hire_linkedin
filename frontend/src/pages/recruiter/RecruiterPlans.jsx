@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Check, Shield, Rocket, Diamond, Star } from 'lucide-react';
+import { AiFillSafetyCertificate, AiOutlineCheck } from 'react-icons/ai';
+import { FaRocket, FaGem, FaStar } from 'react-icons/fa';
 
 function RecruiterPlans() {
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -7,7 +8,7 @@ function RecruiterPlans() {
   const plans = [
     {
       name: 'Basic',
-      icon: Shield,
+      icon: AiFillSafetyCertificate,
       price: '₹499',
       color: 'blue',
       features: [
@@ -16,11 +17,12 @@ function RecruiterPlans() {
         'Email & chat support',
         'Basic analytics'
       ],
-      popular: false
+      popular: false,
+      borderColor: 'border-blue-300'
     },
     {
       name: 'Standard',
-      icon: Rocket,
+      icon: FaRocket,
       price: '₹999',
       color: 'indigo',
       features: [
@@ -29,11 +31,12 @@ function RecruiterPlans() {
         'Priority 24/7 support',
         'Advanced analytics suite'
       ],
-      popular: true
+      popular: true,
+      borderColor: 'ring-indigo-500'
     },
     {
       name: 'Premium',
-      icon: Diamond,
+      icon: FaGem,
       price: '₹1,499',
       color: 'purple',
       features: [
@@ -42,7 +45,8 @@ function RecruiterPlans() {
         'Dedicated success manager',
         'Custom API integration'
       ],
-      popular: false
+      popular: false,
+      borderColor: 'border-purple-300'
     }
   ];
 
@@ -86,10 +90,10 @@ function RecruiterPlans() {
             return (
               <div
                 key={plan.name}
-                className={`relative bg-white rounded-2xl p-6 transition-all duration-300 ${
+                className={`relative bg-white rounded-2xl p-6 transition-all duration-300 shadow-lg hover:shadow-xl ${
                   plan.popular
-                    ? 'shadow-xl ring-2 ring-indigo-500 hover:shadow-2xl'
-                    : 'shadow-lg hover:shadow-xl'
+                    ? `ring-2 ${plan.borderColor} hover:shadow-2xl`
+                    : `border-2 ${plan.borderColor}`
                 }`}
               >
                 {plan.popular && (
@@ -115,7 +119,7 @@ function RecruiterPlans() {
                   {plan.features.map((feature, index) => (
                     <li key={index} className="flex items-start space-x-3">
                       <div className={`p-0.5 rounded-full bg-${plan.color}-50 mt-0.5`}>
-                        <Check className={`h-3.5 w-3.5 text-${plan.color}-500`} />
+                        <AiOutlineCheck className={`h-3.5 w-3.5 text-${plan.color}-500`} />
                       </div>
                       <span className="text-sm text-gray-600">{feature}</span>
                     </li>
@@ -135,7 +139,7 @@ function RecruiterPlans() {
 
         <div className="mt-8 text-center">
           <div className="inline-flex items-center space-x-4 bg-white rounded-full px-6 py-2 shadow-sm">
-            <Star className="h-4 w-4 text-yellow-400" />
+            <FaStar className="h-4 w-4 text-yellow-400" />
             <span className="text-sm text-gray-600">
               Trusted by 10,000+ recruitment teams worldwide
             </span>
