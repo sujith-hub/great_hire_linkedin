@@ -19,6 +19,6 @@ router.route("/change-admin").put(isAuthenticated, changeAdmin);
 
 // router.route("/get").get(isAuthenticated,getCompanyList);
 
-// router.route("/update/:id").put(isAuthenticated, updateCompany);
+router.route("/update/:id").put(isAuthenticated, updateCompany);
 
 export default router;

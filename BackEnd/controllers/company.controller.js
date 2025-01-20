@@ -236,27 +236,51 @@ export const companyByUserId = async (req, res) => {
 //update company
 export const updateCompany = async (req, res) => {
   try {
-    const { name, description, website, location } = req.body;
-    const file = req.file;
-    //cloudainary is coming here....
+    const { companyWebsite, address, industry, email, phone } = req.body;
+    const companyId = req.params.id;
+    const userId = req.id; // Assuming `req.id` contains the user's ID
 
-    const updateData = { name, description, website, location };
-
-    const company = await Company.findByIdAndUpdate(req.params.id, updateData, {
-      new: true,
-    });
+    // Find the company by ID
+    const company = await Company.findById(companyId);
     if (!company) {
       return res.status(404).json({
         message: "Company not found.",
         success: false,
       });
     }
+
+    // Check if the user is associated with the company
+    const isUserAssociated = company.userId.some(
+      (userObj) => userObj.user.toString() === userId
+    );
+    if (!isUserAssociated) {
+      return res.status(403).json({
+        message: "You are not authorized to update this company.",
+        success: false,
+      });
+    }
+
+    // Update only provided fields
+    if (companyWebsite !== undefined) company.companyWebsite = companyWebsite;
+    if (address !== undefined) company.address = address;
+    if (industry !== undefined) company.industry = industry;
+    if (email !== undefined) company.email = email;
+    if (phone !== undefined) company.phone = phone;
+
+    // Save the updated company document
+    const updatedCompany = await company.save();
+
     return res.status(200).json({
+      company: updatedCompany,
       message: "Company information updated.",
       success: true,
     });
   } catch (error) {
-    console.log(error);
+    console.error("Error updating company:", error);
+    return res.status(500).json({
+      message: "An error occurred while updating the company.",
+      success: false,
+    });
   }
 };
 
