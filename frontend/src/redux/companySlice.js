@@ -28,11 +28,24 @@ const companySlice = createSlice({
     },
     // change company admin
     changeAdminUser: (state, action) => {
-      state.company.adminEmail = action.payload
+      state.company.adminEmail = action.payload;
+    },
+    // reducer function to update compnay data
+    updateCompanyField: (state, action) => {
+      const { field, value } = action.payload;
+      if (state.company) {
+        state.company[field] = value;
+      }
     },
   },
 });
 
-export const { setLoading, addCompany, removeCompany, removeUserFromCompany, changeAdminUser } = companySlice.actions;
+export const {
+  setLoading,
+  addCompany,
+  removeCompany,
+  removeUserFromCompany,
+  changeAdminUser,
+} = companySlice.actions;
 
 export default companySlice.reducer;
