@@ -10,15 +10,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { FiSearch } from "react-icons/fi";
+import { FaToggleOn, FaToggleOff } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
 import axios from "axios";
+import { toast } from "react-hot-toast";
 
 const statusOptions = ["All", "Active", "Expired"];
-const statusStyles = {
-  Active: "bg-green-200 text-green-700 hover:bg-green-100",
-  Expired: "bg-red-200 text-red-700 hover:bg-red-100",
-};
 
 const PostedJobList = () => {
   const navigate = useNavigate();
@@ -28,8 +26,7 @@ const PostedJobList = () => {
   const { user } = useSelector((state) => state.auth);
   const { company } = useSelector((state) => state.company);
   const [loading, setLoading] = useState(false);
-
-  console.log(jobs);
+  const [statusLoading, setStatusLoading] = useState({});
 
   const handlePostJob = () => {
     navigate("/recruiter/dashboard/post-job");
@@ -52,13 +49,8 @@ const PostedJobList = () => {
           withCredentials: true,
         }
       );
-      console.log("API Response:", response.data);
       if (response.data.success) {
-        // Sort jobs by createdAt in descending order
-        const sortedJobs = response.data.jobs.sort(
-          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-        );
-        setJobs(sortedJobs);
+        setJobs(response.data.jobs);
       } else {
         console.error("Error: Unable to fetch jobs.");
       }
@@ -86,6 +78,43 @@ const PostedJobList = () => {
     }
   }, [user]);
 
+  const toggleActive = async (event, jobId, isActive) => {
+    event.stopPropagation();
+    try {
+      setStatusLoading((prevLoading) => ({ ...prevLoading, [jobId]: true }));
+      const response = await axios.put(
+        `${JOB_API_END_POINT}/toggle-active`,
+        {
+          jobId,
+          isActive,
+          companyId: company?._id,
+        },
+        { withCredentials: true }
+      );
+
+      if (response.data.success) {
+        setJobs((prevJobs) =>
+          prevJobs.map((job) =>
+            job._id === jobId
+              ? { ...job, jobDetails: { ...job.jobDetails, isActive } }
+              : job
+          )
+        );
+
+        toast.success(response.data.message);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.error("Error toggling job status:", error);
+      toast.error(
+        "There was an error toggling the job status. Please try again later."
+      );
+    } finally {
+      setStatusLoading((prevLoading) => ({ ...prevLoading, [jobId]: false }));
+    }
+  };
+
   return (
     <>
       {company && user.isVerify ? (
@@ -94,7 +123,7 @@ const PostedJobList = () => {
             <div className="p-10 bg-white shadow-md rounded-lg flex justify-center items-center">
               <button
                 onClick={handlePostJob}
-                className="bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-bold hover:bg-blue-700 transition flex items-center"
+                className="bg-blue-700 text-white px-6 py-3 rounded-lg text-lg font-bold hover:bg-blue-600 transition flex items-center"
               >
                 <span className="text-2xl font-bold mr-1">+</span> Post New Job
               </button>
@@ -138,17 +167,17 @@ const PostedJobList = () => {
               </div>
 
               <Table className="w-full border-collapse border border-gray-200">
-                <TableHeader className="bg-gray-100">
+                <TableHeader className="bg-gray-300 ">
                   <TableRow>
-                    <TableHead>Sr No.</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Job Role</TableHead>
-                    <TableHead>No. of Applicants</TableHead>
-                    <TableHead>Status</TableHead>
+                    <TableHead className="text-center">Sr No.</TableHead>
+                    <TableHead className="text-center">Date</TableHead>
+                    <TableHead className="text-center">Job Role</TableHead>
+                    <TableHead className="text-center">Status</TableHead>
                     <TableHead className="text-center">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableBody>
+
+                <TableBody className="text-center">
                   {filteredJobs.length > 0 ? (
                     filteredJobs.map((job, index) => (
                       <TableRow
@@ -164,22 +193,48 @@ const PostedJobList = () => {
                           })}
                         </TableCell>
                         <TableCell>{job.jobDetails.title}</TableCell>
-                        <TableCell>{job.application.length}</TableCell>
-                        <TableCell>
-                          <div
-                            className={`px-3 py-1 rounded-md text-sm text-center ${
-                              job.jobDetails.isActive
-                                ? statusStyles["Active"]
-                                : statusStyles["Expired"]
-                            }`}
-                          >
-                            {job.jobDetails.isActive ? "Active" : "Expired"}
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-right space-x-2">
+
+                        {job?.created_by === user?._id ||
+                        user?.emailId.email === company?.adminEmail ? (
+                          <>
+                            <TableCell className="py-3 px-6 flex justify-center">
+                              {statusLoading[job._id] ? (
+                                "loading..."
+                              ) : job.jobDetails.isActive ? (
+                                <FaToggleOn
+                                  className="text-green-500 cursor-pointer"
+                                  onClick={(event) =>
+                                    toggleActive(
+                                      event,
+                                      job._id,
+                                      !job.jobDetails.isActive
+                                    )
+                                  }
+                                  size={30}
+                                />
+                              ) : (
+                                <FaToggleOff
+                                  className="text-red-500 cursor-pointer"
+                                  onClick={(event) =>
+                                    toggleActive(
+                                      event,
+                                      job._id,
+                                      !job.jobDetails.isActive
+                                    )
+                                  }
+                                  size={30}
+                                />
+                              )}
+                            </TableCell>
+                          </>
+                        ) : (
+                          <TableCell >-----</TableCell>
+                        )}
+
+                        <TableCell className="space-x-2">
                           <button
                             onClick={() => handleJobDetailsClick(job._id)}
-                            className="bg-blue-500 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-600 transition"
+                            className="bg-blue-700 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-600 transition"
                           >
                             Job Details
                           </button>
