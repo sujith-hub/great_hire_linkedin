@@ -157,7 +157,11 @@ const PostedJobList = () => {
                       >
                         <TableCell>{index + 1}</TableCell>
                         <TableCell>
-                          {new Date(job.createdAt).toLocaleDateString()}
+                          {new Date(job.createdAt).toLocaleDateString("en-GB", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                          })}
                         </TableCell>
                         <TableCell>{job.jobDetails.title}</TableCell>
                         <TableCell>{job.application.length}</TableCell>
