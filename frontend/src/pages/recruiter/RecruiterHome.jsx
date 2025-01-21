@@ -46,37 +46,37 @@ const RecruiterHome = () => {
       title: "Posted Jobs",
       count: jobsStatistics?.totalJobs,
       gradient: "from-green-500 to-teal-500",
-      description: "Track the jobs you have posted and their status.",
+      description: "This are the jobs you have posted.",
     },
     {
       title: "Max Post Jobs",
       count: company?.maxPostJobs,
       gradient: "from-gray-500 to-gray-700",
-      description: "View the maximum number of jobs you can post.",
+      description: "This are the maximum number of jobs you can post.",
     },
     {
       title: "Active Jobs",
       count: jobsStatistics?.activeJobs,
       gradient: "from-purple-500 to-pink-500",
-      description: "Monitor jobs that are currently active and open.",
+      description: " Jobs that are currently active and open.",
     },
     {
       title: "Expired Jobs",
       count: jobsStatistics?.inactiveJobs,
       gradient: "from-orange-500 to-yellow-500",
-      description: "Review jobs that have expired and are no longer active.",
+      description: " Jobs that have expired and are no longer active.",
     },
     {
       title: "Applicants",
       count: jobsStatistics?.totalApplicants,
       gradient: "from-red-500 to-pink-500",
-      description: "Analyze the total number of applicants for your jobs.",
+      description: " Total number of applicants for your jobs.",
     },
     {
       title: "Selected Candidates",
       count: jobsStatistics?.selectedCandidates,
       gradient: "from-teal-500 to-blue-500",
-      description: "Keep track of candidates who have been selected.",
+      description: "Candidates who have been selected.",
     },
   ];
 
