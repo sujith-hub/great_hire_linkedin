@@ -7,8 +7,6 @@ import getDataUri from "../utils/dataUri.js";
 
 export const postJob = async (req, res) => {
   try {
-    // Extract job details from the request body
-
     const {
       companyName,
       urgentHiring,
@@ -33,7 +31,27 @@ export const postJob = async (req, res) => {
     } = req.body;
 
     // Extract recruiter ID from the request (assuming it's added to the request during authentication)
-    const recruiterId = req.id;
+    const userId = req.id;
+
+    // Find the company by ID
+    const company = await Company.findById(companyId);
+    if (!company) {
+      return res.status(404).json({
+        message: "Company not found.",
+        success: false,
+      });
+    }
+
+    // Check if the user is associated with the company
+    const isUserAssociated = company.userId.some(
+      (userObj) => userObj.user.toString() === userId
+    );
+    if (!isUserAssociated) {
+      return res.status(403).json({
+        message: "You are not authorized",
+        success: false,
+      });
+    }
 
     // Validate required fields
     if (
@@ -86,7 +104,7 @@ export const postJob = async (req, res) => {
         respondTime,
         duration,
       },
-      created_by: recruiterId,
+      created_by: userId,
       company: companyId,
     });
 
@@ -167,9 +185,11 @@ export const getJobByRecruiterId = async (req, res) => {
     const recruiterId = req.params.id;
 
     // Fetch jobs with only the required fields
-    const jobs = await Job.find({ created_by: recruiterId }).select(
-      "jobDetails.companyName jobDetails.title jobDetails.location jobDetails.jobType jobDetails.isActive"
-    );
+    const jobs = await Job.find({ created_by: recruiterId })
+      .select(
+        "jobDetails.companyName jobDetails.title jobDetails.location jobDetails.jobType jobDetails.isActive"
+      )
+      .sort({ createdAt: -1 });
 
     if (jobs.length === 0) {
       return res.status(404).json({
@@ -502,6 +522,81 @@ export const applyJob = async (req, res) => {
     console.error("Error applying for job:", err);
     return res.status(500).json({
       message: "Internal server error",
+      error: err.message,
+    });
+  }
+};
+
+export const getJobsStatistics = async (req, res) => {
+  try {
+    const companyId = req.params.id; // Accessing companyId from the URL params
+    const userId = req.id; // Assuming the user ID is stored in req.id after authentication
+
+    // Find the company by ID
+    const company = await Company.findById(companyId);
+    if (!company) {
+      return res.status(404).json({
+        message: "Company not found.",
+        success: false,
+      });
+    }
+
+    // Check if the user is associated with the company
+    const isUserAssociated = company.userId.some(
+      (userObj) => userObj.user.toString() === userId
+    );
+    if (!isUserAssociated) {
+      return res.status(403).json({
+        message: "You are not authorized",
+        success: false,
+      });
+    }
+
+    // Get the total number of jobs posted by the company
+    const totalJobs = await Job.countDocuments({ company: companyId });
+
+    // Get the number of active jobs posted by the company
+    const activeJobs = await Job.countDocuments({
+      company: companyId,
+      isActive: true,
+    });
+
+    // Get the number of inactive jobs posted by the company
+    const inactiveJobs = await Job.countDocuments({
+      company: companyId,
+      isActive: false,
+    });
+
+    // Get the total number of applicants for the company
+    const totalApplicants = await Application.countDocuments({
+      company: companyId,
+    });
+
+    // Get the number of selected candidates for the company
+    const selectedCandidates = await Application.countDocuments({
+      company: companyId,
+      status: "selected",
+    });
+
+    // Format the response
+    const statistics = {
+      totalJobs,
+      activeJobs,
+      inactiveJobs,
+      totalApplicants,
+      selectedCandidates,
+    };
+
+    return res.status(200).json({
+      message: "Statistics fetched successfully",
+      success: true,
+      statistics,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      message: "Server error",
+      success: false,
       error: err.message,
     });
   }
