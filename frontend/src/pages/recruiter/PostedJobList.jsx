@@ -14,44 +14,6 @@ import { useSelector } from "react-redux";
 import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
 import axios from "axios";
 
-const initialJobs = [
-  {
-    id: 1,
-    date: "07-12-2024",
-    role: "Backend Developer",
-    NoOfApplicants: 20,
-    status: "Active",
-  },
-  {
-    id: 2,
-    date: "15-11-2024",
-    role: "Frontend Developer",
-    NoOfApplicants: 50,
-    status: "Expired",
-  },
-  {
-    id: 3,
-    date: "01-10-2024",
-    role: "Full Stack Engineer",
-    NoOfApplicants: 75,
-    status: "Expired",
-  },
-  {
-    id: 4,
-    date: "25-09-2024",
-    role: "Data Analyst",
-    NoOfApplicants: 35,
-    status: "Active",
-  },
-  {
-    id: 5,
-    date: "12-09-2024",
-    role: "Mobile App Developer",
-    NoOfApplicants: 20,
-    status: "Expired",
-  },
-];
-
 const statusOptions = ["All", "Active", "Expired"];
 const statusStyles = {
   Active: "bg-green-200 text-green-700 hover:bg-green-100",
@@ -66,6 +28,8 @@ const PostedJobList = () => {
   const { user } = useSelector((state) => state.auth);
   const { company } = useSelector((state) => state.company);
   const [loading, setLoading] = useState(false);
+
+  console.log(jobs);
 
   const handlePostJob = () => {
     navigate("/recruiter/dashboard/post-job");
@@ -88,20 +52,32 @@ const PostedJobList = () => {
           withCredentials: true,
         }
       );
+      console.log("API Response:", response.data);
       if (response.data.success) {
-        setJobs(response.data.jobs);
+        // Sort jobs by createdAt in descending order
+        const sortedJobs = response.data.jobs.sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
+        setJobs(sortedJobs);
+      } else {
+        console.error("Error: Unable to fetch jobs.");
       }
     } catch (error) {
       console.error("Error fetching jobs:", error);
     } finally {
-      setLoading(true);
+      setLoading(false);
     }
   };
 
   const filteredJobs = jobs.filter((job) => {
-    // const matchesSearch = job.role.toLowerCase().includes(search.toLowerCase());
-    // const matchesStatus = statusFilter === "All" || job.status === statusFilter;
-    // return matchesSearch && matchesStatus;
+    const matchesSearch = job?.jobDetails?.title
+      ?.toLowerCase()
+      .includes(search.toLowerCase());
+    const matchesStatus =
+      statusFilter === "All" ||
+      (statusFilter === "Active" && job.jobDetails.isActive) ||
+      (statusFilter === "Expired" && !job.jobDetails.isActive);
+    return matchesSearch && matchesStatus;
   });
 
   useEffect(() => {
@@ -109,8 +85,6 @@ const PostedJobList = () => {
       fetchAllJobs(company?._id);
     }
   }, [user]);
-
-  console.log(jobs);
 
   return (
     <>
@@ -127,96 +101,107 @@ const PostedJobList = () => {
             </div>
           </div>
 
-          <Table className="w-full border-collapse border border-gray-200">
-            <TableCaption className="underline mb-6 text-gray-800 text-lg font-bold text-center caption-top">
-              Posted Job List
-            </TableCaption>
-          </Table>
-
-          <div className="flex flex-wrap justify-between mb-2 gap-4">
-            <div className="relative w-full md:w-1/3">
-              <FiSearch className="absolute left-3 top-2.5 text-gray-500" />
-              <input
-                type="text"
-                placeholder="Search by job title"
-                className="pl-10 p-2 border border-gray-300 rounded-md w-full"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
+          {loading ? (
+            <div className="flex justify-center items-center">
+              <p className="text-blue-600 font-bold">Loading jobs...</p>
             </div>
+          ) : (
+            <>
+              <Table className="w-full border-collapse border border-gray-200">
+                <TableCaption className="underline mb-6 text-gray-800 text-lg font-bold text-center caption-top">
+                  Posted Job List
+                </TableCaption>
+              </Table>
+              <div className="flex flex-wrap justify-between mb-2 gap-4">
+                <div className="relative w-full md:w-1/3">
+                  <FiSearch className="absolute left-3 top-2.5 text-gray-500" />
+                  <input
+                    type="text"
+                    placeholder="Search by job title"
+                    className="pl-10 p-2 border border-gray-300 rounded-md w-full"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                  />
+                </div>
 
-            <select
-              className="p-2 border border-gray-300 rounded-md w-full md:w-1/6"
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-            >
-              {statusOptions.map((status) => (
-                <option key={status} value={status}>
-                  {status}
-                </option>
-              ))}
-            </select>
-          </div>
+                <select
+                  className="p-2 border border-gray-300 rounded-md w-full md:w-1/6"
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                >
+                  {statusOptions.map((status) => (
+                    <option key={status} value={status}>
+                      {status}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-          <Table className="w-full border-collapse border border-gray-200">
-            <TableHeader className="bg-gray-100">
-              <TableRow>
-                <TableHead>Sr No.</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Job Title</TableHead>
-                <TableHead>No. of Applicants</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-center">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredJobs.length > 0 ? (
-                filteredJobs.map((job, index) => (
-                  <TableRow
-                    key={job.id}
-                    className="hover:bg-gray-50 transition duration-150"
-                  >
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell>{job.date}</TableCell>
-                    <TableCell>{job.role}</TableCell>
-                    <TableCell>{job.NoOfApplicants}</TableCell>
-                    <TableCell>
-                      <div
-                        className={`px-3 py-1 rounded-md text-sm text-center ${
-                          statusStyles[job.status]
-                        }`}
-                      >
-                        {job.status}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right space-x-2">
-                      <button
-                        onClick={() => handleJobDetailsClick(job.id)}
-                        className="bg-blue-500 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-600 transition"
-                      >
-                        Job Details
-                      </button>
-                      <button
-                        onClick={() => handleApplicantsClick(job.id)}
-                        className="bg-green-500 text-white px-3 py-1 rounded-md text-sm hover:bg-green-600 transition"
-                      >
-                        Applicants Details
-                      </button>
-                    </TableCell>
+              <Table className="w-full border-collapse border border-gray-200">
+                <TableHeader className="bg-gray-100">
+                  <TableRow>
+                    <TableHead>Sr No.</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Job Role</TableHead>
+                    <TableHead>No. of Applicants</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-center">Actions</TableHead>
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan="6"
-                    className="text-center text-gray-500 py-4"
-                  >
-                    No jobs found.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+                </TableHeader>
+                <TableBody>
+                  {filteredJobs.length > 0 ? (
+                    filteredJobs.map((job, index) => (
+                      <TableRow
+                        key={job._id}
+                        className="hover:bg-gray-50 transition duration-150"
+                      >
+                        <TableCell>{index + 1}</TableCell>
+                        <TableCell>
+                          {new Date(job.createdAt).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell>{job.jobDetails.title}</TableCell>
+                        <TableCell>{job.application.length}</TableCell>
+                        <TableCell>
+                          <div
+                            className={`px-3 py-1 rounded-md text-sm text-center ${
+                              job.jobDetails.isActive
+                                ? statusStyles["Active"]
+                                : statusStyles["Expired"]
+                            }`}
+                          >
+                            {job.jobDetails.isActive ? "Active" : "Expired"}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right space-x-2">
+                          <button
+                            onClick={() => handleJobDetailsClick(job._id)}
+                            className="bg-blue-500 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-600 transition"
+                          >
+                            Job Details
+                          </button>
+                          <button
+                            onClick={() => handleApplicantsClick(job._id)}
+                            className="bg-green-500 text-white px-3 py-1 rounded-md text-sm hover:bg-green-600 transition"
+                          >
+                            Applicants Details
+                          </button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell
+                        colSpan="6"
+                        className="text-center text-gray-500 py-4"
+                      >
+                        No jobs found.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </>
+          )}
         </div>
       ) : !company ? (
         <p className="h-screen flex items-center justify-center">

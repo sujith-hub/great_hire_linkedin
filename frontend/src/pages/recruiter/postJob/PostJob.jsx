@@ -51,25 +51,25 @@ const PostJob = () => {
       responsibilities: Yup.string().required("Responsibility is required"),
     }),
 
-    onSubmit: async (values, { resetForm }) => {
+    
+
+    onSubmit: async (values) => {
       try {
-        const response = await axios.post(`${JOB_API_END_POINT}/post-job`, values, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await axios.post(
+          `${JOB_API_END_POINT}/post-job`,
+          { ...values },
+          { withCredentials: true }
+        );
+        console.log(values);
+        
         console.log("Job posted successfully:", response.data);
-        resetForm();
         alert("Job posted successfully!");
       } catch (error) {
         console.error("Error posting job:", error.response?.data || error.message);
-        if (error.response) {
-          alert(`Failed to post job: ${error.response.data.message || "Unknown error"}`);
-        } else {
-          alert("Failed to post job. Please check your internet connection.");
-        }
+        alert(`Failed to post job: ${error.response?.data?.message || "Unknown error"}`);
       }
     },
+    
   })   
 
   const handleNext = async () => {
