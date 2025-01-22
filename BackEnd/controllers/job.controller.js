@@ -224,12 +224,13 @@ export const getJobById = async (req, res) => {
     }
     return res.status(200).json({
       job,
-      success: false,
+      success: true,
     });
   } catch (error) {
     console.log(error);
   }
 };
+
 
 export const getJobByCompanyId = async (req, res) => {
   try {

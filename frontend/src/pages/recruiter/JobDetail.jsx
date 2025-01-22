@@ -1,103 +1,289 @@
-import React from "react";
-import { Label } from "@/components/ui/label";
+// import React, { useEffect, useState } from "react";
+// import { useParams } from "react-router-dom"; // For accessing dynamic route params
+// import axios from "axios"; // For API requests
+// import { Label } from "@/components/ui/label";
+// import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
 
-const JobDetail = ({ jobData }) => {
-  if (!jobData) {
-    return <p className="text-center text-gray-500 mt-10">Loading job details...</p>;
+// const JobDetail = () => {
+//   const { id } = useParams(); // Get job ID from URL
+//   const [jobDetails, setJobDetails] = useState(null); // State to store job details
+//   const [loading, setLoading] = useState(true); // Loading state
+//   const [error, setError] = useState(null); // Error state
+
+//   console.log("Job ID:", id);
+
+//   // Fetch job details from the API
+//   useEffect(() => {
+//     const fetchJobDetails = async () => {
+//       try {
+//         const response = await axios.get(`${JOB_API_END_POINT}/get/${id}`, {
+//           withCredentials: true,
+//         });
+
+//         console.log("API Response:", response.data);
+
+//         if (!response.data.success) {
+//           // If success is false, handle the error
+//           setError(response.data.message || "Job details not found.");
+//           setJobDetails(null); // Clear job details in case of failure
+//           return;
+//         }
+
+//         // Access jobDetails from the nested 'job' object in the response
+//         setJobDetails(response.data.job.jobDetails);
+//       } catch (err) {
+//         console.error("Error fetching job details:", err.message);
+//         setError(err.message || "An unexpected error occurred.");
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     if (id) {
+//       fetchJobDetails();
+//     }
+//   }, [id]);
+
+//   // Loading state
+//   if (loading) {
+//     return (
+//       <div className="max-w-5xl mx-auto my-10 text-gray-500">
+//         Loading job details...
+//       </div>
+//     );
+//   }
+
+//   // Error state
+//   if (error) {
+//     return <div className="max-w-5xl mx-auto my-10 text-red-500">{error}</div>;
+//   }
+
+//   // Render job details
+//   return (
+//     <div className="max-w-5xl mx-auto my-10">
+//       {/* Job Title and Basic Info */}
+//       <div>
+//         <h1 className="font-bold text-xl">{jobDetails?.title}</h1>
+//         <h5 className="text-sm">{jobDetails?.companyName}</h5>
+//         <h6 className="text-sm">{jobDetails?.location || "Location not specified"}</h6>
+//         <h6 className="text-sm">{jobDetails?.salary || "Salary not specified"}</h6>
+//       </div>
+
+//       {/* Job Description */}
+//       <div className="my-6">
+//         <h1 className="border-b-2 border-b-gray-300 font-medium py-2">
+//           Job Description:
+//         </h1>
+//         <p className="text-sm text-gray-600">{jobDetails?.details || "No description provided."}</p>
+//         <br />
+
+//         <div>
+//           <Label className="font-bold text-gray-700">Benefits:</Label>{" "}
+//           <span className="text-sm text-gray-600">
+//             {jobDetails?.benefits?.join(", ") || "Not specified"}
+//           </span>
+//         </div>
+
+//         <div>
+//           <Label className="font-bold text-gray-700">Responsibilities:</Label>{" "}
+//           <span className="text-sm text-gray-600">
+//             {jobDetails?.responsibilities?.join(", ") || "Not specified"}
+//           </span>
+//         </div>
+
+//         <div>
+//           <Label className="font-bold text-gray-700">Job Type:</Label>{" "}
+//           <span className="text-sm text-gray-600">{jobDetails?.jobType || "Not specified"}</span>
+//         </div>
+//         <div>
+//           <Label className="font-bold text-gray-700">Working Days:</Label>{" "}
+//           <span className="text-sm text-gray-600">{jobDetails?.duration || "Not specified"}</span>
+//         </div>
+
+//         <div>
+//           <Label className="font-bold text-gray-700">No. of Openings:</Label>{" "}
+//           <span className="text-sm text-gray-600">
+//             {jobDetails?.numberOfOpening || "Not specified"}
+//           </span>
+//         </div>
+//       </div>
+
+//       {/* Job Requirements */}
+//       <div className="my-6">
+//         <h1 className="border-b-2 border-b-gray-300 font-medium py-2">
+//           Job Requirements:
+//         </h1>
+//         <div className="space-y-4">
+//           {/* Qualifications */}
+//           <div>
+//             <Label className="font-bold text-gray-700">Qualifications:</Label>{" "}
+//             <span className="text-sm text-gray-600">
+//               {jobDetails?.qualifications?.join(", ") || "Not specified"}
+//             </span>
+//           </div>
+
+//           {/* Experience */}
+//           <div>
+//             <Label className="font-bold text-gray-700">Experience:</Label>{" "}
+//             <span className="text-sm text-gray-600">
+//               {jobDetails?.experience || "Not specified"} years
+//             </span>
+//           </div>
+
+//           {/* Skills */}
+//           <div>
+//             <Label className="font-bold text-gray-700">Skills:</Label>{" "}
+//             <span className="text-sm text-gray-600">
+//               {jobDetails?.skills?.join(", ") || "Not specified"}
+//             </span>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default JobDetail;
+
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import axios from "axios";
+import { Label } from "@/components/ui/label";
+import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
+
+const JobDetail = () => {
+  const { id } = useParams();
+  const [jobDetails, setJobDetails] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchJobDetails = async () => {
+      try {
+        const response = await axios.get(`${JOB_API_END_POINT}/get/${id}`, {
+          withCredentials: true,
+        });
+
+        if (!response.data.success) {
+          setError(response.data.message || "Job details not found.");
+          setJobDetails(null);
+          return;
+        }
+
+        setJobDetails(response.data.job.jobDetails);
+      } catch (err) {
+        setError(err.message || "An unexpected error occurred.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchJobDetails();
+    }
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="max-w-5xl mx-auto my-10 text-gray-500">
+        Loading job details...
+      </div>
+    );
   }
 
-  const {
-    title,
-    companyName,
-    address,
-    salaryRange,
-    description,
-    benefits,
-    responsibilities,
-    jobType,
-    workingDays,
-    openings,
-    postedDate,
-    qualifications,
-    experience,
-    skills,
-  } = jobData;
+  if (error) {
+    return <div className="max-w-5xl mx-auto my-10 text-red-500">{error}</div>;
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4">
-      <div className="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6">
-        {/* Job Title and Overview */}
-        <div className="border-b pb-4 mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">{title}</h1>
-          <h5 className="text-sm text-gray-500 mt-1">{companyName}</h5>
-          <h6 className="text-sm text-gray-500">{address}</h6>
-          <h6 className="text-sm text-gray-700 font-medium mt-1">{salaryRange}</h6>
-        </div>
+    <div className="max-w-4xl mx-auto my-10">
+      {/* Job Title and Basic Info */}
+      <div>
+        <h1 className="font-bold text-xl">{jobDetails?.title}</h1>
+        <h5 className="text-sm">{jobDetails?.companyName}</h5>
+        <h6 className="text-sm">{jobDetails?.location || "Location not specified"}</h6>
+        <h6 className="text-sm">{jobDetails?.salary || "Salary not specified"}</h6>
+      </div>
 
-        {/* Job Description */}
-        <div className="mb-6">
-          <h2 className="text-lg font-semibold text-gray-800 mb-2">Job Description:</h2>
-          <p className="text-gray-600 text-sm leading-relaxed">{description}</p>
-        </div>
+      {/* Job Description */}
+      <div className="my-4">
+        <h1 className="border-b-2 border-b-gray-300 font-medium py-1">
+          Job Description:
+        </h1>
+        <p className="text-sm text-gray-600">{jobDetails?.details || "No description provided."}</p>
+        <br />
 
-        {/* Benefits, Responsibilities, and Additional Details */}
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">Benefits:</h3>
+        {/* Benefits and Responsibilities in Two Columns */}
+        <div className="flex flex-col lg:flex-row gap-8">
+          <div className="w-full lg:w-1/2">
+            <Label className="font-bold text-gray-700">Benefits:</Label>
             <ul className="list-disc list-inside text-sm text-gray-600">
-              {benefits.map((benefit, index) => (
-                <li key={index}>{benefit}</li>
-              ))}
+              {jobDetails?.benefits?.length > 0
+                ? jobDetails.benefits.map((benefit, index) => (
+                    <li key={index}>{benefit}</li>
+                  ))
+                : <li>Not specified</li>}
             </ul>
           </div>
-
-          <div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">Responsibilities:</h3>
+          <div className="w-full lg:w-1/2">
+            <Label className="font-bold text-gray-700">Responsibilities:</Label>
             <ul className="list-disc list-inside text-sm text-gray-600">
-              {responsibilities.map((responsibility, index) => (
-                <li key={index}>{responsibility}</li>
-              ))}
+              {jobDetails?.responsibilities?.length > 0
+                ? jobDetails.responsibilities.map((responsibility, index) => (
+                    <li key={index}>{responsibility}</li>
+                  ))
+                : <li>Not specified</li>}
             </ul>
-          </div>
-
-          <div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">Job Details:</h3>
-            <p className="text-sm text-gray-600">
-              <strong>Job Type:</strong> {jobType}
-            </p>
-            <p className="text-sm text-gray-600">
-              <strong>Working Days:</strong> {workingDays}
-            </p>
-            <p className="text-sm text-gray-600">
-              <strong>No. of Openings:</strong> {openings}
-            </p>
-            <p className="text-sm text-gray-600">
-              <strong>Posted Date:</strong> {postedDate}
-            </p>
           </div>
         </div>
 
-        {/* Job Requirements */}
-        <div className="mt-6">
-          <h2 className="text-lg font-semibold text-gray-800 mb-2">Job Requirements:</h2>
-          <div className="space-y-4">
-            {/* Qualifications */}
-            <div>
-              <Label className="font-bold text-gray-700">Qualifications:</Label>{" "}
-              <span className="text-sm text-gray-600">{qualifications}</span>
-            </div>
+        <div>
+          <h1 className="border-b-2 border-b-gray-300 font-medium py-1">
+            Job Details:
+          </h1>
+          <Label className="font-bold text-gray-700">Job Type:</Label>{" "}
+          <span className="text-sm text-gray-600">{jobDetails?.jobType || "Not specified"}</span>
+        </div>
+        <div>
+          <Label className="font-bold text-gray-700">Working Days:</Label>{" "}
+          <span className="text-sm text-gray-600">{jobDetails?.duration || "Not specified"}</span>
+        </div>
+        <div>
+          <Label className="font-bold text-gray-700">No. of Openings:</Label>{" "}
+          <span className="text-sm text-gray-600">
+            {jobDetails?.numberOfOpening || "Not specified"}
+          </span>
+        </div>
+      </div>
 
-            {/* Experience */}
-            <div>
-              <Label className="font-bold text-gray-700">Experience:</Label>{" "}
-              <span className="text-sm text-gray-600">{experience}</span>
-            </div>
+      {/* Job Requirements */}
+      <div className="my-4">
+        <h1 className="border-b-2 border-b-gray-300 font-medium py-1">
+          Job Requirements:
+        </h1>
+        <div className="space-y-2">
+          {/* Qualifications */}
+          <div>
+            <Label className="font-bold text-gray-700">Qualifications:</Label>{" "}
+            <span className="text-sm text-gray-600">
+              {jobDetails?.qualifications?.join(", ") || "Not specified"}
+            </span>
+          </div>
 
-            {/* Skills */}
-            <div>
-              <Label className="font-bold text-gray-700">Skills:</Label>{" "}
-              <span className="text-sm text-gray-600">{skills.join(", ")}</span>
-            </div>
+          {/* Experience */}
+          <div>
+            <Label className="font-bold text-gray-700">Experience:</Label>{" "}
+            <span className="text-sm text-gray-600">
+              {jobDetails?.experience || "Not specified"} years
+            </span>
+          </div>
+
+          {/* Skills */}
+          <div>
+            <Label className="font-bold text-gray-700">Skills:</Label>{" "}
+            <span className="text-sm text-gray-600">
+              {jobDetails?.skills?.join(", ") || "Not specified"}
+            </span>
           </div>
         </div>
       </div>
@@ -106,3 +292,6 @@ const JobDetail = ({ jobData }) => {
 };
 
 export default JobDetail;
+
+
+
