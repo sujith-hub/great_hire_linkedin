@@ -126,31 +126,22 @@ export const postJob = async (req, res) => {
 };
 
 //get all jobs.....
-// export const getAllJobs = async (req, res) => {
-//   try {
-//     // Retrieve all jobs from the database, sorted by createdAt in descending order
-//     const jobs = await Job.find({}).sort({ createdAt: -1 });
-
-//     // Respond with the list of jobs
-//     return res.status(200).json({
-//       jobs,
-//       success: true,
-//     });
-//   } catch (error) {
-//     console.error("Error fetching all jobs:", error);
-//     return res.status(500).json({
-//       success: false,
-//       message: "Internal server error.",
-//     });
-//   }
-// };
 export const getAllJobs = async (req, res) => {
   res.setHeader("Content-Type", "application/json");
   res.setHeader("Cache-Control", "no-cache");
 
   try {
+    const userId = req.id; // Assuming user ID is passed in the request for checking applications
+
     // Using cursor to stream the data in LIFO order (newest to oldest)
-    const cursor = Job.find().sort({ createdAt: -1 }).cursor();
+    const cursor = Job.find()
+      .sort({ createdAt: -1 })
+      .populate({
+        path: "application",
+        match: { applicant: userId }, // Match applications for the specific user
+        select: "status", // Only select the 'status' field or other fields you need
+      })
+      .cursor();
 
     res.write("["); // Start the JSON array
 
@@ -161,7 +152,17 @@ export const getAllJobs = async (req, res) => {
       } else {
         isFirst = false;
       }
-      res.write(JSON.stringify(doc));
+
+      // Check if the user has applied to this job
+      const isApplied = doc.application.length > 0; // If the array has items, the user has applied
+
+      // Add the application status to the job details
+      const jobWithApplicationStatus = {
+        ...doc.toObject(),
+        isApplied, // Add 'isApplied' field to indicate if the user applied for the job
+      };
+
+      res.write(JSON.stringify(jobWithApplicationStatus)); // Write the job with application status
     });
 
     cursor.on("end", () => {
@@ -465,11 +466,17 @@ export const applyJob = async (req, res) => {
     const userId = req.id;
     const { fullname, email, number, address, jobId } = req.body;
     const { resume } = req.files;
+
     // Find the user by ID
     const user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
+    }
+
+    const job = await Job.findById(jobId);
+    if (!job) {
+      return res.status(404).json({ message: "Job not found" });
     }
 
     // Check and update user details if necessary
@@ -516,6 +523,12 @@ export const applyJob = async (req, res) => {
 
     // Save the application to the database
     await newApplication.save();
+
+    // Push the new application ID to the job's applications array
+    job.application.push(newApplication._id);
+
+    // Save the updated job
+    await job.save();
 
     res.status(201).json({
       message: "Applied successfully",

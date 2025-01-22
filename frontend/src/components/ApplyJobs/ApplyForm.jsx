@@ -476,7 +476,7 @@ const ApplyForm = ({ setRight }) => {
         </div>
       )}
 
-      {review && <ReviewPage input={input} handleReview1={handleReview1} />}
+      {review && <ReviewPage input={input} handleReview1={handleReview1} fileURL={fileURL} />}
     </div>
   );
 };

@@ -6,7 +6,7 @@ import { Viewer } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
 
-const ReviewPage = ({ handleReview1, input }) => {
+const ReviewPage = ({ handleReview1, input, fileURL }) => {
   const { user } = useSelector((state) => state.auth);
   console.log(input);
 
@@ -20,6 +20,7 @@ const ReviewPage = ({ handleReview1, input }) => {
     if (input.phoneNumber !== user.phoneNumber.number)
       formData.append("phoneNumber", input.phoneNumber);
 
+    
     if (input.resume) {
       formData.append("resume", input.resume);
     }
@@ -89,7 +90,7 @@ const ReviewPage = ({ handleReview1, input }) => {
 
       <p className=" text-gray-500 text-2xl">Resume</p>
       <div className="h-96">
-        <Viewer fileUrl={input.resume} />
+        <Viewer fileUrl={fileURL || input.resume} />
       </div>
 
       <h4 className="text-lg font-medium mb-4">Employee Questions</h4>
