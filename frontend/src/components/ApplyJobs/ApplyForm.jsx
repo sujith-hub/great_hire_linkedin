@@ -47,16 +47,15 @@ const ApplyForm = ({ setRight }) => {
   });
 
   const handleFileChange = (e) => {
-    const file = e.target.files[0];  
+    const file = e.target.files[0];
     if (file) {
       const fileUrl = URL.createObjectURL(file);
       setInput((prevData) => ({
         ...prevData,
         resume: file,
       }));
-      setFileURL(fileUrl)
+      setFileURL(fileUrl);
     }
-    
   };
 
   const handleChange = (e) => {
@@ -98,8 +97,6 @@ const ApplyForm = ({ setRight }) => {
     }
   };
 
-  
-
   const handleCoverLetter = (option) => {
     if (option === "write") {
       setCoverLetter(true);
@@ -122,11 +119,10 @@ const ApplyForm = ({ setRight }) => {
     );
   };
 
-
   return (
-    <div>
+    <div className="w-full ">
       {step1 && (
-        <div className="w-full max-w-xl mx-auto p-6 bg-white shadow-md rounded-md">
+        <div className="w-full  p-6  shadow-md rounded-md bg-white">
           <ProgressBar percent={20} unfilledBackground="gray" />
           <h6 className="text-sm text-gray-500 mt-4">
             Application step 1 of 5
@@ -147,7 +143,7 @@ const ApplyForm = ({ setRight }) => {
               onChange={handleChange}
               className="mt-1 w-full p-2 border border-gray-300 rounded-md"
               value={input.fullname}
-              readOnly
+              
             />
 
             <label
@@ -162,7 +158,7 @@ const ApplyForm = ({ setRight }) => {
               onChange={handleChange}
               className="mt-1 w-full p-2 border border-gray-300 rounded-md"
               value={input.number}
-              readOnly
+              
             />
             <label
               htmlFor="email"
@@ -176,7 +172,7 @@ const ApplyForm = ({ setRight }) => {
               onChange={handleChange}
               className="mt-1 w-full p-2 border border-gray-300 rounded-md"
               value={input.email}
-              readOnly
+              
             />
 
             <label
@@ -227,7 +223,7 @@ const ApplyForm = ({ setRight }) => {
       )}
 
       {step2 && (
-        <div className="w-full max-w-xl mx-auto p-6 bg-white shadow-md rounded-md">
+        <div className="w-full  p-6 bg-white shadow-md rounded-md">
           <ProgressBar percent={40} unfilledBackground="gray" />
           <div className="flex items-center mt-4">
             <BiArrowBack
@@ -243,7 +239,7 @@ const ApplyForm = ({ setRight }) => {
             </h6>
           </div>
 
-          <div className="mt-4 h-full w-full flex flex-col items-center justify-center ">
+          <div className="mt-4 h-96 w-full flex flex-col items-center justify-center ">
             {fileURL || input.resume ? (
               <div className="w-full h-full">
                 <Viewer fileUrl={fileURL || input.resume} />
@@ -310,7 +306,7 @@ const ApplyForm = ({ setRight }) => {
       )}
 
       {step3 && (
-        <div className="w-full max-w-xl mx-auto p-6 bg-white shadow-md rounded-md">
+        <div className="w-full  p-6 bg-white shadow-md rounded-md">
           <ProgressBar percent={60} unfilledBackground="gray" />
 
           <div className="flex items-center mt-4">
@@ -388,7 +384,7 @@ const ApplyForm = ({ setRight }) => {
         </div>
       )}
       {step4 && (
-        <div className="w-full max-w-xl mx-auto p-6 bg-white shadow-md rounded-md">
+        <div className="w-full  p-6 bg-white shadow-md rounded-md">
           <ProgressBar percent={80} unfilledBackground="gray" />
 
           <div className="flex items-center mt-4">
@@ -480,9 +476,7 @@ const ApplyForm = ({ setRight }) => {
         </div>
       )}
 
-      {review && (
-        <ReviewPage input={input} handleReview1={handleReview1} />
-      )}
+      {review && <ReviewPage input={input} handleReview1={handleReview1} />}
     </div>
   );
 };

@@ -48,7 +48,7 @@ const ReviewPage = ({ handleReview1, input }) => {
     }
   };
   return (
-    <div className="max-w-6xl justify-center mx-auto p-6 bg-white shadow-lg rounded-lg">
+    <div className="flex justify-center flex-col p-6 bg-white shadow-lg rounded-lg w-full">
       <div className="flex items-center mb-6">
         <BiArrowBack
           className="text-gray-600 cursor-pointer text-2xl"
@@ -87,8 +87,8 @@ const ReviewPage = ({ handleReview1, input }) => {
         </div>
       </div>
 
-      <p className="text-sm text-gray-500">Resume</p>
-      <div className="w-full h-fit">
+      <p className=" text-gray-500 text-2xl">Resume</p>
+      <div className="h-96">
         <Viewer fileUrl={input.resume} />
       </div>
 
