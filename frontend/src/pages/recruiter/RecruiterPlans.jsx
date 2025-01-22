@@ -15,10 +15,11 @@ function RecruiterPlans() {
         'Up to 10 active job posts',
         'Basic candidate matching',
         'Email & chat support',
-        'Basic analytics'
+        'Basic analytics',
       ],
       popular: false,
-      borderColor: 'border-blue-300'
+      borderColor: 'border-blue-300',
+      selectedBorderColor: 'ring-4 ring-blue-500',
     },
     {
       name: 'Standard',
@@ -29,10 +30,11 @@ function RecruiterPlans() {
         'Up to 25 active job posts',
         'Advanced AI matching',
         'Priority 24/7 support',
-        'Advanced analytics suite'
+        'Advanced analytics suite',
       ],
       popular: true,
-      borderColor: 'ring-indigo-500'
+      borderColor: 'ring-indigo-300',
+      selectedBorderColor: 'ring-4 ring-indigo-600',
     },
     {
       name: 'Premium',
@@ -43,16 +45,29 @@ function RecruiterPlans() {
         'Unlimited job posts',
         'Custom AI solutions',
         'Dedicated success manager',
-        'Custom API integration'
+        'Custom API integration',
       ],
       popular: false,
-      borderColor: 'border-purple-300'
-    }
+      borderColor: 'border-purple-300',
+      selectedBorderColor: 'ring-4 ring-purple-500',
+    },
   ];
 
-  const handleSelectPlan = (plan) => {
-    setSelectedPlan(plan);
-    console.log(`Selected ${plan.name} plan`);
+  const handleSelectPlan = (planName) => {
+    setSelectedPlan(planName);
+    console.log(`Selected ${planName} plan`);
+  };
+
+  const getCardClasses = (plan) => {
+    const isSelected = selectedPlan === plan.name;
+    const baseClasses =
+      'relative bg-white rounded-2xl p-6 transition-all duration-300 shadow-lg hover:shadow-xl cursor-pointer';
+    const borderClasses = isSelected
+      ? plan.selectedBorderColor
+      : plan.popular
+      ? `ring-2 ${plan.borderColor}`
+      : `border-2 ${plan.borderColor}`;
+    return `${baseClasses} ${borderClasses}`;
   };
 
   const getButtonClasses = (color, popular) => {
@@ -67,7 +82,7 @@ function RecruiterPlans() {
         : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100',
       purple: popular
         ? 'bg-gradient-to-r from-purple-600 to-purple-500 text-white'
-        : 'bg-purple-50 text-purple-600 hover:bg-purple-100'
+        : 'bg-purple-50 text-purple-600 hover:bg-purple-100',
     };
     return `${baseClasses} ${colorStyles[color]}`;
   };
@@ -90,13 +105,10 @@ function RecruiterPlans() {
             return (
               <div
                 key={plan.name}
-                className={`relative bg-white rounded-2xl p-6 transition-all duration-300 shadow-lg hover:shadow-xl ${
-                  plan.popular
-                    ? `ring-2 ${plan.borderColor} hover:shadow-2xl`
-                    : `border-2 ${plan.borderColor}`
-                }`}
+                className={getCardClasses(plan)}
+                onClick={() => handleSelectPlan(plan.name)}
               >
-                {plan.popular && (
+                {plan.popular && selectedPlan === plan.name && (
                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-indigo-600 to-indigo-500 text-white px-3 py-1 rounded-full text-xs font-semibold tracking-wide shadow-md">
                     MOST POPULAR
                   </div>
@@ -127,7 +139,7 @@ function RecruiterPlans() {
                 </ul>
 
                 <button
-                  onClick={() => handleSelectPlan(plan)}
+                  onClick={() => handleSelectPlan(plan.name)}
                   className={getButtonClasses(plan.color, plan.popular)}
                 >
                   Get Started
