@@ -3,6 +3,7 @@ import axios from "axios";
 import { razorpay_key_id } from "@/utils/RazorpayCredentials";
 import {toast} from "react-hot-toast";
 import { VERIFICATION_API_END_POINT, ORDER_API_END_POINT } from "@/utils/ApiEndPoint";
+import GreatHireLogo from '../../assets/Great.png'
 
 const CollectUserDetails = ({ selectedPlan }) => {
   const [formData, setFormData] = useState({
@@ -75,7 +76,7 @@ const CollectUserDetails = ({ selectedPlan }) => {
         currency,
         name: "GreatHire",
         description: selectedPlan?.headline,
-        image: "/logo.png",
+        image: {GreatHireLogo},
         order_id: orderId,
         handler: async (response) => {
           const verificationResponse = await axios.post(`${VERIFICATION_API_END_POINT}/verify-payment`, {

@@ -38,11 +38,11 @@ const ApplyForm = ({ setRight }) => {
     number: user?.phoneNumber.number,
     email: user?.emailId.email,
     address:
-      user?.address?.city +
-      ", " +
-      user?.address?.state +
-      ", " +
-      user?.address?.country,
+      user?.address?.city || user?.address?.state || user?.address?.country
+        ? `${user?.address?.city || ""}, ${user?.address?.state || ""}, ${
+            user?.address?.country || ""
+          }`
+        : "",
     resume: user?.profile?.resume,
   });
 
@@ -143,7 +143,6 @@ const ApplyForm = ({ setRight }) => {
               onChange={handleChange}
               className="mt-1 w-full p-2 border border-gray-300 rounded-md"
               value={input.fullname}
-              
             />
 
             <label
@@ -158,7 +157,6 @@ const ApplyForm = ({ setRight }) => {
               onChange={handleChange}
               className="mt-1 w-full p-2 border border-gray-300 rounded-md"
               value={input.number}
-              
             />
             <label
               htmlFor="email"
@@ -172,7 +170,6 @@ const ApplyForm = ({ setRight }) => {
               onChange={handleChange}
               className="mt-1 w-full p-2 border border-gray-300 rounded-md"
               value={input.email}
-              
             />
 
             <label
@@ -476,7 +473,13 @@ const ApplyForm = ({ setRight }) => {
         </div>
       )}
 
-      {review && <ReviewPage input={input} handleReview1={handleReview1} fileURL={fileURL} />}
+      {review && (
+        <ReviewPage
+          input={input}
+          handleReview1={handleReview1}
+          fileURL={fileURL}
+        />
+      )}
     </div>
   );
 };

@@ -232,7 +232,6 @@ export const getJobById = async (req, res) => {
   }
 };
 
-
 export const getJobByCompanyId = async (req, res) => {
   try {
     const companyId = req.params.id;
@@ -465,7 +464,7 @@ export const updateJob = async (req, res) => {};
 export const applyJob = async (req, res) => {
   try {
     const userId = req.id;
-    const { fullname, email, number, address, jobId } = req.body;
+    const { fullname, email, number, address, coverLetter, jobId } = req.body;
     const { resume } = req.files;
 
     // Find the user by ID
@@ -502,6 +501,10 @@ export const applyJob = async (req, res) => {
       if (address.country && address.country !== user.address.country) {
         user.address.country = address.country;
       }
+    }
+
+    if (coverLetter) {
+      user.profile.coverLetter = coverLetter;
     }
 
     // Update resume if provided
@@ -618,4 +621,3 @@ export const getJobsStatistics = async (req, res) => {
     });
   }
 };
-
