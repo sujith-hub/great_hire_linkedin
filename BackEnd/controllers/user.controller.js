@@ -380,7 +380,7 @@ export const updateProfile = async (req, res) => {
       user.emailId.isVerified = false;
     }
     if (phoneNumber && user.phoneNumber.number !== phoneNumber) {
-      user.phoneNumber = phoneNumber;
+      user.phoneNumber.number = phoneNumber;
       user.phoneNumber.isVerified = false;
     }
     if (bio && user.profile.bio !== bio) user.profile.bio = bio;
