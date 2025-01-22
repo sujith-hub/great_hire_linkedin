@@ -21,6 +21,7 @@ const JobsForYou = () => {
     changeBookmarkStatus,
     changeBlockStatus,
   } = useJobDetails(); // Access functions from context
+ 
 
   const navigate = useNavigate();
   const [isClickOnThreeDot, setClickOnThreeDot] = useState(false);

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
 import axios from "axios";
+import { FaUsers, FaBriefcase, FaClipboardList, FaChevronUp, FaChevronDown } from "react-icons/fa"; // Importing icons
 
 const RecruiterHome = () => {
   const { company } = useSelector((state) => state.company);
@@ -35,47 +36,58 @@ const RecruiterHome = () => {
     }
   }, [user]);
 
+  console.log(jobsStatistics)
+
+  const getArrowIcon = (current, previous) => {
+    if (current > previous) {
+      return <FaChevronUp className="text-green-500" />;
+    } else if (current < previous) {
+      return <FaChevronDown className="text-red-500" />;
+    }
+    return null;
+  };
+
   const cards = [
     {
       title: "Recruiters",
       count: recruiters.length,
-      gradient: "from-blue-500 to-indigo-500",
-      description: "Manage and oversee your team of recruiters effectively.",
+      icon: <FaUsers className="text-4xl text-blue-600" />,
+      description: "Recruiters in you company.",
     },
     {
       title: "Posted Jobs",
       count: jobsStatistics?.totalJobs,
-      gradient: "from-green-500 to-teal-500",
-      description: "This are the jobs you have posted.",
+      icon: <FaBriefcase className="text-4xl text-green-600" />,
+      description: "Jobs that you have posted.",
     },
     {
       title: "Max Post Jobs",
       count: company?.maxPostJobs,
-      gradient: "from-gray-500 to-gray-700",
-      description: "This are the maximum number of jobs you can post.",
+      icon: <FaClipboardList className="text-4xl text-pink-600" />,
+      description: "The maximum number of jobs you can post.",
     },
     {
       title: "Active Jobs",
       count: jobsStatistics?.activeJobs,
-      gradient: "from-purple-500 to-pink-500",
-      description: " Jobs that are currently active and open.",
+      icon: <FaBriefcase className="text-4xl text-purple-600" />,
+      description: "Jobs that are currently active and open.",
     },
     {
       title: "Expired Jobs",
       count: jobsStatistics?.inactiveJobs,
-      gradient: "from-orange-500 to-yellow-500",
-      description: " Jobs that have expired and are no longer active.",
+      icon: <FaBriefcase className="text-4xl text-orange-600" />,
+      description: "Jobs that have expired and are no longer active.",
     },
     {
       title: "Applicants",
       count: jobsStatistics?.totalApplicants,
-      gradient: "from-red-500 to-pink-500",
-      description: " Total number of applicants for your jobs.",
+      icon: <FaUsers className="text-4xl text-red-600" />,
+      description: "Total number of applicants for your jobs.",
     },
     {
       title: "Selected Candidates",
       count: jobsStatistics?.selectedCandidates,
-      gradient: "from-teal-500 to-blue-500",
+      icon: <FaUsers className="text-4xl text-teal-600" />,
       description: "Candidates who have been selected.",
     },
   ];
@@ -83,15 +95,14 @@ const RecruiterHome = () => {
   return (
     <>
       {company && user?.isVerify ? (
-        <div className="min-h-screen bg-gray-100 p-8">
+        <div className="min-h-screen bg-gray-50 p-8">
           {/* Header Section */}
           <header className="text-center mb-8">
             <h1 className="text-4xl font-bold text-gray-800">
               Welcome, {company?.companyName || "Recruiter"}
             </h1>
             <p className="text-gray-600 mt-2">
-              Empower your hiring process with key insights and metrics at a
-              glance.
+              Empower your hiring process with key insights and metrics at a glance.
             </p>
           </header>
 
@@ -100,23 +111,18 @@ const RecruiterHome = () => {
             {cards.map((card, index) => (
               <div
                 key={index}
-                className="bg-white shadow-xl rounded-lg overflow-hidden hover:scale-105 transition-transform duration-300 ease-in-out"
+                className="bg-white shadow-lg rounded-lg p-6 flex flex-col items-center justify-between border-l-4 border-gray-300 hover:border-blue-700 transition-all duration-300 ease-in-out"
               >
-                <div
-                  className={`h-48 bg-gradient-to-r ${card.gradient} flex flex-col items-center justify-center`}
-                >
-                  <h2 className="text-white text-xl font-semibold text-center">
-                    {card.title}
-                  </h2>
-                  <h2 className="text-white text-4xl font-bold mt-2">
-                    {card.count}
-                  </h2>
+                <div className="flex items-center space-x-4 mb-4">
+                  {card.icon}
+                  <h2 className="text-xl font-semibold text-gray-700">{card.title}</h2>
                 </div>
-                <div className="p-4">
-                  <p className="text-gray-600 text-sm text-center">
-                    {card.description}
-                  </p>
+                <h3 className="text-3xl font-bold text-gray-800">{card.count}</h3>
+                <div className="mt-4">
+                  <p className="text-gray-600 text-sm text-center">{card.description}</p>
                 </div>
+
+                
               </div>
             ))}
           </div>

@@ -62,6 +62,12 @@ const companySchema = new mongoose.Schema(
         },
       },
     ],
+    subscriptions: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Subscription", // Reference to the Subscription model
+      },
+    ],
   },
   { timestamps: true }
 );

@@ -1,10 +1,12 @@
 import express from "express";
-import { postJob, getAllJobs, getJobById, getJobForRecruiter, deleteJobById, updateJob, hideJob, bookmarkJob, unBookmarkJob, getJobByRecruiterId, toggleActive, getJobByCompanyId, getJobsStatistics } from '../controllers/job.controller.js';
+import { postJob, getAllJobs, getJobById, getJobForRecruiter, deleteJobById, updateJob, hideJob, bookmarkJob, unBookmarkJob, getJobByRecruiterId, toggleActive, getJobByCompanyId, getJobsStatistics, applyJob } from '../controllers/job.controller.js';
 import isAuthenticated from '../middlewares/isAuthenticated.js';
+import { singleUpload } from "../middlewares/multer.js";
 
 const router = express.Router();
 
 router.route("/post-job").post(isAuthenticated, postJob);
+router.route("/apply-job").post(isAuthenticated, singleUpload, applyJob);
 router.route('/bookmark-job/:id').get(isAuthenticated, bookmarkJob);
 router.route('/unbookmark-job/:id').get(isAuthenticated, unBookmarkJob);
 router.route('/hide-job/:id').get(isAuthenticated, hideJob);

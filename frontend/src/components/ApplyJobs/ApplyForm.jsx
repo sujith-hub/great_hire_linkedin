@@ -92,11 +92,11 @@ const ApplyForm = ({ setRight }) => {
     number: user?.phoneNumber.number,
     email: user?.emailId.email,
     address:
-      user?.address?.city +
-      ", " +
-      user?.address?.state +
-      ", " +
-      user?.address?.country,
+      user?.address?.city || user?.address?.state || user?.address?.country
+        ? `${user?.address?.city || ""}, ${user?.address?.state || ""}, ${
+            user?.address?.country || ""
+          }`
+        : "",
     resume: user?.profile?.resume,
   });
 
@@ -192,7 +192,6 @@ const ApplyForm = ({ setRight }) => {
               name="fullname"
               onChange={handleChange}
               value={input.fullname}
-              className="mt-1 w-full p-2 border border-gray-300 rounded-md"
             />
             {errors.fullname && (
               <p className="text-red-600 text-sm">{errors.fullname}</p>
@@ -206,7 +205,6 @@ const ApplyForm = ({ setRight }) => {
               name="number"
               onChange={handleChange}
               value={input.number}
-              className="mt-1 w-full p-2 border border-gray-300 rounded-md"
             />
             {errors.number && (
               <p className="text-red-600 text-sm">{errors.number}</p>
@@ -220,7 +218,6 @@ const ApplyForm = ({ setRight }) => {
               name="email"
               onChange={handleChange}
               value={input.email}
-              className="mt-1 w-full p-2 border border-gray-300 rounded-md"
             />
             {errors.email && (
               <p className="text-red-600 text-sm">{errors.email}</p>
@@ -525,7 +522,13 @@ const ApplyForm = ({ setRight }) => {
         </div>
       )}
 
-      {review && <ReviewPage input={input} handleReview1={handleReview1} />}
+      {review && (
+        <ReviewPage
+          input={input}
+          handleReview1={handleReview1}
+          fileURL={fileURL}
+        />
+      )}
     </div>
   );
 };
