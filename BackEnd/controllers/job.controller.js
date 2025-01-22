@@ -575,13 +575,13 @@ export const getJobsStatistics = async (req, res) => {
     // Get the number of active jobs posted by the company
     const activeJobs = await Job.countDocuments({
       company: companyId,
-      isActive: true,
+      "jobDetails.isActive": true, // Accessing isActive inside jobDetails
     });
 
     // Get the number of inactive jobs posted by the company
     const inactiveJobs = await Job.countDocuments({
       company: companyId,
-      isActive: false,
+      "jobDetails.isActive": false, // Accessing isActive inside jobDetails
     });
 
     // Get the total number of applicants for the company
@@ -618,3 +618,4 @@ export const getJobsStatistics = async (req, res) => {
     });
   }
 };
+
