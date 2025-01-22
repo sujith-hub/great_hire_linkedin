@@ -119,7 +119,7 @@ const PostJob = () => {
   ];
 
   return (
-    <div className="bg-gray-50 py-6">
+    <div className=" py-6">
       <div className="w-full max-w-3xl mx-auto  p-6 bg-white  shadow-lg rounded-lg">
         <div className="mb-10">
           <Stepper

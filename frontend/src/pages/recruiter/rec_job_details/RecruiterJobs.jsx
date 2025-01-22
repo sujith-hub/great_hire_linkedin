@@ -8,28 +8,33 @@ import { useNavigate } from "react-router-dom";
 
 const RecruiterJob = ({ recruiterId }) => {
   const [jobs, setJobs] = useState([]);
-  const navigate = useNavigate();
+  const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState({});
   const [dloading, dsetLoading] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
   const { user } = useSelector((state) => state.auth);
   const { company } = useSelector((state) => state.company);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (!user || user?.role !== "recruiter") navigate("/login");
   }, [user]);
 
-  const getJobsByRecruiter = async (recruiterId) => {
+  const getJobsByRecruiter = async (recruiterId, page = 1) => {
     try {
       setLoading((prevLoading) => ({ ...prevLoading, [recruiterId]: true }));
       const response = await axios.get(
-        `${JOB_API_END_POINT}/jobs/${recruiterId}`,
+        `${JOB_API_END_POINT}/jobs/${recruiterId}?page=${page}&limit=10`,
         { withCredentials: true }
       );
 
       if (response.data.success) {
         setJobs(response.data.jobs);
+        setTotalPages(response.data.totalPages);
+        console.log(response.data);
       } else {
         toast.error(response.data.message);
       }
@@ -45,16 +50,17 @@ const RecruiterJob = ({ recruiterId }) => {
 
   useEffect(() => {
     if (recruiterId && jobs.length === 0) {
-      getJobsByRecruiter(recruiterId);
+      getJobsByRecruiter(recruiterId, currentPage);
     }
-  }, [recruiterId]);
+  }, [recruiterId, currentPage]);
 
   const toggleActive = async (event, jobId, isActive) => {
     event.stopPropagation();
     try {
       setLoading((prevLoading) => ({ ...prevLoading, [jobId]: true }));
       const response = await axios.put(
-        `${JOB_API_END_POINT}/toggle-active`,
+        `
+        ${JOB_API_END_POINT}/toggle-active`,
         {
           jobId,
           isActive,
@@ -91,7 +97,8 @@ const RecruiterJob = ({ recruiterId }) => {
     try {
       dsetLoading((prevLoading) => ({ ...prevLoading, [jobId]: true }));
       const response = await axios.delete(
-        `${JOB_API_END_POINT}/delete/${jobId}`,
+        `
+        ${JOB_API_END_POINT}/delete/${jobId}`,
         {
           withCredentials: true,
         }
@@ -111,6 +118,11 @@ const RecruiterJob = ({ recruiterId }) => {
     } finally {
       dsetLoading((prevLoading) => ({ ...prevLoading, [jobId]: false }));
     }
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    getJobsByRecruiter(recruiterId, page);
   };
 
   const filteredJobs = jobs.filter((job) => {
@@ -150,6 +162,8 @@ const RecruiterJob = ({ recruiterId }) => {
           <option value="inactive">Inactive</option>
         </select>
       </div>
+
+      {/* Table displaying jobs */}
       <table className="min-w-full bg-white border border-gray-200 rounded-lg">
         <thead>
           <tr>
@@ -165,7 +179,8 @@ const RecruiterJob = ({ recruiterId }) => {
             <th className="py-3 px-6 bg-gray-200 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
               Job Type
             </th>
-            {recruiterId === user?._id && (
+            {(recruiterId === user?._id ||
+              user?.emailId.email === company?.adminEmail) && (
               <>
                 <th className="py-3 px-6 bg-gray-200 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
                   Status
@@ -247,6 +262,35 @@ const RecruiterJob = ({ recruiterId }) => {
           )}
         </tbody>
       </table>
+
+      {/* Pagination */}
+      <div className="flex justify-between mt-4">
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className={`px-4 py-2 border ${
+            currentPage === 1
+              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+              : "bg-blue-700 text-white"
+          }`}
+        >
+          Previous
+        </button>
+        <span className="px-4 py-2">
+          {currentPage} / {totalPages}
+        </span>
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className={`px-4 py-2 border ${
+            currentPage === totalPages
+              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+              : "bg-blue-700 text-white"
+          }`}
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 };

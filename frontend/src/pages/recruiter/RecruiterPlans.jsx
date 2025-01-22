@@ -88,7 +88,7 @@ function RecruiterPlans() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4 flex items-center justify-center">
+    <div className="min-h-screen  py-8 px-4 flex items-center justify-center">
       <div className="w-full max-w-6xl">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-3">

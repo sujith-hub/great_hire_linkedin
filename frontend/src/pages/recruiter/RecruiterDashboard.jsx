@@ -60,13 +60,13 @@ const RecruiterDashboard = () => {
       {/* Main Content */}
       <div className="flex">
         <DashboardNavigations />
-        <div className="ml-52 w-full ">
+        <div className="ml-52 w-full bg-gradient-to-r from-gray-100 via-blue-100 to-gray-100 h-screen ">
           {" "}
           {/* Adjust margin for sidebar */}
           {loading ? (
             <div className="text-center text-gray-500">Loading...</div>
           ) : (
-            <Outlet /> // Render nested routes
+            <Outlet/> // Render nested routes
           )}
         </div>
       </div>

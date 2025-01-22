@@ -184,14 +184,28 @@ export const getAllJobs = async (req, res) => {
 export const getJobByRecruiterId = async (req, res) => {
   try {
     const recruiterId = req.params.id;
+    const page = parseInt(req.query.page, 10) || 1; // Default to page 1
+    const limit = parseInt(req.query.limit, 10) || 10; // Default to 10 items per page
 
-    // Fetch jobs with only the required fields
+    // Calculate the number of documents to skip
+    const skip = (page - 1) * limit;
+
+    // Fetch paginated jobs
     const jobs = await Job.find({ created_by: recruiterId })
       .select(
         "jobDetails.companyName jobDetails.title jobDetails.location jobDetails.jobType jobDetails.isActive"
       )
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
+    // Total job count for the recruiter
+    const totalJobs = await Job.countDocuments({ created_by: recruiterId });
+
+    // Total pages
+    const totalPages = Math.ceil(totalJobs / limit);
+
+    // If no jobs are found
     if (jobs.length === 0) {
       return res.status(404).json({
         message: "No jobs found for this recruiter.",
@@ -199,8 +213,12 @@ export const getJobByRecruiterId = async (req, res) => {
       });
     }
 
+    // Return paginated response
     return res.status(200).json({
       jobs,
+      totalJobs,
+      totalPages,
+      currentPage: page,
       success: true,
     });
   } catch (error) {
@@ -211,6 +229,7 @@ export const getJobByRecruiterId = async (req, res) => {
     });
   }
 };
+
 
 //get job by id...
 export const getJobById = async (req, res) => {
@@ -275,35 +294,6 @@ export const getJobByCompanyId = async (req, res) => {
   }
 };
 
-// particular recuriter job
-export const getJobForRecruiter = async (req, res) => {
-  try {
-    const recruiterId = req.id; // Assuming recruiter ID is coming from the request object (e.g., via middleware)
-
-    // Find jobs created by the recruiter and populate company with name and address
-    const jobs = await Job.find({ created_by: recruiterId })
-      .populate({
-        path: "company",
-        select: "name address",
-      })
-      .populate({
-        path: "created_by",
-        select: "fullname emailId.email",
-      });
-
-    // Respond with the list of jobs
-    return res.status(200).json({
-      success: true,
-      jobs,
-    });
-  } catch (error) {
-    console.error("Error fetching jobs for recruiter:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error.",
-    });
-  }
-};
 
 export const deleteJobById = async (req, res) => {
   try {

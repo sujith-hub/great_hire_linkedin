@@ -95,7 +95,7 @@ const RecruiterHome = () => {
   return (
     <>
       {company && user?.isVerify ? (
-        <div className="min-h-screen bg-gray-50 p-8">
+        <div className="min-h-screen p-8">
           {/* Header Section */}
           <header className="text-center mb-8">
             <h1 className="text-4xl font-bold text-gray-800">
