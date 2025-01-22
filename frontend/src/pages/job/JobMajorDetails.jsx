@@ -6,10 +6,7 @@ import { FaToolbox } from "react-icons/fa";
 import { BsFlagFill } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 
-const JobMajorDetails = ({
-  selectedJob,
-}) => {
-  
+const JobMajorDetails = ({ selectedJob }) => {
   const navigate = useNavigate();
 
   return (
@@ -26,7 +23,7 @@ const JobMajorDetails = ({
             <HiLightBulb />
             <span className="text-xl font-bold text-black">Skills</span>
           </h3>
-  
+
           <div className="flex flex-wrap gap-2 mt-2">
             {selectedJob?.jobDetails?.skills.map((skill, index) => (
               <div
@@ -44,7 +41,6 @@ const JobMajorDetails = ({
       <div className="p-4 flex flex-col justify-center gap-4 border-b-2 border-gray-200">
         <div>
           <h1 className="text-xl font-bold">Job details</h1>
-          
         </div>
 
         {/* Pay Section */}
@@ -53,13 +49,19 @@ const JobMajorDetails = ({
             <PiMoneyWavyFill />
             <span className="text-xl font-bold text-black">Pay</span>
           </h3>
-          <div className="flex flex-wrap gap-2 mt-2">
-            <div className="flex items-center w-fit px-4 py-2 rounded-lg  bg-slate-200 gap-1 text-sm text-gray-800">
-              <span className="font-bold">{selectedJob?.jobDetails?.salary}</span>
+          <div className="flex items-center w-fit px-4 py-2 rounded-lg  bg-slate-200 gap-1 text-sm text-gray-800 font-semibold">
+              {selectedJob?.jobDetails?.salary
+                .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
+                .split("-")
+                .map((part, index) => (
+                  <span key={index}>
+                    ₹{part.trim()}
+                    {index === 0 ? " - " : ""}
+                  </span>
+                ))}
             </div>
-          </div>
         </div>
-        
+
         {/* Experience Section */}
         <div className="mt-2">
           <h3 className="text-xl text-gray-500 flex items-center gap-2">
@@ -68,7 +70,9 @@ const JobMajorDetails = ({
           </h3>
           <div className="flex flex-wrap gap-2 mt-2">
             <div className="flex items-center w-fit px-4 py-2 rounded-lg bg-slate-200 gap-1 text-sm text-gray-800">
-              <span className="font-bold">{selectedJob?.jobDetails?.experience} Years</span>
+              <span className="font-bold">
+                {selectedJob?.jobDetails?.experience} Years
+              </span>
             </div>
           </div>
         </div>
@@ -83,7 +87,9 @@ const JobMajorDetails = ({
             <div
               className={`flex items-center w-fit px-4 py-2 rounded-lg bg-slate-200 gap-1 text-sm text-gray-800`}
             >
-              <span className="font-bold">{selectedJob?.jobDetails?.jobType}</span>
+              <span className="font-bold">
+                {selectedJob?.jobDetails?.jobType}
+              </span>
             </div>
           </div>
         </div>
@@ -91,7 +97,7 @@ const JobMajorDetails = ({
 
       {/* Full Job Description */}
       <div className="p-4 flex flex-col justify-center gap-4 border-b-2 border-gray-200">
-      <h1 className="text-xl font-bold">Full Job Description</h1>
+        <h1 className="text-xl font-bold">Full Job Description</h1>
         <p className="font-semibold">
           Please Note: After the submission of your application, you will
           receive an email to complete a virtual interview via our online
@@ -126,7 +132,10 @@ const JobMajorDetails = ({
           dialers preferred.
         </p>
         <p className="font-semibold">
-        This job description is not an exclusive or exhaustive list of all job functions that a team member in this position may be asked to perform. Duties and responsibilities can be changed, expanded, reduced, or delegated by management to meet the business needs of the company.
+          This job description is not an exclusive or exhaustive list of all job
+          functions that a team member in this position may be asked to perform.
+          Duties and responsibilities can be changed, expanded, reduced, or
+          delegated by management to meet the business needs of the company.
         </p>
       </div>
 
@@ -150,9 +159,11 @@ const JobMajorDetails = ({
           className="ml-6 text-sm text-gray-600 mt-2"
           style={{ listStyleType: "circle" }}
         >
-          {selectedJob?.jobDetails?.responsibilities?.map((responsibilitie, index) => (
-            <li key={index}>{responsibilitie}</li>
-          ))}
+          {selectedJob?.jobDetails?.responsibilities?.map(
+            (responsibilitie, index) => (
+              <li key={index}>{responsibilitie}</li>
+            )
+          )}
         </ul>
       </div>
 
@@ -163,14 +174,19 @@ const JobMajorDetails = ({
           className="ml-6 text-sm text-gray-600 mt-2"
           style={{ listStyleType: "circle" }}
         >
-          {selectedJob?.jobDetails?.qualifications?.map((qualification, index) => (
-            <li key={index}>{qualification}</li>
-          ))}
+          {selectedJob?.jobDetails?.qualifications?.map(
+            (qualification, index) => (
+              <li key={index}>{qualification}</li>
+            )
+          )}
         </ul>
       </div>
 
       <div className="p-4">
-        <button className="flex items-center gap-2 bg-gray-400 p-2 rounded-lg cursor-pointer" onClick={()=> navigate(`/report-job/${selectedJob?.jobDetails?.id}`)}>
+        <button
+          className="flex items-center gap-2 bg-gray-400 p-2 rounded-lg cursor-pointer"
+          onClick={() => navigate(`/report-job/${selectedJob?.jobDetails?.id}`)}
+        >
           <BsFlagFill /> <span className="font-semibold">Report Job</span>
         </button>
       </div>

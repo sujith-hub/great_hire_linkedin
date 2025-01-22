@@ -146,14 +146,14 @@ const appRouter = createBrowserRouter([
       { path: "jobs", element: <PostedJobList /> },
       { path: "company-details", element: <CompanyDetails /> },
       { path: "your-plans", element: <RecruiterPlans /> },
-      {path: "delete-account",element: <DeleteAccount/>},
+      { path: "delete-account", element: <DeleteAccount /> },
       { path: "recruiter-list", element: <RecruiterList /> },
       {
         path: "recruiter-details/:recruiterId",
         element: <RecruitersDetails />,
       },
-      { path: "job-details/:id", element: <JobDetail />}, 
-      { path: "applicants-details/:id", element: <AppliedCandidatesList />}, 
+      { path: "job-details/:id", element: <JobDetail /> },
+      { path: "applicants-details/:id", element: <AppliedCandidatesList /> },
       { index: true, element: <RecruiterHome /> },
     ],
   },
@@ -212,7 +212,7 @@ function App() {
   return (
     <div>
       <JobDetailsProvider>
-        <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.6.347/build/pdf.worker.min.js">
+        <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js">
           <RouterProvider router={appRouter} />
         </Worker>
       </JobDetailsProvider>

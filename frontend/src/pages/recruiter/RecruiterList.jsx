@@ -118,26 +118,26 @@ const RecruiterList = () => {
             </select>
           </div>
           <table className="min-w-full bg-white border border-gray-200 rounded-lg">
-            <thead>
+            <thead className="text-center">
               <tr>
-                <th className="py-3 px-6 bg-gray-200 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
+                <th className="py-3 px-6 bg-gray-200  text-sm font-medium text-gray-600 uppercase tracking-wider">
                   Full Name
                 </th>
-                <th className="py-3 px-6 bg-gray-200 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
+                <th className="py-3 px-6 bg-gray-200 text-sm font-medium text-gray-600 uppercase tracking-wider">
                   Email
                 </th>
-                <th className="py-3 px-6 bg-gray-200 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
+                <th className="py-3 px-6 bg-gray-200 text-sm font-medium text-gray-600 uppercase tracking-wider">
                   Phone
                 </th>
-                <th className="py-3 px-6 bg-gray-200 text-left text-sm font-medium text-gray-600 uppercase tracking-wider">
+                <th className="py-3 px-6 bg-gray-200 text-sm font-medium text-gray-600 uppercase tracking-wider">
                   Position
                 </th>
                 {user?.emailId.email === company?.adminEmail && (
                   <>
-                    <th className="py-3 px-6 bg-gray-200 text-center text-sm font-medium text-gray-600 uppercase tracking-wider">
+                    <th className="py-3 px-6 bg-gray-200 text-sm font-medium text-gray-600 uppercase tracking-wider">
                       Active
                     </th>
-                    <th className="py-3 px-6 bg-gray-200 text-center text-sm font-medium text-gray-600 uppercase tracking-wider">
+                    <th className="py-3 px-6 bg-gray-200 text-sm font-medium text-gray-600 uppercase tracking-wider">
                       Actions
                     </th>
                   </>
@@ -145,7 +145,7 @@ const RecruiterList = () => {
               </tr>
             </thead>
 
-            <tbody>
+            <tbody className="text-center">
               {filteredRecruiters.length !== 0 ? (
                 filteredRecruiters.map((recruiter) => (
                   <tr
@@ -172,7 +172,7 @@ const RecruiterList = () => {
                           </>
                         ) : (
                           <>
-                            <td className="py-3 px-6">
+                            <td className="flex justify-center py-3 px-6">
                               {loading[recruiter._id] ? (
                                 "loading..."
                               ) : recruiter.isActive ? (
