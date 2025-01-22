@@ -242,13 +242,17 @@ const Navbar = () => {
 
           {/* Mobile Menu Button */}
           <button
-            className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors relative z-50"
+            className={`lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-all fixed z-50 ${
+              isMenuOpen ? "left-4 top-4" : "right-4 top-4"
+            }`}
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-expanded={isMenuOpen}
             aria-label="Toggle navigation menu"
           >
             <svg
-              className="w-6 h-6"
+              className={`w-6 h-6 transition-transform duration-300 ${
+                isMenuOpen ? "rotate-180" : ""
+              }`}
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -259,7 +263,7 @@ const Navbar = () => {
                 strokeWidth={2}
                 d={
                   isMenuOpen
-                    ? "M6 18L18 6M6 6l12 12"
+                    ? "M9 19l7-7-7-7"
                     : "M4 6h16M4 12h16M4 18h16"
                 }
               />
@@ -300,7 +304,7 @@ const Navbar = () => {
                   </div>
                 </div>
               ) : (
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-4 mt-16 px-4">
                   <Link
                     to="/login"
                     className="w-full bg-blue-700 text-white px-4 py-2 rounded-lg text-center hover:bg-blue-800 transition-colors"

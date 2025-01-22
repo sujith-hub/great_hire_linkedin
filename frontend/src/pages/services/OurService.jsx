@@ -94,7 +94,7 @@ const OurService = () => {
             <h2 className="text-2xl md:text-4xl font-bold text-center mb-12 text-blue-600 animate-bounce ">
               What We Offer
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3
              gap-6 lg:gap-8">
               {services.map((service, index) => (
                 <div
