@@ -79,6 +79,14 @@ const ContactSection = () => {
                   <p className="text-sm text-gray-500">
                     Get in touch with our support team for personalized
                     assistance.
+                    <br />
+                    Contact No :{" "}
+                    <a
+                    href="tel:+91-8328192093"
+                    className="text-blue-600 hover:underline"
+                  >
+                    +91-8328192093
+                  </a>
                   </p>
                 </div>
               </div>
@@ -90,6 +98,14 @@ const ContactSection = () => {
                   </h4>
                   <p className="text-sm text-gray-500">
                     Send us an email, and we'll get back to you shortly.
+                    <br />
+                    Email id :{" "}
+                    <a
+                    href="mailto:Hr@greathire.in"
+                    className="text-blue-600 hover:underline"
+                  >
+                    Hr@greathire.in
+                  </a>
                   </p>
                 </div>
               </div>
