@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-// import { ProgressBar } from "react-step-progress-bar";
+import { ProgressBar } from "react-step-progress-bar";
 import { MdInfo } from "react-icons/md";
 import { BiArrowBack } from "react-icons/bi";
 import { Viewer } from "@react-pdf-viewer/core";
@@ -33,6 +33,60 @@ const ApplyForm = ({ setRight }) => {
   const [fileURL, setFileURL] = useState(null);
   const inputRef = useRef();
 
+  // Validation errors
+  const [errors, setErrors] = useState({});
+
+  const handleChange = (e) => {
+    setInput({ ...input, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: "" }); // Clear errors as user types
+  };
+
+  // Validate Step 1 fields
+  const validateStep1 = () => {
+    const newErrors = {};
+    if (!input.fullname.trim()) newErrors.fullname = "Full Name is required.";
+    if (!input.number.trim()) newErrors.number = "Phone Number is required.";
+    if (!input.email.trim()) newErrors.email = "Email is required.";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleContinue1 = (e) => {
+    e.preventDefault();
+    if (validateStep1()) {
+      setStep1(false);
+      setStep2(true);
+    }
+  };
+
+  const handleContinue2 = (e) => {
+    e.preventDefault();
+    if (input.resume) {
+      setStep2(false);
+      setStep3(true);
+    } else {
+      setErrors({ resume: "Resume is required to proceed." });
+    }
+  };
+
+  const handleBack2 = (e) => {
+    e.preventDefault();
+    setStep2(false);
+    setStep1(true);
+  };
+
+  const handleBack3 = (e) => {
+    e.preventDefault();
+    setStep3(false);
+    setStep2(true);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Form Submitted:", input);
+    setRight(false); // Assuming this closes the form
+  };
+
   const [input, setInput] = useState({
     fullname: user?.fullname,
     number: user?.phoneNumber.number,
@@ -47,32 +101,34 @@ const ApplyForm = ({ setRight }) => {
   });
 
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files[0]; // Get the uploaded file
     if (file) {
-      const fileUrl = URL.createObjectURL(file);
-      setInput((prevData) => ({
-        ...prevData,
-        resume: file,
-      }));
-      setFileURL(fileUrl);
+        const fileUrl = URL.createObjectURL(file); // Generate a URL for the uploaded file
+        setInput((prevData) => ({
+            ...prevData,
+            resume: file, // Update the resume field with the uploaded file
+        }));
+        setFileURL(fileUrl); // Set the file URL for preview or further use
+        setErrors({ ...errors, resume: "" }); // Clear any errors related to the file upload
     }
-  };
+};
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setInput({ ...input, [name]: value });
-  };
 
-  const handleContinue1 = (e) => {
-    e.preventDefault();
-    setStep1(false);
-    setStep2(true);
-  };
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setInput({ ...input, [name]: value });
+  // };
 
-  const handleContinue2 = () => {
-    setStep2(false);
-    setStep3(true);
-  };
+  // const handleContinue1 = (e) => {
+  //   e.preventDefault();
+  //   setStep1(false);
+  //   setStep2(true);
+  // };
+
+  // const handleContinue2 = () => {
+  //   setStep2(false);
+  //   setStep3(true);
+  // };
 
   const handleContinue3 = (e) => {
     e.preventDefault();
@@ -106,87 +162,79 @@ const ApplyForm = ({ setRight }) => {
     }
   };
 
-  const ProgressBar = ({ percent, unfilledBackground }) => {
-    return (
-      <div className="w-full bg-gray-200 rounded-full h-3 dark:bg-gray-700">
-        <div
-          className={`h-3 rounded-full ${
-            percent > 0 ? "bg-gradient-to-r from-blue-400 to-blue-700" : ""
-          }`}
-          style={{ width: `${percent}%` }}
-        ></div>
-      </div>
-    );
-  };
+  // const ProgressBar = ({ percent, unfilledBackground }) => {
+  //   return (
+  //     <div className="w-full bg-gray-200 rounded-full h-3 dark:bg-gray-700">
+  //       <div
+  //         className={`h-3 rounded-full ${
+  //           percent > 0 ? "bg-gradient-to-r from-blue-400 to-blue-700" : ""
+  //         }`}
+  //         style={{ width: `${percent}%` }}
+  //       ></div>
+  //     </div>
+  //   );
+  // };
 
   return (
     <div className="w-full ">
       {step1 && (
-        <div className="w-full  p-6  shadow-md rounded-md bg-white">
+        <div className="shadow-md rounded-md p-6 bg-white">
           <ProgressBar percent={20} unfilledBackground="gray" />
-          <h6 className="text-sm text-gray-500 mt-4">
-            Application step 1 of 5
-          </h6>
           <h4 className="text-xl font-semibold my-4">
             Add your contact information
           </h4>
           <form>
-            <label
-              htmlFor="fullname"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Full Name
+            <label className="block text-sm font-medium text-gray-700">
+              Full Name <span className="text-red-600">*</span>
             </label>
             <input
               type="text"
               name="fullname"
               onChange={handleChange}
-              className="mt-1 w-full p-2 border border-gray-300 rounded-md"
               value={input.fullname}
-              
+              className="mt-1 w-full p-2 border border-gray-300 rounded-md"
             />
+            {errors.fullname && (
+              <p className="text-red-600 text-sm">{errors.fullname}</p>
+            )}
 
-            <label
-              htmlFor="phoneNumber"
-              className="block text-sm font-medium text-gray-700 mt-4"
-            >
-              Phone number
+            <label className="block text-sm font-medium text-gray-700 mt-4">
+              Phone Number <span className="text-red-600">*</span>
             </label>
             <input
               type="text"
-              name="phoneNumber"
+              name="number"
               onChange={handleChange}
-              className="mt-1 w-full p-2 border border-gray-300 rounded-md"
               value={input.number}
-              
+              className="mt-1 w-full p-2 border border-gray-300 rounded-md"
             />
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700 mt-4"
-            >
-              Email
+            {errors.number && (
+              <p className="text-red-600 text-sm">{errors.number}</p>
+            )}
+
+            <label className="block text-sm font-medium text-gray-700 mt-4">
+              Email <span className="text-red-600">*</span>
             </label>
             <input
               type="email"
               name="email"
               onChange={handleChange}
-              className="mt-1 w-full p-2 border border-gray-300 rounded-md"
               value={input.email}
-              
+              className="mt-1 w-full p-2 border border-gray-300 rounded-md"
             />
+            {errors.email && (
+              <p className="text-red-600 text-sm">{errors.email}</p>
+            )}
 
-            <label
-              htmlFor="city"
-              className="block text-sm font-medium text-gray-700 mt-4"
-            >
-              City, State <small className="text-gray-400">(optional)</small>
+            <label className="block text-sm font-medium text-gray-700 mt-4">
+              Address (Optional)
             </label>
             <input
               type="text"
-              name="city"
+              name="address"
               onChange={handleChange}
-              className="mt-1 w-full p-2 border border-gray-300 rounded-md"
               value={input.address}
+              className="mt-1 w-full p-2 border border-gray-300 rounded-md"
             />
 
             <div className="flex items-start mt-4">
@@ -204,6 +252,7 @@ const ApplyForm = ({ setRight }) => {
               >
                 Return to job search
               </Link>
+
               <button
                 onClick={handleContinue1}
                 className="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
@@ -212,7 +261,6 @@ const ApplyForm = ({ setRight }) => {
               </button>
             </div>
           </form>
-
           <p className="text-sm text-gray-600 mt-4">
             Having an issue with this application?{" "}
             <Link to="/contact" className="text-blue-700 cursor-pointer">
@@ -222,6 +270,7 @@ const ApplyForm = ({ setRight }) => {
         </div>
       )}
 
+      {/* Step 2 */}
       {step2 && (
         <div className="w-full  p-6 bg-white shadow-md rounded-md">
           <ProgressBar percent={40} unfilledBackground="gray" />

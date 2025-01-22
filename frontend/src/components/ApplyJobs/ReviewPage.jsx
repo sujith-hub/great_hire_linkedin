@@ -1,52 +1,78 @@
-import React from "react";
+import React, {useState} from "react";
 import { BiArrowBack } from "react-icons/bi";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useParams} from "react-router-dom";
 import { Viewer } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from "react-router-dom"; 
+import axios from "axios";
 
 const ReviewPage = ({ handleReview1, input }) => {
+  const { id } = useParams();
+  const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
+  const [loading, setLoading] = useState(false); 
+
+  const [fileUrl, setFileURL] = useState(
+    input.resume ? URL.createObjectURL(input.resume) : null
+  );
   console.log(input);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
-    if (input.fullname !== user?.fullname)
+  
+    console.log("User object:", user);
+    console.log("Input object:", input);
+  
+    if (input.fullname !== user?.fullname) {
       formData.append("fullname", input.fullname);
-    if (input.email !== user.emailId.email)
+    }
+    if (input.email !== user?.emailId?.email) {
       formData.append("email", input.email);
-    if (input.phoneNumber !== user.phoneNumber.number)
+    }
+    if (input.phoneNumber && input.phoneNumber !== user?.phoneNumber?.number) {
       formData.append("phoneNumber", input.phoneNumber);
-
+    }
+    // if (input.address && input.address !== user?.address?.address) {
+    //   formData.append("Address", input.address);
+    // }
     if (input.resume) {
       formData.append("resume", input.resume);
     }
-
+  
     try {
       setLoading(true);
-      const response = await axios.put(
-        `${JOB_API_END_POINT}/apply-job`,
+      const response = await axios.post(
+        `${JOB_API_END_POINT}/apply-job/{id}`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
           withCredentials: true,
         }
       );
-
+  
       if (response.data.success) {
         dispatch(setUser(response.data.user));
         toast.success("Profile updated successfully!");
         setOpen(false);
+        navigate("/success");
       }
     } catch (err) {
-      console.error(err);
+      console.error("Error in API call:", err);
       toast.error(err.response?.data?.message || "Something went wrong!");
     } finally {
       setLoading(false);
     }
+    if (id) {
+      handleSubmit();
+    }
   };
+  
+  
   return (
     <div className="flex justify-center flex-col p-6 bg-white shadow-lg rounded-lg w-full">
       <div className="flex items-center mb-6">
@@ -87,10 +113,16 @@ const ReviewPage = ({ handleReview1, input }) => {
         </div>
       </div>
 
-      <p className=" text-gray-500 text-2xl">Resume</p>
-      <div className="h-96">
-        <Viewer fileUrl={input.resume} />
+       {/* Resume */}
+       <p className="text-gray-500 text-2xl">Resume</p>
+       <div className="h-96">
+        {fileUrl ? (
+          <Viewer fileUrl={fileUrl} />
+        ) : (
+          <p className="text-gray-500">No resume uploaded</p>
+        )}
       </div>
+
 
       <h4 className="text-lg font-medium mb-4">Employee Questions</h4>
       <div className="space-y-4 mb-6">
@@ -108,6 +140,10 @@ const ReviewPage = ({ handleReview1, input }) => {
           </p>
           <h3 className="text-base font-semibold">{input?.experience}</h3>
         </div>
+        <div>
+          <p className="text-sm text-gray-500">Cover Letter</p>
+          <h3 className="text-base font-semibold">{input?.coverLetter}</h3>
+        </div>
       </div>
 
       <p className="text-sm text-gray-500 mb-6">
@@ -118,15 +154,6 @@ const ReviewPage = ({ handleReview1, input }) => {
       </p>
 
       <div className="mb-6">
-        <div className="flex items-center space-x-2 mb-2">
-          <input
-            type="checkbox"
-            className="h-4 w-4 text-blue-500 border-gray-300 rounded focus:ring-blue-500"
-          />
-          <h3 className="text-sm text-gray-700">
-            Notify me by email when similar jobs are available
-          </h3>
-        </div>
         <small className="text-xs text-gray-500 block">
           By creating a job alert, you agree to our{" "}
           <Link
@@ -154,10 +181,11 @@ const ReviewPage = ({ handleReview1, input }) => {
       </small>
 
       <div className="text-center mb-6">
-        <button className="bg-blue-700 hover:bg-blue-600 text-white px-6 py-2 rounded-md ">
-          <Link to="/success" className="text-white no-underline">
-            Submit your application
-          </Link>
+        <button
+          onClick={handleSubmit}
+          className="bg-blue-700 hover:bg-blue-600 text-white px-6 py-2 rounded-md"
+        >
+          Submit your application
         </button>
       </div>
 
