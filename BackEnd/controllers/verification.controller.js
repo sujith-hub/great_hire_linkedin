@@ -4,9 +4,8 @@ import { Recruiter } from "../models/recruiter.model.js";
 import { User } from "../models/user.model.js";
 import { Admin } from "../models/admin.model.js";
 import { Company } from "../models/company.model.js";
-import mongoose from "mongoose";
 import randomstring from "randomstring";
-import { Order } from "../models/order.model.js";
+import { serviceOrder } from "../models/serviceOrder.model.js";
 import { hmac } from "fast-sha256";
 import { TextEncoder } from "util";
 // otpService.js
@@ -355,7 +354,7 @@ export const verifyPayment = async (req, res) => {
     // Compare the generated signature with Razorpay's signature
     if (generatedSignature === razorpay_signature) {
       // Update the order status in the database
-      await Order.findOneAndUpdate(
+      await serviceOrder.findOneAndUpdate(
         { razorpayOrderId: razorpay_order_id },
         {
           status: "paid",
