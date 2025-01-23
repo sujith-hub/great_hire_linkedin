@@ -18,9 +18,10 @@ const HeroSection = ({ searchInfo }) => {
   return (
     <div className="text-center px-4 sm:px-6 lg:px-12">
       <div className="flex flex-col gap-5 my-10">
-        <span className="mx-auto px-4 py-2 rounded-full bg-gray-100 text-[#0233f8] font-medium animate-bounce">
-          No. 1 Job Hunt Website
-        </span>
+        <div className="relative mx-auto w-fit px-6 py-3 rounded-full  bg-white text-[#0233f8] font-medium animate-bounce">
+          <span className="">No. 1 Job Hunt Website</span>
+          
+        </div>
 
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight">
           Search, Apply & <br /> Get Your{" "}

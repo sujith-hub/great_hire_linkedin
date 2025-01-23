@@ -56,18 +56,18 @@ const JobsForYou = () => {
   };
 
   return (
-    <div className="flex justify-center mt-4 gap-4 h-screen sticky top-10 lg:px-6">
+    <div className="flex justify-center mt-4 gap-4 h-screen sticky top-10 lg:px-6 ">
       {/* Job List */}
       <div
-        className={`flex flex-col gap-4  w-full md:w-1/2 h-screen m-5 md:m-0 scrollbar-hide overflow-y-scroll`}
+        className={`flex flex-col gap-4  w-full md:w-1/2 h-screen m-5 md:m-0 scrollbar-hide overflow-y-scroll `}
       >
         {jobs?.map((job) => (
           <div
             key={job._id}
-            className={`p-4 border-2  rounded-lg cursor-pointer hover:shadow-lg relative flex flex-col space-y-2 ${
+            className={`p-4 border-2  rounded-lg cursor-pointer hover:shadow-lg relative flex flex-col space-y-2 bg-white ${
               selectedJob?._id === job._id
                 ? "border-blue-600"
-                : "border-gray-400"
+                : ""
             }`}
             onClick={() => {
               setSelectedJob(job);
@@ -168,8 +168,8 @@ const JobsForYou = () => {
 
       {/* Job Details */}
       {selectedJob && (
-        <div className="md:flex flex-col border-2 border-gray-300 rounded-lg w-full md:w-1/2 hidden">
-          <div className="flex flex-col shadow-lg rounded-lg py-8 px-4 space-y-2">
+        <div className="md:flex flex-col  rounded-lg w-full md:w-1/2 hidden bg-white">
+          <div className="flex flex-col shadow-lg rounded-lg py-8 px-4 space-y-2 border-b-2 border-gray-300">
             <h3 className="text-2xl font-semibold">
               {selectedJob?.jobDetails?.title}
             </h3>
