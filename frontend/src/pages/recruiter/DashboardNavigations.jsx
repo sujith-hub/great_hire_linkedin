@@ -4,7 +4,7 @@ import { RiHome4Line } from "react-icons/ri";
 import { IoCreateOutline } from "react-icons/io5";
 import { MdWorkOutline, MdPostAdd } from "react-icons/md";
 import { PiBuildingOffice, PiBuildingOfficeLight } from "react-icons/pi";
-import { BiDetail } from "react-icons/bi";
+import { GiUpgrade } from "react-icons/gi";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { BsPersonPlus } from "react-icons/bs";
 import { LuLayoutDashboard } from "react-icons/lu";
@@ -145,8 +145,8 @@ const DashboardNavigations = () => {
           >
             {({ isActive }) => (
               <>
-                <BiDetail size={25} className={iconClass(isActive)} />
-                <span>Your Plans</span>
+                <GiUpgrade size={25} className={iconClass(isActive)} />
+                <span>Upgrade Plans</span>
               </>
             )}
           </NavLink>

@@ -34,7 +34,6 @@ const RecruiterJob = ({ recruiterId }) => {
       if (response.data.success) {
         setJobs(response.data.jobs);
         setTotalPages(response.data.totalPages);
-        console.log(response.data);
       } else {
         toast.error(response.data.message);
       }

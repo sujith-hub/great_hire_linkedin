@@ -205,14 +205,6 @@ export const getJobByRecruiterId = async (req, res) => {
     // Total pages
     const totalPages = Math.ceil(totalJobs / limit);
 
-    // If no jobs are found
-    if (jobs.length === 0) {
-      return res.status(404).json({
-        message: "No jobs found for this recruiter.",
-        success: false,
-      });
-    }
-
     // Return paginated response
     return res.status(200).json({
       jobs,

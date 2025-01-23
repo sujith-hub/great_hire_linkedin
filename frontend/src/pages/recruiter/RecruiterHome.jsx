@@ -36,7 +36,6 @@ const RecruiterHome = () => {
     }
   }, [user]);
 
-  console.log(jobsStatistics)
 
   const getArrowIcon = (current, previous) => {
     if (current > previous) {

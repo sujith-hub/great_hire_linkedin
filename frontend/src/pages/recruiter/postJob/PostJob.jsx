@@ -12,7 +12,6 @@ import { useNavigate } from "react-router-dom";
 
 const PostJob = () => {
   const [step, setStep] = useState(0);
-  const navigate = useNavigate();
   const { company } = useSelector((state) => state.company);
 
   const formik = useFormik({
@@ -68,7 +67,6 @@ const PostJob = () => {
         );
         if (response.data.success) {
           toast.success("Job post successfully");
-          
         } else {
           toast.error("Job post failed");
         }
@@ -662,12 +660,7 @@ const PostJob = () => {
                   type="submit"
                   className="bg-blue-700 text-white p-2 rounded"
                 >
-                  <Link
-                    to="/recruiter/success"
-                    className="text-white no-underline"
-                  >
-                    Submit
-                  </Link>
+                  Submit
                 </button>
               </div>
             </>
