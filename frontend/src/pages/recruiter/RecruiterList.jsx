@@ -97,7 +97,7 @@ const RecruiterList = () => {
   return (
     <>
       {company && user?.isVerify ? (
-        <div className="container mx-auto p-4">
+        <div className="container mx-auto p-4 min-h-screen">
           <h2 className="text-2xl font-semibold mb-4">Recruiter List</h2>
           <div className="mb-4 flex justify-between px-2">
             <input

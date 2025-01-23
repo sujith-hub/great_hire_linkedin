@@ -1,9 +1,9 @@
 import express from 'express';
-import { createOrder } from '../controllers/order.controller.js';
+import { createOrderForService } from '../controllers/order.controller.js';
 
 const router = express.Router();
 
 // Define your routes here
-router.post('/create-order', createOrder);
+router.post('/create-order', createOrderForService);
 
 export default router;

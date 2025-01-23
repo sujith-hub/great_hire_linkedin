@@ -39,10 +39,10 @@ const FilterCard = () => {
     };
 
     return (
-        <div className="w-full sticky top-0 rounded-md">
+        <div className=" w-full sticky top-0 rounded-md">
             <h1 className="font-bold text-lg">Filter Jobs</h1>
             <hr className="mt-3" />
-            <RadioGroup>
+            <RadioGroup className='flex flex-col space-y-4'>
                 {fitlerData.map((data, index) => (
                     <div key={index}>
                         <div className="flex justify-between items-center">

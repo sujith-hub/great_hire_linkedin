@@ -4,7 +4,7 @@ import { RiHome4Line } from "react-icons/ri";
 import { IoCreateOutline } from "react-icons/io5";
 import { MdWorkOutline, MdPostAdd } from "react-icons/md";
 import { PiBuildingOffice, PiBuildingOfficeLight } from "react-icons/pi";
-import { BiDetail } from "react-icons/bi";
+import { GiUpgrade } from "react-icons/gi";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { BsPersonPlus } from "react-icons/bs";
 import { LuLayoutDashboard } from "react-icons/lu";
@@ -25,7 +25,7 @@ const DashboardNavigations = () => {
   const iconClass = (isActive) => (isActive ? "text-white" : "text-blue-600");
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] w-52 bg-gray-100 p-4 justify-between fixed top-16 overflow-y-auto shadow-lg shadow-gray-700">
+    <div className="flex flex-col h-[calc(100vh-4rem)] w-52 bg-gradient-to-b from-white via-blue-100 to-white p-4 justify-between fixed top-16 overflow-y-auto  border-r-2 border-gray-300">
       {/* Main Navigation Section */}
       <section>
         <h2 className="flex gap-2 items-center text-lg font-semibold text-gray-700 mb-4">
@@ -145,8 +145,8 @@ const DashboardNavigations = () => {
           >
             {({ isActive }) => (
               <>
-                <BiDetail size={25} className={iconClass(isActive)} />
-                <span>Your Plans</span>
+                <GiUpgrade size={25} className={iconClass(isActive)} />
+                <span>Upgrade Plans</span>
               </>
             )}
           </NavLink>
