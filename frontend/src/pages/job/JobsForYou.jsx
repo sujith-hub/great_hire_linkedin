@@ -144,7 +144,11 @@ const JobsForYou = () => {
 
             <div className="flex items-center text-sm text-blue-700">
               <IoMdSend className="mr-1" size={20} />
-              <span className="text-black">Easy Apply</span>
+              <span className="text-black"
+               onClick={() => {
+                navigate("/apply");
+              }}
+              >Easy Apply</span>
             </div>
 
             {/* Job details in circle bullets */}

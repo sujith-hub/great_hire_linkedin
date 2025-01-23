@@ -13,10 +13,11 @@ import axios from "axios";
 const ReviewPage = ({ handleReview1, input, fileURL }) => {
   const { user } = useSelector((state) => state.auth);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const [fileUrl, setFileURL] = useState(
-    input.resume ? URL.createObjectURL(input.resume) : null
-  );
+  // const [fileUrl, setFileURL] = useState(
+  //   input.resume ? URL.createObjectURL(input.resume) : null
+  // );
   console.log(input);
 
   const handleSubmit = async (e) => {
@@ -42,7 +43,7 @@ const ReviewPage = ({ handleReview1, input, fileURL }) => {
       try {
         setLoading(true);
         const response = await axios.post(
-          `${JOB_API_END_POINT}/apply-job/{id}`,
+          `${JOB_API_END_POINT}/apply-job`,
           formData,
           {
             headers: { "Content-Type": "multipart/form-data" },
@@ -62,9 +63,9 @@ const ReviewPage = ({ handleReview1, input, fileURL }) => {
       } finally {
         setLoading(false);
       }
-      if (id) {
-        handleSubmit();
-      }
+      // if (id) {
+      //   handleSubmit();
+      // }
     }
 
     return (
