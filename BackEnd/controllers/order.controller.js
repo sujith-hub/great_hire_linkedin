@@ -1,17 +1,17 @@
 import Razorpay from "razorpay";
-import { Order } from "../models/order.model.js";
+import { serviceOrder } from "../models/serviceOrder.model";
 
 const razorpayInstance = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-export const createOrder = async (req, res) => {
+export const createOrderForService = async (req, res) => {
   try {
     const { userDetails, planDetails } = req.body;
 
     // Check for an existing order
-    const existingOrder = await Order.findOne({
+    const existingOrder = await serviceOrder.findOne({
       "userDetails.email": userDetails.email,
       "planDetails.planId": planDetails.planId,
       status: "created",
@@ -37,7 +37,7 @@ export const createOrder = async (req, res) => {
     const razorpayOrder = await razorpayInstance.orders.create(options);
 
     // Save new order to the database
-    const newOrder = new Order({
+    const newOrder = new serviceOrder({
       userDetails,
       planDetails,
       razorpayOrderId: razorpayOrder.id,
