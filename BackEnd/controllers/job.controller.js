@@ -251,6 +251,7 @@ export const getJobById = async (req, res) => {
   }
 };
 
+// help to fecth all job of a particular company
 export const getJobByCompanyId = async (req, res) => {
   try {
     const companyId = req.params.id;

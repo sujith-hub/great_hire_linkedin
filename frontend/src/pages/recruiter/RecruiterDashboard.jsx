@@ -60,7 +60,7 @@ const RecruiterDashboard = () => {
       {/* Main Content */}
       <div className="flex">
         <DashboardNavigations />
-        <div className="ml-52 w-full bg-gradient-to-r from-gray-100 via-blue-100 to-gray-100 h-screen ">
+        <div className="ml-52 w-full bg-gradient-to-r from-gray-100 via-blue-100 to-gray-100 h-full">
           {" "}
           {/* Adjust margin for sidebar */}
           {loading ? (

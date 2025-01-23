@@ -141,8 +141,12 @@ const RecruiterJob = ({ recruiterId }) => {
     return searchMatch && statusMatch;
   });
 
+  const handleJobDetailsClick = (jobId) => {
+    navigate(`/recruiter/dashboard/job-details/${jobId}`);
+  };
+
   return (
-    <div className="container">
+    <div className="container min-h-screen">
       <h2 className="text-2xl font-semibold mb-4">Jobs Created By You</h2>
       <div className="mb-4 flex justify-between px-2">
         <input
@@ -199,7 +203,7 @@ const RecruiterJob = ({ recruiterId }) => {
               <tr
                 key={job._id}
                 className="border-b cursor-pointer"
-                onClick={() => navigate(`/job-details/${job._id}`)}
+                onClick={() => handleJobDetailsClick(job?._id)}
               >
                 <td className="py-3 px-6">{job.jobDetails.title}</td>
                 <td className="py-3 px-6">{job.jobDetails.companyName}</td>
