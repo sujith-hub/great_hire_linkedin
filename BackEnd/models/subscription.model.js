@@ -7,6 +7,7 @@ const subscriptionSchema = new mongoose.Schema(
       enum: ["JobPosting", "CandidateData"], // Subscription types
       required: true,
     },
+    planName: { type: String, required: true, default: "Free" }, // e.g., "Basic", "Standard", "Premium"
     purchaseDate: {
       type: Date,
       required: true,
@@ -19,6 +20,7 @@ const subscriptionSchema = new mongoose.Schema(
     maxUsage: {
       type: Number, // Maximum allowed usage
       required: true,
+      default:10
     },
     price: {
       type: Nubmer,
@@ -27,7 +29,7 @@ const subscriptionSchema = new mongoose.Schema(
     remainingUsage: {
       type: Number, // Remaining usage
       required: true,
-      default: 0,
+      default: 10,
     },
     status: {
       type: String,

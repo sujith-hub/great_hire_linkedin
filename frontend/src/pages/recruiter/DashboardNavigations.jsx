@@ -25,7 +25,7 @@ const DashboardNavigations = () => {
   const iconClass = (isActive) => (isActive ? "text-white" : "text-blue-600");
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] w-52 bg-white p-4 justify-between fixed top-16 overflow-y-auto  border-r-2 border-gray-300">
+    <div className="flex flex-col h-[calc(100vh-4rem)] w-52 bg-gradient-to-b from-white via-blue-100 to-white p-4 justify-between fixed top-16 overflow-y-auto  border-r-2 border-blue-700">
       {/* Main Navigation Section */}
       <section>
         <h2 className="flex gap-2 items-center text-lg font-semibold text-gray-700 mb-4">
