@@ -5,8 +5,6 @@ import { Link, useParams } from "react-router-dom";
 import { Viewer } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
