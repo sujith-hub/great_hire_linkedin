@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { toast } from "react-hot-toast";
@@ -23,16 +23,17 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     skills: user?.profile?.skills?.join(", ") || "",
     resume: user?.profile?.resume || "",
     profilePhoto: user?.profile?.profilePhoto || "",
-    address: user?.address?.city || "",
+    address:
+      user?.address?.city || user?.address?.state || user?.address?.country
+        ? `${user?.address?.city || ""}, ${user?.address?.state || ""}, ${
+            user?.address?.country || ""
+          }`
+        : "",
   });
 
-  const [previewImage, setPreviewImage] = useState(user?.profile?.profilePhoto || "");
-
-  useEffect(() => {
-    if (user?.profile?.profilePhoto) {
-      setPreviewImage(user?.profile?.profilePhoto);
-    }
-  }, [user]);
+  const [previewImage, setPreviewImage] = useState(
+    user?.profile?.profilePhoto || ""
+  );
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -41,9 +42,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
 
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setInput((prev) => ({ ...prev, resume: file }));
-    }
+    setInput((prev) => ({ ...prev, resume: file }));
   };
 
   const handleImageChange = (e) => {
@@ -70,7 +69,8 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     formData.append("bio", input.bio);
     formData.append("experience", input.experience);
     formData.append("skills", input.skills);
-    formData.append("address", input.address);
+    
+    
 
     if (input.resume) {
       formData.append("resume", input.resume);
@@ -81,10 +81,14 @@ const UserUpdateProfile = ({ open, setOpen }) => {
 
     try {
       setLoading(true);
-      const response = await axios.put(`${USER_API_END_POINT}/profile/update`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-        withCredentials: true,
-      });
+      const response = await axios.put(
+        `${USER_API_END_POINT}/profile/update`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+          withCredentials: true,
+        }
+      );
 
       if (response.data.success) {
         dispatch(setUser(response.data.user));
@@ -122,127 +126,172 @@ const UserUpdateProfile = ({ open, setOpen }) => {
           </button>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-          {/* Profile Image */}
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="profilePhoto" className="text-right">
-              Profile Image
-            </Label>
-            <div className="col-span-3 space-y-2">
-              {previewImage ? (
-                <img
-                  src={previewImage}
-                  alt="Preview"
-                  className="w-20 h-20 rounded-full object-cover border"
+          <div className="grid gap-2 py-4">
+            {/* Profile Image */}
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="profilePhoto" className="text-right">
+                Profile Image
+              </Label>
+              <div className="col-span-3 space-y-2">
+                {previewImage ? (
+                  <img
+                    src={previewImage}
+                    alt="Preview"
+                    className="w-20 h-20 rounded-full object-cover border"
+                  />
+                ) : (
+                  <p>No image uploaded</p>
+                )}
+                <Input
+                  id="profilePhoto"
+                  name="profilePhoto"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
                 />
-              ) : (
-                <p>No image uploaded</p>
-              )}
+              </div>
+            </div>
+
+            {/* Fullname */}
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="fullname" className="text-right">
+                Name
+              </Label>
               <Input
-                id="profilePhoto"
-                name="profilePhoto"
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
+                id="fullname"
+                name="fullname"
+                type="text"
+                value={input.fullname}
+                onChange={handleChange}
+                className="col-span-3"
+                placeholder="Enter your name"
               />
             </div>
-          </div>
 
-          {/* Fullname */}
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="fullname" className="text-right">
-              Name
-            </Label>
-            <Input
-              id="fullname"
-              name="fullname"
-              type="text"
-              value={input.fullname}
-              onChange={handleChange}
-              className="col-span-3"
-              placeholder="Enter your name"
-            />
-          </div>
+            {/* Email */}
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="email" className="text-right">
+                Email
+              </Label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                value={input.email}
+                onChange={handleChange}
+                className="col-span-3"
+                placeholder="Enter your email"
+              />
+            </div>
 
-          {/* Email */}
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="email" className="text-right">
-              Email
-            </Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              value={input.email}
-              onChange={handleChange}
-              className="col-span-3"
-              placeholder="Enter your email"
-            />
-          </div>
+            {/* Phone Number */}
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="phoneNumber" className="text-right">
+                Phone
+              </Label>
+              <Input
+                id="phoneNumber"
+                name="phoneNumber"
+                value={input.phoneNumber}
+                onChange={handleChange}
+                className="col-span-3"
+                placeholder="Enter your phone number"
+              />
+            </div>
 
-          {/* Phone Number */}
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="phoneNumber" className="text-right">
-              Phone
-            </Label>
-            <Input
-              id="phoneNumber"
-              name="phoneNumber"
-              value={input.phoneNumber}
-              onChange={handleChange}
-              className="col-span-3"
-              placeholder="Enter your phone number"
-            />
-          </div>
+            {/* Address */}
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="address" className="text-right">
+                Address
+              </Label>
+              <Input
+                id="address"
+                name="address"
+                type="text"
+                value={input.address}
+                onChange={handleChange}
+                className="col-span-3"
+                placeholder="City, State, Country"
+              />
+            </div>
 
-          {/* Address */}
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="address" className="text-right">
-              Address
-            </Label>
-            <Input
-              id="address"
-              name="address"
-              type="text"
-              value={input.address}
-              onChange={handleChange}
-              className="col-span-3"
-              placeholder="Enter your address"
-            />
-          </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="bio" className="text-right">
+                Bio
+              </Label>
+              <Input
+                id="bio"
+                name="bio"
+                value={input.bio}
+                onChange={handleChange}
+                className="col-span-3"
+                placeholder="Write a short bio"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="experience" className="text-right">
+                Experience
+              </Label>
+              <Input
+                id="experience"
+                name="experience"
+                value={input.experience}
+                onChange={handleChange}
+                className="col-span-3"
+                placeholder="Experience in years (1, 2, 3..)"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="skills" className="text-right">
+                Skills
+              </Label>
+              <Input
+                id="skills"
+                name="skills"
+                value={input.skills}
+                onChange={handleChange}
+                className="col-span-3"
+                placeholder="Enter your skills, separated by commas"
+              />
+            </div>
 
-          {/* Resume */}
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="resume" className="text-right">
-              Resume
-            </Label>
-            <div className="col-span-3 space-y-2">
-              {input.resume && typeof input.resume !== "string" && (
-                <div className="flex items-center space-x-2">
-                  <span>{input.resume.name}</span>
+            {/* Resume */}
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="resume" className="text-right">
+                Resume
+              </Label>
+              <div className="col-span-3 flex items-center space-x-2">
+                <Input
+                  id="resume"
+                  name="resume"
+                  type="file"
+                  accept=".pdf"
+                  onChange={handleFileChange}
+                />
+                {input.resume && (
                   <button
                     type="button"
                     onClick={removeResume}
-                    className="text-red-500"
+                    className="text-red-500 hover:text-red-700 text-sm"
                   >
                     Remove
                   </button>
-                </div>
-              )}
-              <Input
-                id="resume"
-                name="resume"
-                type="file"
-                accept=".pdf,.doc,.docx"
-                onChange={handleFileChange}
-              />
+                )}
+              </div>
             </div>
-          </div>
 
-          {/* Submit Button */}
-          <div className="text-right">
-            <Button type="submit" disabled={loading} className="w-full">
-              {loading ? <Loader2 className="animate-spin" /> : "Update Profile"}
-            </Button>
+            {/* Submit Button */}
+            <div>
+              {loading ? (
+                <Button className="w-full my-2" disabled>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait
+                </Button>
+              ) : (
+                <Button type="submit" className="w-full my-2">
+                  Update
+                </Button>
+              )}
+            </div>
           </div>
         </form>
       </div>

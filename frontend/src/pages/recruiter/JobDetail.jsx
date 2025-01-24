@@ -3,17 +3,24 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const JobDetail = () => {
   const { id } = useParams();
+  const { user } = useSelector((state) => state.auth);
+  const { company } = useSelector((state) => state.company);
   const [jobDetails, setJobDetails] = useState(null);
-  const [dloading, dsetLoading] = useState({});
-  const [loading, setLoading] = useState(true);
+  const [dloading, dsetLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  const [jobOwner, setJobOwner] = useState(null);
 
   useEffect(() => {
     const fetchJobDetails = async () => {
       try {
+        setLoading(true);
         const response = await axios.get(`${JOB_API_END_POINT}/get/${id}`, {
           withCredentials: true,
         });
@@ -23,7 +30,7 @@ const JobDetail = () => {
           setJobDetails(null);
           return;
         }
-
+        setJobOwner(response?.data.job.created_by);
         setJobDetails(response.data.job.jobDetails);
       } catch (err) {
         setError(err.message || "An unexpected error occurred.");
@@ -39,7 +46,7 @@ const JobDetail = () => {
 
   const deleteJob = async (jobId) => {
     try {
-      dsetLoading((prevLoading) => ({ ...prevLoading, [jobId]: true }));
+      dsetLoading(true);
       const response = await axios.delete(
         `
         ${JOB_API_END_POINT}/delete/${jobId}`,
@@ -60,7 +67,7 @@ const JobDetail = () => {
         "There was an error deleting the job. Please try again later."
       );
     } finally {
-      dsetLoading((prevLoading) => ({ ...prevLoading, [jobId]: false }));
+      dsetLoading(true);
     }
   };
 
@@ -93,7 +100,7 @@ const JobDetail = () => {
         <p className="text-md mt-1">
           {jobDetails?.location || "Location not specified"}
         </p>
-        <p className="text-md mt-1 font-semibold">
+        <p className="text-lg mt-1 font-semibold">
           {jobDetails?.salary
             ?.replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
             .split("-")
@@ -102,7 +109,8 @@ const JobDetail = () => {
                 ₹{part.trim()}
                 {index === 0 ? " - " : ""}
               </span>
-            ))}
+            ))}{" "}
+          <span className="text-sm">Monthly</span>
         </p>
       </div>
 
@@ -200,13 +208,28 @@ const JobDetail = () => {
         </div>
       </div>
 
-      <div className="flex w-full justify-end">
+      <div className="flex w-full justify-end space-x-2">
         <Button
-          className="bg-red-600 hover:bg-red-700"
-          onClick={() => deleteJob(id)}
+          className="bg-green-600 hover:bg-green-700"
+          onClick={() =>
+            navigate(`/recruiter/dashboard/applicants-details/${id}`)
+          }
         >
-          Delete
+          Applicants Details
         </Button>
+        {(user?._id === jobOwner ||
+          user?.emailId.email === company?.adminEmail) && (
+          <Button
+            className={`bg-red-600 hover:bg-red-700 ${
+              dloading ? "cursor-not-allowed" : ""
+            }`}
+            onClick={() => deleteJob(id)}
+            disabled={dloading}
+          >
+            {dloading ? "Deleting..." : "Delete"}
+          </Button>
+        )}
+        
       </div>
     </div>
   );

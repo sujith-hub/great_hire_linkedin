@@ -114,21 +114,7 @@ const ApplyForm = ({ setRight }) => {
 };
 
 
-  // const handleChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setInput({ ...input, [name]: value });
-  // };
-
-  // const handleContinue1 = (e) => {
-  //   e.preventDefault();
-  //   setStep1(false);
-  //   setStep2(true);
-  // };
-
-  // const handleContinue2 = () => {
-  //   setStep2(false);
-  //   setStep3(true);
-  // };
+  
 
   const handleContinue3 = (e) => {
     e.preventDefault();
@@ -162,18 +148,6 @@ const ApplyForm = ({ setRight }) => {
     }
   };
 
-  // const ProgressBar = ({ percent, unfilledBackground }) => {
-  //   return (
-  //     <div className="w-full bg-gray-200 rounded-full h-3 dark:bg-gray-700">
-  //       <div
-  //         className={`h-3 rounded-full ${
-  //           percent > 0 ? "bg-gradient-to-r from-blue-400 to-blue-700" : ""
-  //         }`}
-  //         style={{ width: `${percent}%` }}
-  //       ></div>
-  //     </div>
-  //   );
-  // };
 
   return (
     <div className="w-full ">
