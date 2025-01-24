@@ -1,9 +1,12 @@
 import express from 'express';
-import { createOrderForService } from '../controllers/order.controller.js';
+import { createOrderForService, createOrderForJobPlan } from '../controllers/order.controller.js';
+import isAuthenticated from '../middlewares/isAuthenticated.js';
 
 const router = express.Router();
 
 // Define your routes here
-router.post('/create-order', createOrderForService);
+router.post('/create-order-for-service', createOrderForService);
+router.post('/create-order-for-jobplan', isAuthenticated,createOrderForJobPlan);
+
 
 export default router;

@@ -38,6 +38,7 @@ const companySchema = new mongoose.Schema(
     CIN: {
       type: String,
       required: true,
+      unique: true,
     },
     businessFile: {
       type: String, // Store the file path or URL
@@ -60,12 +61,6 @@ const companySchema = new mongoose.Schema(
           ref: "User",
           required: true,
         },
-      },
-    ],
-    subscriptions: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Subscription", // Reference to the Subscription model
       },
     ],
   },

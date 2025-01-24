@@ -5,6 +5,7 @@ import getDataUri from "../utils/dataUri.js";
 import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
+import { BlacklistedCompany } from "../models/blacklistedCompany.model.js";
 
 export const registerCompany = async (req, res) => {
   try {
@@ -33,6 +34,18 @@ export const registerCompany = async (req, res) => {
     if (!isValidCIN(CIN)) {
       return res.status(400).json({
         message: "Invalid CIN format.",
+        success: false,
+      });
+    }
+
+    // Check if any unique field exists in the BlacklistedCompany collection
+    const isBlacklisted = await BlacklistedCompany.findOne({
+      $or: [{ companyName }, { email }, { adminEmail }, { CIN }],
+    });
+
+    if (isBlacklisted) {
+      return res.status(200).json({
+        message: "Company Already has been Used",
         success: false,
       });
     }
@@ -238,7 +251,7 @@ export const updateCompany = async (req, res) => {
   try {
     const { companyWebsite, address, industry, email, phone } = req.body;
     const companyId = req.params.id;
-    const userId = req.id; 
+    const userId = req.id;
 
     // Find the company by ID
     const company = await Company.findById(companyId);

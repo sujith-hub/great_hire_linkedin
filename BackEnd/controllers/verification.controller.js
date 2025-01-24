@@ -6,6 +6,7 @@ import { Admin } from "../models/admin.model.js";
 import { Company } from "../models/company.model.js";
 import randomstring from "randomstring";
 import { serviceOrder } from "../models/serviceOrder.model.js";
+import { JobSubscription } from "../models/jobSubscription.model.js";
 import { hmac } from "fast-sha256";
 import { TextEncoder } from "util";
 // otpService.js
@@ -333,26 +334,36 @@ export const verifyOTP = async (req, res) => {
   }
 };
 
+// Compare the generated signature with Razorpay's signature
+const matchSignature = (
+  razorpay_order_id,
+  razorpay_payment_id,
+  razorpay_signature
+) => {
+  // Secret key and data for HMAC
+  const secret = process.env.RAZORPAY_KEY_SECRET;
+  const data = razorpay_order_id + "|" + razorpay_payment_id;
+
+  // Generate HMAC signature
+  const encoder = new TextEncoder();
+  const secretKey = encoder.encode(secret);
+  const message = encoder.encode(data);
+  const generatedSignature = Buffer.from(hmac(secretKey, message)).toString(
+    "hex"
+  );
+  return generatedSignature === razorpay_signature;
+};
+
 // Verify Payment Controller
-export const verifyPayment = async (req, res) => {
+export const verifyPaymentForService = async (req, res) => {
   try {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
       req.body;
 
-    // Secret key and data for HMAC
-    const secret = process.env.RAZORPAY_KEY_SECRET;
-    const data = razorpay_order_id + "|" + razorpay_payment_id;
-
-    // Generate HMAC signature
-    const encoder = new TextEncoder();
-    const secretKey = encoder.encode(secret);
-    const message = encoder.encode(data);
-    const generatedSignature = Buffer.from(hmac(secretKey, message)).toString(
-      "hex"
-    );
-
-    // Compare the generated signature with Razorpay's signature
-    if (generatedSignature === razorpay_signature) {
+    
+    if (
+      matchSignature(razorpay_order_id, razorpay_payment_id, razorpay_signature)
+    ) {
       // Update the order status in the database
       await serviceOrder.findOneAndUpdate(
         { razorpayOrderId: razorpay_order_id },
@@ -362,6 +373,42 @@ export const verifyPayment = async (req, res) => {
             paymentId: razorpay_payment_id,
             signature: razorpay_signature,
           },
+        }
+      );
+
+      res
+        .status(200)
+        .json({ success: true, message: "Payment verified successfully" });
+    } else {
+      res
+        .status(400)
+        .json({ success: false, message: "Payment verification failed" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+export const verifyPaymentForJobPlans = async (req, res) => {
+  try {
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
+      req.body;
+
+    
+    if (
+      matchSignature(razorpay_order_id, razorpay_payment_id, razorpay_signature)
+    ) {
+      // Update the order status in the database
+      await JobSubscription.findOneAndUpdate(
+        { razorpayOrderId: razorpay_order_id },
+        {
+          paymentStatus: "paid",
+          paymentDetails: {
+            paymentId: razorpay_payment_id,
+            signature: razorpay_signature,
+          },
+          status:"Active" // active the plan after paymentStatus paid
         }
       );
 
