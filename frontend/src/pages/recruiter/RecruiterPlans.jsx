@@ -2,62 +2,68 @@ import React, { useState } from "react";
 import { AiFillSafetyCertificate, AiOutlineCheck } from "react-icons/ai";
 import { FaRocket, FaGem, FaStar } from "react-icons/fa";
 import { useSelector } from "react-redux";
+import {
+  VERIFICATION_API_END_POINT,
+  ORDER_API_END_POINT,
+} from "@/utils/ApiEndPoint";
+import { razorpay_key_id } from "@/utils/RazorpayCredentials";
+import { toast } from "react-hot-toast";
+import axios from "axios";
+import GreatHireLogo from '../../assets/Great.png';
 
 function RecruiterPlans() {
   const plans = [
     {
       name: "Basic",
       icon: AiFillSafetyCertificate,
-      price: "₹499",
+      price: "499",
       color: "blue",
       features: [
-        "Up to 10 active job posts",
+        "Boost 10 active job posts",
         "Basic candidate matching",
         "Email & chat support",
         "Basic analytics",
       ],
       popular: false,
       borderColor: "border-blue-300",
-      selectedBorderColor: "ring-4 ring-blue-500",
+      selectedBorderColor: "ring-2 ring-blue-500",
     },
     {
       name: "Standard",
       icon: FaRocket,
-      price: "₹999",
+      price: "999",
       color: "indigo",
       features: [
-        "Up to 25 active job posts",
-        "Advanced AI matching",
+        "Boost 25 active job posts",
         "Priority 24/7 support",
         "Advanced analytics suite",
       ],
       popular: true,
       borderColor: "ring-indigo-300",
-      selectedBorderColor: "ring-4 ring-indigo-600",
+      selectedBorderColor: "ring-2 ring-indigo-600",
     },
     {
       name: "Premium",
       icon: FaGem,
-      price: "₹1,499",
+      price: "1,499",
       color: "purple",
       features: [
         "Unlimited job posts",
-        "Custom AI solutions",
         "Dedicated success manager",
         "Custom API integration",
       ],
       popular: false,
       borderColor: "border-purple-300",
-      selectedBorderColor: "ring-4 ring-purple-500",
+      selectedBorderColor: "ring-2 ring-purple-500",
     },
   ];
+
   const [selectedPlan, setSelectedPlan] = useState(plans[1].name);
   const { user } = useSelector((state) => state.auth);
   const { company } = useSelector((state) => state.company);
 
   const handleSelectPlan = (planName) => {
     setSelectedPlan(planName);
-    console.log(`Selected ${planName} plan`);
   };
 
   const getCardClasses = (plan) => {
@@ -87,6 +93,70 @@ function RecruiterPlans() {
         : "bg-purple-50 text-purple-600 hover:bg-purple-100",
     };
     return `${baseClasses} ${colorStyles[color]}`;
+  };
+
+  const initiatePayment = async (plan) => {
+    console.log(plan)
+    try {
+      const response = await axios.post(
+        `${ORDER_API_END_POINT}/create-order-for-jobplan`,
+        {
+          planName: plan.name,
+          companyId: company?._id,
+          amount: plan.price,
+        },
+        {
+          withCredentials: true, // This sends cookies or authentication data with the request
+        }
+      );
+
+      const { orderId, amount, currency } = response.data;
+
+      const options = {
+        key: razorpay_key_id,
+        amount,
+        currency,
+        name: "GreatHire",
+        description: plan?.name,
+        image: { GreatHireLogo },
+        order_id: orderId,
+        handler: async (response) => {
+          const verificationResponse = await axios.post(
+            `${VERIFICATION_API_END_POINT}/verify-payment-for-jobplan`,
+            {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            }
+          );
+
+          if (verificationResponse.data.success) {
+            toast.success("Payment Successful!");
+          } else {
+            toast.error("Payment Verification Failed!");
+          }
+        },
+        prefill: {
+          name: company?.companyName,
+          email: company.email,
+          contact: company?.phone,
+        },
+        theme: { color: "#528FF0" },
+      };
+
+      const rzp1 = new window.Razorpay(options);
+      rzp1.open();
+    } catch (error) {
+      console.error("Error initiating payment:", error);
+      toast.error("Error initiating payment. Please try again.");
+    }
+  };
+
+  const purchasePlan = (plan) => {
+    handleSelectPlan(plan.name);
+    try {
+      initiatePayment(plan);
+    } catch (err) {}
   };
 
   return (
@@ -124,7 +194,7 @@ function RecruiterPlans() {
                           {plan.name}
                         </h2>
                         <p className="text-2xl font-bold text-gray-900">
-                          {plan.price}
+                        ₹{plan.price}
                           <span className="text-sm font-normal text-gray-500 ml-1">
                             /mo
                           </span>
@@ -153,7 +223,7 @@ function RecruiterPlans() {
                     </ul>
 
                     <button
-                      onClick={() => handleSelectPlan(plan.name)}
+                      onClick={() => purchasePlan(plan)}
                       className={getButtonClasses(plan.color, plan.popular)}
                     >
                       Get Started

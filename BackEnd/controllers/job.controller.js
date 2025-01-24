@@ -4,6 +4,7 @@ import { User } from "../models/user.model.js";
 import { Company } from "../models/company.model.js";
 import cloudinary from "../utils/cloudinary.js";
 import getDataUri from "../utils/dataUri.js";
+import { JobSubscription } from "../models/jobSubscription.model.js";
 
 export const postJob = async (req, res) => {
   try {
@@ -46,10 +47,19 @@ export const postJob = async (req, res) => {
     const isUserAssociated = company.userId.some(
       (userObj) => userObj.user.toString() === userId
     );
+
     if (!isUserAssociated) {
       return res.status(403).json({
         message: "You are not authorized",
         success: false,
+      });
+    }
+
+    // Expire plan if maxPostJobs is 0
+    if (company.maxPostJobs === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Company need job plans",
       });
     }
 
@@ -110,6 +120,23 @@ export const postJob = async (req, res) => {
 
     // Save the job to the database
     const savedJob = await newJob.save();
+    company.maxPostJobs = company.maxPostJobs - 1;
+    await company.save();
+    
+    if (company.maxPostJobs === 0) {
+      const activeSubscription = await JobSubscription.findOne({
+        company: companyId,
+        status: "Active",
+      });
+
+      if (activeSubscription) {
+        // Check if the current plan is not the Free plan
+        if (activeSubscription.planName !== "Free") {
+          activeSubscription.status = "Expired";
+          await activeSubscription.save();
+        }
+      }
+    }
 
     // Respond with success and the saved job details
     return res.status(201).json({
@@ -222,7 +249,6 @@ export const getJobByRecruiterId = async (req, res) => {
   }
 };
 
-
 //get job by id...
 export const getJobById = async (req, res) => {
   try {
@@ -286,7 +312,6 @@ export const getJobByCompanyId = async (req, res) => {
       .json({ message: "Server error", error: err.message });
   }
 };
-
 
 export const deleteJobById = async (req, res) => {
   try {
