@@ -46,10 +46,17 @@ const companySchema = new mongoose.Schema(
     bussinessFileName: {
       type: String,
     },
-    maxPostJobs: {
+    maxJobPosts: {
       type: Number,
-      default: 10,
+      default: 10, // Default for Free plan
+      validate: {
+        validator: function (v) {
+          return v === null || v >= 0; // Allow null for unlimited
+        },
+        message: "maxJobPosts must be null or a non-negative number",
+      },
     },
+
     creditedForCandidates: {
       type: Number,
       default: 10,

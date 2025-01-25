@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { AiFillSafetyCertificate, AiOutlineCheck } from "react-icons/ai";
 import { FaRocket, FaGem, FaStar } from "react-icons/fa";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
   VERIFICATION_API_END_POINT,
   ORDER_API_END_POINT,
@@ -9,7 +9,9 @@ import {
 import { razorpay_key_id } from "@/utils/RazorpayCredentials";
 import { toast } from "react-hot-toast";
 import axios from "axios";
-import GreatHireLogo from '../../assets/Great.png';
+import GreatHireLogo from "../../assets/Great.png";
+import { updateMaxPostJobs } from "@/redux/companySlice";
+import { addJobPlan } from "@/redux/jobPlanSlice";
 
 function RecruiterPlans() {
   const plans = [
@@ -18,6 +20,7 @@ function RecruiterPlans() {
       icon: AiFillSafetyCertificate,
       price: "499",
       color: "blue",
+      jobBoost: 10,
       features: [
         "Boost 10 active job posts",
         "Basic candidate matching",
@@ -32,6 +35,7 @@ function RecruiterPlans() {
       name: "Standard",
       icon: FaRocket,
       price: "999",
+      jobBoost: 25,
       color: "indigo",
       features: [
         "Boost 25 active job posts",
@@ -46,6 +50,7 @@ function RecruiterPlans() {
       name: "Premium",
       icon: FaGem,
       price: "1,499",
+      jobBoost: null,
       color: "purple",
       features: [
         "Unlimited job posts",
@@ -58,6 +63,7 @@ function RecruiterPlans() {
     },
   ];
 
+  const dispatch = useDispatch();
   const [selectedPlan, setSelectedPlan] = useState(plans[1].name);
   const { user } = useSelector((state) => state.auth);
   const { company } = useSelector((state) => state.company);
@@ -96,7 +102,6 @@ function RecruiterPlans() {
   };
 
   const initiatePayment = async (plan) => {
-    console.log(plan)
     try {
       const response = await axios.post(
         `${ORDER_API_END_POINT}/create-order-for-jobplan`,
@@ -104,6 +109,7 @@ function RecruiterPlans() {
           planName: plan.name,
           companyId: company?._id,
           amount: plan.price,
+          jobBoost:plan.jobBoost
         },
         {
           withCredentials: true, // This sends cookies or authentication data with the request
@@ -127,11 +133,15 @@ function RecruiterPlans() {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
+              jobBoost: plan.jobBoost,
+              companyId: company?._id,
             }
           );
 
           if (verificationResponse.data.success) {
             toast.success("Payment Successful!");
+            dispatch(updateMaxPostJobs(plan.jobBoost));
+            
           } else {
             toast.error("Payment Verification Failed!");
           }
@@ -194,7 +204,7 @@ function RecruiterPlans() {
                           {plan.name}
                         </h2>
                         <p className="text-2xl font-bold text-gray-900">
-                        ₹{plan.price}
+                          ₹{plan.price}
                           <span className="text-sm font-normal text-gray-500 ml-1">
                             /mo
                           </span>
