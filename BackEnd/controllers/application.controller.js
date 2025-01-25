@@ -6,6 +6,7 @@ export const applyJob = async (req, res) => {
   try {
     const userId = req.id;
     const jobId = req.params.id;
+    console.log(req.params.id);
     const {
       fullname,
       email,
@@ -17,6 +18,9 @@ export const applyJob = async (req, res) => {
       company,
     } = req.body;
     const { resume } = req.files;
+
+    console.log(req.body);
+    
 
     // Find the user by ID
     const user = await User.findById(userId);
