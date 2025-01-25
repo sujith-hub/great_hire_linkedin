@@ -62,7 +62,7 @@ const Job = () => {
         <div className="flex items-center text-sm text-blue-700 gap-2 cursor-pointer">
           <span className="text-black"
            onClick={() => {
-            navigate("/apply");
+            navigate(`/apply/${selectedJob?._id}`);
           }}
           >Easy Apply</span>
           <IoMdSend  size={20} />

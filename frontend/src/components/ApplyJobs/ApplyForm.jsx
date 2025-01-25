@@ -8,12 +8,13 @@ import { CgFileRemove } from "react-icons/cg";
 import { FaFileSignature } from "react-icons/fa";
 import { TiTick } from "react-icons/ti";
 import ReviewPage from "./ReviewPage";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import "react-step-progress-bar/styles.css";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 const ApplyForm = ({ setRight }) => {
+  const jobId = useParams();
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
 
@@ -30,6 +31,8 @@ const ApplyForm = ({ setRight }) => {
   const [review, setReview] = useState(false);
   const [coverLetter, setCoverLetter] = useState(true);
   const [coverLetterText, setCoverLetterText] = useState("");
+  const [showCoverLetterError, setShowCoverLetterError] = useState(false);
+
   const [fileURL, setFileURL] = useState(null);
   const inputRef = useRef();
 
@@ -87,6 +90,11 @@ const ApplyForm = ({ setRight }) => {
     setRight(false); // Assuming this closes the form
   };
 
+  const handleCoverLetterChange = (e) => {
+    setInput((prev) => ({ ...prev, coverLetterText: e.target.value }));
+    setShowCoverLetterError(false); // Clear the error message as soon as they type
+  };
+
   const [input, setInput] = useState({
     fullname: user?.fullname,
     number: user?.phoneNumber.number,
@@ -98,37 +106,21 @@ const ApplyForm = ({ setRight }) => {
           }`
         : "",
     resume: user?.profile?.resume,
+    coverLetterText: user?.coverLetterText || "",
   });
 
   const handleFileChange = (e) => {
     const file = e.target.files[0]; // Get the uploaded file
     if (file) {
-        const fileUrl = URL.createObjectURL(file); // Generate a URL for the uploaded file
-        setInput((prevData) => ({
-            ...prevData,
-            resume: file, // Update the resume field with the uploaded file
-        }));
-        setFileURL(fileUrl); // Set the file URL for preview or further use
-        setErrors({ ...errors, resume: "" }); // Clear any errors related to the file upload
+      const fileUrl = URL.createObjectURL(file); // Generate a URL for the uploaded file
+      setInput((prevData) => ({
+        ...prevData,
+        resume: file, // Update the resume field with the uploaded file
+      }));
+      setFileURL(fileUrl); // Set the file URL for preview or further use
+      setErrors({ ...errors, resume: "" }); // Clear any errors related to the file upload
     }
-};
-
-
-  // const handleChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setInput({ ...input, [name]: value });
-  // };
-
-  // const handleContinue1 = (e) => {
-  //   e.preventDefault();
-  //   setStep1(false);
-  //   setStep2(true);
-  // };
-
-  // const handleContinue2 = () => {
-  //   setStep2(false);
-  //   setStep3(true);
-  // };
+  };
 
   const handleContinue3 = (e) => {
     e.preventDefault();
@@ -192,6 +184,7 @@ const ApplyForm = ({ setRight }) => {
               name="fullname"
               onChange={handleChange}
               value={input.fullname}
+              className="mt-1 w-full p-2 border border-gray-300 rounded-md"
             />
             {errors.fullname && (
               <p className="text-red-600 text-sm">{errors.fullname}</p>
@@ -205,6 +198,7 @@ const ApplyForm = ({ setRight }) => {
               name="number"
               onChange={handleChange}
               value={input.number}
+              className="mt-1 w-full p-2 border border-gray-300 rounded-md"
             />
             {errors.number && (
               <p className="text-red-600 text-sm">{errors.number}</p>
@@ -218,13 +212,14 @@ const ApplyForm = ({ setRight }) => {
               name="email"
               onChange={handleChange}
               value={input.email}
+              className="mt-1 w-full p-2 border border-gray-300 rounded-md"
             />
             {errors.email && (
               <p className="text-red-600 text-sm">{errors.email}</p>
             )}
 
             <label className="block text-sm font-medium text-gray-700 mt-4">
-              Address (Optional)
+              Address
             </label>
             <input
               type="text"
@@ -430,7 +425,7 @@ const ApplyForm = ({ setRight }) => {
         </div>
       )}
       {step4 && (
-        <div className="w-full  p-6 bg-white shadow-md rounded-md">
+        <div className="w-full p-6 bg-white shadow-md rounded-md">
           <ProgressBar percent={80} unfilledBackground="gray" />
 
           <div className="flex items-center mt-4">
@@ -441,7 +436,6 @@ const ApplyForm = ({ setRight }) => {
                 setStep3(true);
               }}
             />
-
             <h6 className="ml-2 text-sm text-gray-500">
               Application step 4 of 5
             </h6>
@@ -457,7 +451,9 @@ const ApplyForm = ({ setRight }) => {
 
           {/* Option to Apply Without Cover Letter */}
           <div
-            className="flex items-center p-4 border border-gray-300 rounded-md cursor-pointer mt-4"
+            className={`flex items-center p-4 border ${
+              coverLetter ? "border-gray-300" : "border-blue-500"
+            } rounded-md cursor-pointer mt-4`}
             onClick={() => handleCoverLetter("without")}
           >
             <CgFileRemove className="text-gray-500 mr-4" />
@@ -474,7 +470,9 @@ const ApplyForm = ({ setRight }) => {
 
           {/* Option to Write Cover Letter */}
           <div
-            className="flex items-center p-4 border border-gray-300 rounded-md cursor-pointer mt-4"
+            className={`flex items-center p-4 border ${
+              coverLetter ? "border-blue-500" : "border-gray-300"
+            } rounded-md cursor-pointer mt-4`}
             onClick={() => handleCoverLetter("write")}
           >
             <FaFileSignature className="text-gray-500 mr-4" />
@@ -493,9 +491,16 @@ const ApplyForm = ({ setRight }) => {
               className="w-full p-3 border border-gray-300 rounded-md mt-4"
               rows="6"
               placeholder="Write your cover letter here..."
-              value={coverLetterText}
-              onChange={(e) => setCoverLetterText(e.target.value)}
+              value={input.coverLetterText}
+              onChange={handleCoverLetterChange}
             />
+          )}
+
+          {/* Error message if cover letter is empty */}
+          {coverLetter && showCoverLetterError && (
+            <p className="text-sm text-red-500 mt-2">
+              Please provide a cover letter before proceeding.
+            </p>
           )}
 
           <div className="flex justify-between items-center mt-6">
@@ -506,7 +511,13 @@ const ApplyForm = ({ setRight }) => {
               Exit
             </Link>
             <button
-              onClick={handleReview}
+             onClick={() => {
+              if (coverLetter && (!input.coverLetterText || !input.coverLetterText.trim())) {
+                setShowCoverLetterError(true); // Display error message
+              } else {
+                handleReview(); // Proceed to the next step
+              }
+            }}
               className="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
             >
               Review your application
@@ -527,6 +538,7 @@ const ApplyForm = ({ setRight }) => {
           input={input}
           handleReview1={handleReview1}
           fileURL={fileURL}
+          jobId={jobId}
         />
       )}
     </div>
