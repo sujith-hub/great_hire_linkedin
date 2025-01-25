@@ -18,40 +18,40 @@ const ReviewPage = ({ handleReview1, input, fileURL }) => {
 
   const handleSubmit = async () => {
     setLoading(true); // Show loading indicator
-
+  
     if (!jobId) {
       toast.error("Job ID is missing in the URL!");
       return;
     }
+  
     try {
       const formData = new FormData();
       formData.append("fullname", input.fullname);
       formData.append("email", input.email);
       formData.append("number", input.number);
-      formData.append("address[city]", input.city);
-      formData.append("address[state]", input.state);
-      formData.append("address[country]", input.country);
+      formData.append("city", input.city); // Flattened structure for compatibility
+      formData.append("state", input.state);
+      formData.append("country", input.country);
       formData.append("coverLetter", input.coverLetter || "");
       formData.append("experience", input.experience || "");
       formData.append("jobTitle", input.jobTitle || "");
       formData.append("company", input.company || "");
+      formData.append("jobId", jobId); // Add jobId to the request body
       if (fileURL) {
         formData.append("resume", fileURL);
       }
-
-      // Replace `jobId` with the actual job ID
-     // const jobId = "12345"; // Update this as per your logic
+  
       const response = await axios.post(
-        `${APPLICATION_API_END_POINT}/apply/${jobId}`,
+        `${APPLICATION_API_END_POINT}/apply`,
         formData,
         {
           headers: {
-           "Content-Type":"multipart/form-data"
+            "Content-Type": "multipart/form-data",
           },
-          withCredentials: true
+          withCredentials: true,
         }
       );
-
+  
       toast.success(response.data.message || "Application submitted successfully!");
       navigate("/success"); // Navigate to success page or any other page
     } catch (error) {
@@ -61,6 +61,7 @@ const ReviewPage = ({ handleReview1, input, fileURL }) => {
       setLoading(false); // Hide loading indicator
     }
   };
+  
 
   return (
     <div className="flex justify-center flex-col p-6 bg-white shadow-lg rounded-lg w-full">
