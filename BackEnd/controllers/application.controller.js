@@ -5,7 +5,8 @@ import { Job } from "../models/job.model.js";
 export const applyJob = async (req, res) => {
   try {
     const userId = req.id;
-    const jobId = req.params.id;
+   // const jobId = req.params.id;
+   // console.log(req.params);
     const {
       fullname,
       email,
@@ -17,8 +18,12 @@ export const applyJob = async (req, res) => {
       experience,
       jobTitle,
       company,
+      jobId
     } = req.body;
     const { resume } = req.files;
+
+    console.log(req.body);
+    
 
     // Find the user by ID
     const user = await User.findById(userId);
@@ -27,7 +32,7 @@ export const applyJob = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const job = await Job.findById(jobId);
+    const job = await Job.findById({ _id: jobId });
     if (!job) {
       return res.status(404).json({ message: "Job not found" });
     }
