@@ -10,7 +10,9 @@ export const applyJob = async (req, res) => {
       fullname,
       email,
       number,
-      address,
+      city,
+      state,
+      country,
       coverLetter,
       experience,
       jobTitle,
@@ -42,16 +44,14 @@ export const applyJob = async (req, res) => {
       user.phoneNumber.number = number;
       user.phoneNumber.isVerified = false;
     }
-    if (address) {
-      if (address.city && address.city !== user.address.city) {
-        user.address.city = address.city;
-      }
-      if (address.state && address.state !== user.address.state) {
-        user.address.state = address.state;
-      }
-      if (address.country && address.country !== user.address.country) {
-        user.address.country = address.country;
-      }
+    if (city && city !== user.address.city) {
+      user.address.city = city;
+    }
+    if (state && state !== user.address.state) {
+      user.address.state = state;
+    }
+    if (country && country !== user.address.country) {
+      user.address.country = country;
     }
 
     if (coverLetter) {
