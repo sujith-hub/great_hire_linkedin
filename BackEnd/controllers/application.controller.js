@@ -21,7 +21,7 @@ export const applyJob = async (req, res) => {
       jobId
     } = req.body;
     const { resume } = req.files;
-
+ 
     console.log(req.body);
     
 

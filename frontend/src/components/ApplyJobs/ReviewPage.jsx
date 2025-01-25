@@ -12,18 +12,13 @@ const ReviewPage = ({ handleReview1, input, fileURL }) => {
   const { user } = useSelector((state) => state.auth);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const jobId = useParams();
-  console.log(jobId);
+  const { jobId } = useParams();
   
-
   const handleSubmit = async () => {
     setLoading(true); // Show loading indicator
-  
-    if (!jobId) {
-      toast.error("Job ID is missing in the URL!");
-      return;
-    }
-  
+
+    console.log(jobId);
+
     try {
       const formData = new FormData();
       formData.append("fullname", input.fullname);
@@ -40,7 +35,7 @@ const ReviewPage = ({ handleReview1, input, fileURL }) => {
       if (fileURL) {
         formData.append("resume", fileURL);
       }
-  
+
       const response = await axios.post(
         `${APPLICATION_API_END_POINT}/apply`,
         formData,
@@ -51,17 +46,20 @@ const ReviewPage = ({ handleReview1, input, fileURL }) => {
           withCredentials: true,
         }
       );
-  
-      toast.success(response.data.message || "Application submitted successfully!");
+
+      toast.success(
+        response.data.message || "Application submitted successfully!"
+      );
       navigate("/success"); // Navigate to success page or any other page
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to submit the application.");
+      toast.error(
+        error.response?.data?.message || "Failed to submit the application."
+      );
       console.error("Error submitting application:", error);
     } finally {
       setLoading(false); // Hide loading indicator
     }
   };
-  
 
   return (
     <div className="flex justify-center flex-col p-6 bg-white shadow-lg rounded-lg w-full">
@@ -73,7 +71,9 @@ const ReviewPage = ({ handleReview1, input, fileURL }) => {
         <h6 className="ml-2 text-sm text-gray-500">Application step 5 of 5</h6>
       </div>
 
-      <h2 className="text-2xl font-semibold mb-6">Please review your application</h2>
+      <h2 className="text-2xl font-semibold mb-6">
+        Please review your application
+      </h2>
 
       <h4 className="text-lg font-medium mb-4">Contact Information</h4>
       <div className="space-y-4 mb-6">
@@ -85,8 +85,9 @@ const ReviewPage = ({ handleReview1, input, fileURL }) => {
           <p className="text-sm text-gray-500">Email Address</p>
           <h3 className="text-base font-semibold">{input.email}</h3>
           <small className="text-xs text-gray-500 block mt-2">
-            To mitigate fraud, Great Hire may mask your email address. If masked, the employer will
-            see an address like <strong>abc123@gmail.com</strong>. Some employers, however, may
+            To mitigate fraud, Great Hire may mask your email address. If
+            masked, the employer will see an address like{" "}
+            <strong>abc123@gmail.com</strong>. Some employers, however, may
             still be able to unmask and see your actual email address.
           </small>
         </div>
@@ -118,7 +119,9 @@ const ReviewPage = ({ handleReview1, input, fileURL }) => {
           <h3 className="text-base font-semibold">{input?.company}</h3>
         </div>
         <div>
-          <p className="text-sm text-gray-500">How many years of total work experience do you have?</p>
+          <p className="text-sm text-gray-500">
+            How many years of total work experience do you have?
+          </p>
           <h3 className="text-base font-semibold">{input?.experience}</h3>
         </div>
 
@@ -153,10 +156,6 @@ const ReviewPage = ({ handleReview1, input, fileURL }) => {
 };
 
 export default ReviewPage;
-
-
-
-
 
 // import React, { useState } from "react";
 // import { BiArrowBack } from "react-icons/bi";
