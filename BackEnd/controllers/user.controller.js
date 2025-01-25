@@ -468,7 +468,11 @@ export const sendMessage = async (req, res) => {
 
     return res.status(200).json({
       success: true,
+<<<<<<< HEAD
       message: "Our team will touch with you soon!",
+=======
+      message: "our team will be in touch with you soon!",
+>>>>>>> 4cec0db088dc2d2bad3b9ea103cca383b167cadc
       contact,
     });
   } catch (err) {
