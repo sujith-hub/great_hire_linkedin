@@ -5,7 +5,8 @@ import {
   requestOTPForEmail,
   requestOTPForNumber,
   verifyOTP,
-  verifyPayment,
+  verifyPaymentForService,
+  verifyPaymentForJobPlans,
   updateEmailVerification,
   updateNumberVerification,
 } from "../controllers/verification.controller.js";
@@ -17,15 +18,10 @@ router.post("/send-verification-status", sendVerificationStatus);
 router.post("/request-otp-email", isAuthenticated, requestOTPForEmail);
 router.post("/request-otp-mob", isAuthenticated, requestOTPForNumber);
 router.post("/verify-otp", verifyOTP);
-router.post("/verify-payment", verifyPayment);
+router.post("/verify-payment-for-service", verifyPaymentForService);
+router.post("/verify-payment-for-jobplan", verifyPaymentForJobPlans);
 
-router.post(
-  "/update-email-verification",
-  updateEmailVerification
-);
-router.post(
-  "/update-number-verification",
-  updateNumberVerification
-);
+router.post("/update-email-verification", updateEmailVerification);
+router.post("/update-number-verification", updateNumberVerification);
 
 export default router;

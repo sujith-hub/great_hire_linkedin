@@ -4,6 +4,7 @@ import { User } from "../models/user.model.js";
 import { Company } from "../models/company.model.js";
 import cloudinary from "../utils/cloudinary.js";
 import getDataUri from "../utils/dataUri.js";
+import { JobSubscription } from "../models/jobSubscription.model.js";
 
 export const postJob = async (req, res) => {
   try {
@@ -46,10 +47,19 @@ export const postJob = async (req, res) => {
     const isUserAssociated = company.userId.some(
       (userObj) => userObj.user.toString() === userId
     );
+
     if (!isUserAssociated) {
       return res.status(403).json({
         message: "You are not authorized",
         success: false,
+      });
+    }
+
+    // Expire plan if maxPostJobs is 0
+    if (company.maxPostJobs === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Company need job plans",
       });
     }
 
@@ -110,6 +120,25 @@ export const postJob = async (req, res) => {
 
     // Save the job to the database
     const savedJob = await newJob.save();
+    if (company.maxPostJobs !== null) {
+      company.maxPostJobs = company.maxPostJobs - 1;
+      await company.save();
+    }
+
+    if (company.maxPostJobs === 0) {
+      const activeSubscription = await JobSubscription.findOne({
+        company: companyId,
+        status: "Active",
+      });
+
+      if (activeSubscription) {
+        // Check if the current plan is not the Free plan
+        if (activeSubscription.planName !== "Free") {
+          activeSubscription.status = "Expired";
+          await activeSubscription.save();
+        }
+      }
+    }
 
     // Respond with success and the saved job details
     return res.status(201).json({
@@ -222,7 +251,6 @@ export const getJobByRecruiterId = async (req, res) => {
   }
 };
 
-
 //get job by id...
 export const getJobById = async (req, res) => {
   try {
@@ -286,7 +314,6 @@ export const getJobByCompanyId = async (req, res) => {
       .json({ message: "Server error", error: err.message });
   }
 };
-
 
 export const deleteJobById = async (req, res) => {
   try {
@@ -443,92 +470,6 @@ export const toggleActive = async (req, res) => {
 };
 
 export const updateJob = async (req, res) => {};
-
-export const applyJob = async (req, res) => {
-  try {
-    const userId = req.id;
-    const { fullname, email, number, address, coverLetter, jobId } = req.body;
-    const { resume } = req.files;
-
-    // Find the user by ID
-    const user = await User.findById(userId);
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    const job = await Job.findById(jobId);
-    if (!job) {
-      return res.status(404).json({ message: "Job not found" });
-    }
-
-    // Check and update user details if necessary
-    if (fullname && fullname !== user.fullname) {
-      user.fullname = fullname;
-    }
-    if (email && email !== user.emailId.email) {
-      user.emailId.email = email;
-      user.emailId.isVerified = false;
-    }
-    if (number && number !== user.phoneNumber.number) {
-      user.phoneNumber.number = number;
-      user.phoneNumber.isVerified = false;
-    }
-    if (address) {
-      if (address.city && address.city !== user.address.city) {
-        user.address.city = address.city;
-      }
-      if (address.state && address.state !== user.address.state) {
-        user.address.state = address.state;
-      }
-      if (address.country && address.country !== user.address.country) {
-        user.address.country = address.country;
-      }
-    }
-
-    if (coverLetter) {
-      user.profile.coverLetter = coverLetter;
-    }
-
-    // Update resume if provided
-    if (resume && resume.length > 0) {
-      const fileUri = getDataUri(resume[0]);
-      const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
-      user.profile.resume = cloudResponse.secure_url;
-      user.profile.resumeOriginalName = resume[0].originalname;
-    }
-
-    // Save the updated user
-    await user.save();
-
-    // Create a new application
-    const newApplication = new Application({
-      job: jobId,
-      applicant: userId,
-      status: "pending",
-    });
-
-    // Save the application to the database
-    await newApplication.save();
-
-    // Push the new application ID to the job's applications array
-    job.application.push(newApplication._id);
-
-    // Save the updated job
-    await job.save();
-
-    res.status(201).json({
-      message: "Applied successfully",
-      application: newApplication,
-    });
-  } catch (err) {
-    console.error("Error applying for job:", err);
-    return res.status(500).json({
-      message: "Internal server error",
-      error: err.message,
-    });
-  }
-};
 
 export const getJobsStatistics = async (req, res) => {
   try {

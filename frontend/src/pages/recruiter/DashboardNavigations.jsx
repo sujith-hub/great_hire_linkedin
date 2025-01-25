@@ -16,7 +16,6 @@ const DashboardNavigations = () => {
   const { user } = useSelector((state) => state.auth);
   const { company } = useSelector((state) => state.company);
 
-
   const navLinkClass = ({ isActive }) =>
     `flex items-center gap-2 px-2 py-2 rounded-lg w-full ${
       isActive ? "bg-blue-600 text-white" : "hover:bg-blue-100 text-gray-700"
@@ -81,19 +80,21 @@ const DashboardNavigations = () => {
                     )}
                   </NavLink>
                 )}
-              {user?.isVerify === 1 && user?.isCompanyCreated && user?.isActive && (
-                <NavLink
-                  to="/recruiter/dashboard/post-job"
-                  className={navLinkClass}
-                >
-                  {({ isActive }) => (
-                    <>
-                      <MdPostAdd size={25} className={iconClass(isActive)} />
-                      <span>Post Job</span>
-                    </>
-                  )}
-                </NavLink>
-              )}
+              {user?.isVerify === 1 &&
+                user?.isCompanyCreated &&
+                user?.isActive && (
+                  <NavLink
+                    to="/recruiter/dashboard/post-job"
+                    className={navLinkClass}
+                  >
+                    {({ isActive }) => (
+                      <>
+                        <MdPostAdd size={25} className={iconClass(isActive)} />
+                        <span>Post Job</span>
+                      </>
+                    )}
+                  </NavLink>
+                )}
             </ul>
           </li>
           <NavLink to="/recruiter/dashboard/jobs" className={navLinkClass}>
@@ -139,18 +140,22 @@ const DashboardNavigations = () => {
           </NavLink>
 
           {/* Plans details */}
-          <NavLink
-            to="/recruiter/dashboard/your-plans"
-            className={navLinkClass}
-          >
-            {({ isActive }) => (
-              <>
-                <GiUpgrade size={25} className={iconClass(isActive)} />
-                <span>Upgrade Plans</span>
-              </>
-            )}
-          </NavLink>
-
+            <NavLink
+              to="/recruiter/dashboard/your-plans"
+              className={navLinkClass}
+            >
+              {({ isActive }) => (
+                <>
+                  <GiUpgrade size={25} className={iconClass(isActive)} />
+                  <span>
+                    {company?.maxPostJobs === 0
+                      ? "Upgrade Plans"
+                      : "Current Plan"}
+                  </span>
+                </>
+              )}
+            </NavLink>
+          
           {user?.emailId.email === company?.adminEmail && (
             <NavLink
               to="/recruiter/dashboard/delete-account"

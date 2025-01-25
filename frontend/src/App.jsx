@@ -36,6 +36,7 @@ import JobDetail from "./pages/recruiter/JobDetail";
 import RecruiterList from "./pages/recruiter/RecruiterList";
 import AppliedCandidatesList from "./pages/recruiter/AppliedCandidatesList";
 import RecruitersDetails from "./pages/recruiter/rec_job_details/RecruitersDetails";
+import CurrentPlans from "./pages/recruiter/CurrentPlans";
 import RecruiterSuccess from "./pages/recruiter/RecruiterSuccess";
 
 // Admin Routes
@@ -145,7 +146,8 @@ const appRouter = createBrowserRouter([
       { path: "post-job", element: <PostJob /> },
       { path: "jobs", element: <PostedJobList /> },
       { path: "company-details", element: <CompanyDetails /> },
-      { path: "your-plans", element: <RecruiterPlans /> },
+      { path: "your-plans", element: <CurrentPlans /> },
+      { path: "upgrade-plans", element: <RecruiterPlans /> },
       { path: "delete-account", element: <DeleteAccount /> },
       { path: "recruiter-list", element: <RecruiterList /> },
       {

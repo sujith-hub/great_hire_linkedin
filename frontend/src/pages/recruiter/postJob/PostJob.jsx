@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 const PostJob = () => {
   const [step, setStep] = useState(0);
   const { company } = useSelector((state) => state.company);
+  const [loading, setLoading] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -54,6 +55,7 @@ const PostJob = () => {
     }),
 
     onSubmit: async (values) => {
+      setLoading(true);
       try {
         const response = await axios.post(
           `${JOB_API_END_POINT}/post-job`,
@@ -72,6 +74,8 @@ const PostJob = () => {
         }
       } catch (error) {
         console.error("Error posting job:", error);
+      } finally {
+        setLoading(false);
       }
     },
   });
@@ -658,9 +662,12 @@ const PostJob = () => {
                 </button>
                 <button
                   type="submit"
-                  className="bg-blue-700 text-white p-2 rounded"
+                  className={`bg-blue-700 text-white p-2 rounded ${
+                    loading && "cursor-not-allowed"
+                  }`}
+                  disabled={loading}
                 >
-                  Submit
+                  {loading ? "Posting..." : "Post"}
                 </button>
               </div>
             </>

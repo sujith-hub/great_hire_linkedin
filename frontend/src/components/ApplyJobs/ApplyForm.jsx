@@ -154,18 +154,6 @@ const ApplyForm = ({ setRight }) => {
     }
   };
 
-  // const ProgressBar = ({ percent, unfilledBackground }) => {
-  //   return (
-  //     <div className="w-full bg-gray-200 rounded-full h-3 dark:bg-gray-700">
-  //       <div
-  //         className={`h-3 rounded-full ${
-  //           percent > 0 ? "bg-gradient-to-r from-blue-400 to-blue-700" : ""
-  //         }`}
-  //         style={{ width: `${percent}%` }}
-  //       ></div>
-  //     </div>
-  //   );
-  // };
 
   return (
     <div className="w-full ">
