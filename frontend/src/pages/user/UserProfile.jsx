@@ -41,7 +41,7 @@ const UserProfile = () => {
       }
       toast.success(response.data.message);
     } catch (err) {
-      console.log(`Error: in deleting account ${err.message}`);
+      console.error("Error deleting account: ", err.message);
       toast.error("Error in deleting account");
     } finally {
       setLoading(false);
@@ -58,7 +58,8 @@ const UserProfile = () => {
             <Avatar className="h-24 w-24">
               <AvatarImage
                 src={
-                  user?.profile?.profilePhoto || "https://github.com/shadcn.png"
+                  user?.profile?.profilePhoto ||
+                  "https://github.com/shadcn.png"
                 }
                 alt="Profile Photo"
               />
@@ -70,7 +71,7 @@ const UserProfile = () => {
               {user?.profile?.bio || "No bio available"}
             </p>
             <p className="text-gray-500">
-              {"Experience: " + user?.profile?.experience?.duration + " Year" ||
+              {`Experience: ${user?.profile?.experience?.duration} Year` ||
                 "No Experience"}
             </p>
             <Button
@@ -102,8 +103,8 @@ const UserProfile = () => {
                     Verify
                   </span>
                 ) : (
-                  <span className="flex  items-center text-green-600 bg-green-50 px-2 rounded-lg gap-1">
-                    <MdOutlineVerified size={25} /> <span>Verified</span>
+                  <span className="flex items-center text-green-600 bg-green-50 px-2 rounded-lg gap-1">
+                    <MdOutlineVerified size={20} /> <span>Verified</span>
                   </span>
                 )}
               </div>
@@ -120,17 +121,18 @@ const UserProfile = () => {
                     Verify
                   </span>
                 ) : (
-                  <span className="flex  items-center text-green-600 bg-green-50 px-2 rounded-lg gap-1 ">
-                    <MdOutlineVerified size={25} /> <span>Verified</span>
+                  <span className="flex items-center text-green-600 bg-green-50 px-2 rounded-lg gap-1">
+                    <MdOutlineVerified size={20} /> <span>Verified</span>
                   </span>
                 )}
               </div>
               <div className="flex items-center gap-3">
                 <FaRegAddressCard size={25} className="text-gray-500" />
                 <span className="text-gray-700">
-                  {user?.address ? `${user.address.city}, ${user.address.state}, ${user.address.country} ` : "Not Provided"}
+                  {user?.address
+                    ? `${user.address.city}, ${user.address.state}, ${user.address.country}`
+                    : "Not Provided"}
                 </span>
-                
               </div>
             </div>
           </div>
@@ -205,8 +207,9 @@ const UserProfile = () => {
       <UserUpdateProfile open={open} setOpen={setOpen} />
       <Footer className="mt-auto" />
 
-      {openEmailOTPModal && <VerifyEmail setOpenEmailOTPModal = {setOpenEmailOTPModal}/>}
-      {openNumberOTPModal && <VerifyNumber setOpenNumberOTPModal = {setOpenNumberOTPModal}/>}
+      {/* OTP Modals */}
+      {openEmailOTPModal && <VerifyEmail setOpenEmailOTPModal={setOpenEmailOTPModal} />}
+      {openNumberOTPModal && <VerifyNumber setOpenNumberOTPModal={setOpenNumberOTPModal} />}
     </div>
   );
 };
