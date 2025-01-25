@@ -48,7 +48,7 @@ const userSchema = new mongoose.Schema(
       coverLetter: {
         type: String,
       },
-      jobTagList: { type: [String] },
+
       bio: { type: String },
       experience: {
         companyName: {

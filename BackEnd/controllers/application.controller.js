@@ -76,7 +76,7 @@ export const applyJob = async (req, res) => {
     }
 
     // Save the updated user
-    await user.save();
+    const updateUser = await user.save();
 
     // Create a new application
     const newApplication = new Application({
@@ -96,7 +96,7 @@ export const applyJob = async (req, res) => {
 
     res.status(201).json({
       message: "Applied successfully",
-      application: newApplication,
+      user: updateUser,
     });
   } catch (err) {
     console.error("Error applying for job:", err);

@@ -18,7 +18,7 @@ function RecruiterPlans() {
     {
       name: "Basic",
       icon: AiFillSafetyCertificate,
-      price: "499",
+      price: "1",
       color: "blue",
       jobBoost: 10,
       features: [
@@ -34,7 +34,7 @@ function RecruiterPlans() {
     {
       name: "Standard",
       icon: FaRocket,
-      price: "999",
+      price: "0",
       jobBoost: 25,
       color: "indigo",
       features: [
@@ -49,7 +49,7 @@ function RecruiterPlans() {
     {
       name: "Premium",
       icon: FaGem,
-      price: "1,499",
+      price: "0",
       jobBoost: null,
       color: "purple",
       features: [
@@ -109,7 +109,7 @@ function RecruiterPlans() {
           planName: plan.name,
           companyId: company?._id,
           amount: plan.price,
-          jobBoost:plan.jobBoost
+          jobBoost: plan.jobBoost,
         },
         {
           withCredentials: true, // This sends cookies or authentication data with the request
@@ -141,7 +141,7 @@ function RecruiterPlans() {
           if (verificationResponse.data.success) {
             toast.success("Payment Successful!");
             dispatch(updateMaxPostJobs(plan.jobBoost));
-            
+            dispatch(addJobPlan(verificationResponse.data.plan));
           } else {
             toast.error("Payment Verification Failed!");
           }

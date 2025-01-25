@@ -12,7 +12,7 @@ const CurrentPlans = () => {
  if (!user || !company) return <p>Loading...</p>;
 
  return (
-   <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center p-4">
+   <div className="min-h-screen  flex items-center justify-center p-4">
      <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden">
        <div className="bg-blue-600 text-white p-6 text-center">
          <AiFillSafetyCertificate className="mx-auto text-5xl mb-3 text-green-400" />
