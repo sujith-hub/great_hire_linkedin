@@ -1,6 +1,8 @@
 import { Application } from "../models/application.model.js";
 import { User } from "../models/user.model.js";
 import { Job } from "../models/job.model.js";
+import getDataUri from "../utils/dataUri.js";
+import cloudinary from "../utils/cloudinary.js";
 
 export const applyJob = async (req, res) => {
   try {
@@ -21,8 +23,6 @@ export const applyJob = async (req, res) => {
       jobId
     } = req.body;
     const { resume } = req.files;
- 
-    console.log(req.body);
     
 
     // Find the user by ID
@@ -87,7 +87,7 @@ export const applyJob = async (req, res) => {
     const newApplication = new Application({
       job: jobId,
       applicant: userId,
-      status: "pending",
+      status: "Pending",
     });
 
     // Save the application to the database
@@ -100,6 +100,7 @@ export const applyJob = async (req, res) => {
     await job.save();
 
     res.status(201).json({
+      success:true,
       message: "Applied successfully",
       user: updateUser,
     });

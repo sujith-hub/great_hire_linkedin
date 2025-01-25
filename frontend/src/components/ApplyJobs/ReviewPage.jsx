@@ -1,19 +1,20 @@
 import React, { useState } from "react";
 import { BiArrowBack } from "react-icons/bi";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Viewer } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import { APPLICATION_API_END_POINT } from "@/utils/ApiEndPoint";
+import { setUser } from "@/redux/authSlice";
 
 const ReviewPage = ({ handleReview1, input, fileURL }) => {
-  const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { jobId } = useParams();
-  
+
   const handleSubmit = async () => {
     setLoading(true); // Show loading indicator
 
@@ -32,8 +33,8 @@ const ReviewPage = ({ handleReview1, input, fileURL }) => {
       formData.append("jobTitle", input.jobTitle || "");
       formData.append("company", input.company || "");
       formData.append("jobId", jobId); // Add jobId to the request body
-      if (fileURL) {
-        formData.append("resume", fileURL);
+      if (input.resume instanceof File) {
+        formData.append("resume", input.resume);
       }
 
       const response = await axios.post(
@@ -47,10 +48,11 @@ const ReviewPage = ({ handleReview1, input, fileURL }) => {
         }
       );
 
-      toast.success(
-        response.data.message || "Application submitted successfully!"
-      );
-      navigate("/success"); // Navigate to success page or any other page
+      if (response.data.success) {
+        toast.success(response.data.message);
+        dispatch(setUser(response.data.user));
+        navigate("/success"); // Navigate to success page or any other page
+      }
     } catch (error) {
       toast.error(
         error.response?.data?.message || "Failed to submit the application."
