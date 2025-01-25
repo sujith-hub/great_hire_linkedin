@@ -6,6 +6,7 @@ import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import { BlacklistedCompany } from "../models/blacklistedCompany.model.js";
+import { JobSubscription } from '../models/jobSubscription.model.js';
 
 export const registerCompany = async (req, res) => {
   try {
@@ -345,6 +346,29 @@ export const changeAdmin = async (req, res) => {
     return res.status(500).json({
       message: "Internal Server Error",
       success: false,
+    });
+  }
+};
+
+export const getCurrentPlan = async (req, res) => {
+  try {
+    const companyId = req.params.id; // Get company ID from request parameters
+
+    // Find the active subscription for the company
+    const currentPlan = await JobSubscription.findOne({
+      company: companyId,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Current active plan retrieved successfully",
+      plan: currentPlan,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
     });
   }
 };

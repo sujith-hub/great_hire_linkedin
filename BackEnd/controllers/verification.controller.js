@@ -403,7 +403,7 @@ export const verifyPaymentForJobPlans = async (req, res) => {
       matchSignature(razorpay_order_id, razorpay_payment_id, razorpay_signature)
     ) {
       // Update the order status in the database
-      await JobSubscription.findOneAndUpdate(
+      const currentPlan = await JobSubscription.findOneAndUpdate(
         { razorpayOrderId: razorpay_order_id },
         {
           paymentStatus: "paid",
@@ -412,9 +412,15 @@ export const verifyPaymentForJobPlans = async (req, res) => {
             signature: razorpay_signature,
           },
           status: "Active", // active the plan after paymentStatus paid
-        }
+        },
+        { new: true } // This ensures the updated document is returned
       );
 
+      // here remove expired plan of company
+      await JobSubscription.deleteOne({
+        company: companyId,
+        status: "Expired",
+      });
 
       // Find the company and update maxPostJobs
       const company = await Company.findById(companyId);
@@ -433,9 +439,11 @@ export const verifyPaymentForJobPlans = async (req, res) => {
 
       await company.save();
 
-      res
-        .status(200)
-        .json({ success: true, message: "Payment verified successfully" });
+      res.status(200).json({
+        success: true,
+        plan: currentPlan,
+        message: "Payment verified successfully",
+      });
     } else {
       res
         .status(400)

@@ -8,7 +8,9 @@ const CurrentPlans = () => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
   const { company } = useSelector((state) => state.company);
-  
+  const { jobPlan } = useSelector((state) => state.jobPlan);
+  console.log(jobPlan);
+
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="  p-8 max-w-md w-full">

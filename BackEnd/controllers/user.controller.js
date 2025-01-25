@@ -468,7 +468,7 @@ export const sendMessage = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Our team touch with you soon!",
+      message: "Our team will touch with you soon!",
       contact,
     });
   } catch (err) {

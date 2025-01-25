@@ -6,6 +6,7 @@ import {
   updateCompany,
   companyByUserId,
   changeAdmin,
+  getCurrentPlan
 } from "../controllers/company.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 import { singleUpload } from "../middlewares/multer.js";
@@ -20,5 +21,6 @@ router.route("/change-admin").put(isAuthenticated, changeAdmin);
 // router.route("/get").get(isAuthenticated,getCompanyList);
 
 router.route("/update/:id").put(isAuthenticated, updateCompany);
+router.route("/current-plan/:id").get(isAuthenticated, getCurrentPlan);
 
 export default router;
