@@ -15,6 +15,7 @@ const RecruiterDashboard = () => {
   const { company } = useSelector((state) => state.company);
   const { recruiters } = useSelector((state) => state.recruiters);
   const { jobPlan } = useSelector((state) => state.jobPlan);
+  
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);

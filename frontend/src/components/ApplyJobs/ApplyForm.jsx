@@ -72,23 +72,7 @@ const ApplyForm = ({ setRight }) => {
     }
   };
 
-  const handleBack2 = (e) => {
-    e.preventDefault();
-    setStep2(false);
-    setStep1(true);
-  };
-
-  const handleBack3 = (e) => {
-    e.preventDefault();
-    setStep3(false);
-    setStep2(true);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Form Submitted:", input);
-    setRight(false); // Assuming this closes the form
-  };
+  
 
   const handleCoverLetterChange = (e) => {
     setInput((prev) => ({ ...prev, coverLetterText: e.target.value }));

@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logOut } from "@/redux/authSlice";
 import { removeCompany } from "@/redux/companySlice";
+import { removeJobPlan } from "@/redux/jobPlanSlice";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
@@ -74,6 +75,7 @@ const Navbar = () => {
         if (user.role === "recruiter") {
           dispatch(removeCompany());
           dispatch(cleanRecruiterRedux());
+          dispatch(removeJobPlan());
         }
 
         setIsProfileMenuOpen(false);

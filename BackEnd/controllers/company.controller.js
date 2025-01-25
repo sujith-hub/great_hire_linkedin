@@ -353,11 +353,12 @@ export const changeAdmin = async (req, res) => {
 export const getCurrentPlan = async (req, res) => {
   try {
     const companyId = req.params.id; // Get company ID from request parameters
-
+    
     // Find the active subscription for the company
     const currentPlan = await JobSubscription.findOne({
       company: companyId,
-    });
+    }).select('jobBoost expiryDate planName price status purchaseDate'); // Select only required fields
+
 
     res.status(200).json({
       success: true,
@@ -372,3 +373,4 @@ export const getCurrentPlan = async (req, res) => {
     });
   }
 };
+
