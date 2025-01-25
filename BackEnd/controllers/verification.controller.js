@@ -360,7 +360,6 @@ export const verifyPaymentForService = async (req, res) => {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
       req.body;
 
-    
     if (
       matchSignature(razorpay_order_id, razorpay_payment_id, razorpay_signature)
     ) {
@@ -392,10 +391,14 @@ export const verifyPaymentForService = async (req, res) => {
 
 export const verifyPaymentForJobPlans = async (req, res) => {
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
-      req.body;
+    const {
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+      jobBoost,
+      companyId,
+    } = req.body;
 
-    
     if (
       matchSignature(razorpay_order_id, razorpay_payment_id, razorpay_signature)
     ) {
@@ -408,9 +411,27 @@ export const verifyPaymentForJobPlans = async (req, res) => {
             paymentId: razorpay_payment_id,
             signature: razorpay_signature,
           },
-          status:"Active" // active the plan after paymentStatus paid
+          status: "Active", // active the plan after paymentStatus paid
         }
       );
+
+
+      // Find the company and update maxPostJobs
+      const company = await Company.findById(companyId);
+      if (!company) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Company not found" });
+      }
+
+      // If the plan is unlimited, set maxPostJobs accordingly
+      if (jobBoost === null) {
+        company.maxPostJobs = null; // this one set unlimited
+      } else {
+        company.maxPostJobs += jobBoost; // Add the jobBoost to existing maxPostJobs
+      }
+
+      await company.save();
 
       res
         .status(200)

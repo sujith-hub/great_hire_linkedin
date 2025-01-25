@@ -10,6 +10,17 @@ const jobSubscriptionSchema = new mongoose.Schema(
       enum: ["Basic", "Standard", "Premium"],
       required: true,
     },
+    jobBoost: {
+      type: Number,
+      validate: {
+        validator: function (v) {
+          return v === null || v >= 0; // Allow null for unlimited
+        },
+        message: "maxJobPosts must be null or a non-negative number",
+        
+      },
+      required:true
+    },
     purchaseDate: {
       type: Date,
       required: true,
@@ -67,9 +78,6 @@ jobSubscriptionSchema.methods.checkValidity = async function () {
       company.maxPostJobs = 0;
       await company.save();
     }
-
-    // Delete this subscription document
-    await this.deleteOne();
   }
 };
 

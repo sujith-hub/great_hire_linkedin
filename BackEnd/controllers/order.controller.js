@@ -61,7 +61,7 @@ export const createOrderForService = async (req, res) => {
 
 export const createOrderForJobPlan = async (req, res) => {
   try {
-    const { planName, companyId, amount } = req.body;
+    const { planName, companyId, amount, jobBoost } = req.body;
 
     const userId = req.id;
 
@@ -126,6 +126,7 @@ export const createOrderForJobPlan = async (req, res) => {
       razorpayOrderId: razorpayOrder.id,
       company: companyId,
       paymentStatus: "created",
+      jobBoost
     });
 
     await newSubscription.save();
