@@ -8,15 +8,15 @@ import { CgFileRemove } from "react-icons/cg";
 import { FaFileSignature } from "react-icons/fa";
 import { TiTick } from "react-icons/ti";
 import ReviewPage from "./ReviewPage";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "react-step-progress-bar/styles.css";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 const ApplyForm = ({ setRight }) => {
-  const jobId = useParams();
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
+  console.log(user);
 
   useEffect(() => {
     if (!user) {
@@ -30,7 +30,7 @@ const ApplyForm = ({ setRight }) => {
   const [step4, setStep4] = useState(false);
   const [review, setReview] = useState(false);
   const [coverLetter, setCoverLetter] = useState(true);
-  const [coverLetterText, setCoverLetterText] = useState("");
+  // const [coverLetterText, setCoverLetterText] = useState("");
   const [showCoverLetterError, setShowCoverLetterError] = useState(false);
 
   const [fileURL, setFileURL] = useState(null);
@@ -72,26 +72,8 @@ const ApplyForm = ({ setRight }) => {
     }
   };
 
-  const handleBack2 = (e) => {
-    e.preventDefault();
-    setStep2(false);
-    setStep1(true);
-  };
-
-  const handleBack3 = (e) => {
-    e.preventDefault();
-    setStep3(false);
-    setStep2(true);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Form Submitted:", input);
-    setRight(false); // Assuming this closes the form
-  };
-
   const handleCoverLetterChange = (e) => {
-    setInput((prev) => ({ ...prev, coverLetterText: e.target.value }));
+    setInput((prev) => ({ ...prev, coverLetter: e.target.value }));
     setShowCoverLetterError(false); // Clear the error message as soon as they type
   };
 
@@ -99,14 +81,14 @@ const ApplyForm = ({ setRight }) => {
     fullname: user?.fullname,
     number: user?.phoneNumber.number,
     email: user?.emailId.email,
-    address:
-      user?.address?.city || user?.address?.state || user?.address?.country
-        ? `${user?.address?.city || ""}, ${user?.address?.state || ""}, ${
-            user?.address?.country || ""
-          }`
-        : "",
+    city: user?.address?.city || "",
+    state: user?.address?.state || "",
+    country: user?.address?.country || "",
     resume: user?.profile?.resume,
-    coverLetterText: user?.coverLetterText || "",
+    coverLetter: user?.profile?.coverLetter || "",
+    jobTitle: user?.profile?.experience.jobProfile,
+    experience: user?.profile?.experience.experienceDetails,
+    company: user?.profile?.experience.companyName,
   });
 
   const handleFileChange = (e) => {
@@ -139,24 +121,16 @@ const ApplyForm = ({ setRight }) => {
     setStep4(true);
   };
 
-  const handleChoose = () => {
-    if (inputRef.current) {
-      inputRef.current.click();
-    }
-  };
-
   const handleCoverLetter = (option) => {
     if (option === "write") {
       setCoverLetter(true);
     } else {
       setCoverLetter(false);
-      setCoverLetterText("");
     }
   };
 
-
   return (
-    <div className="w-full ">
+    <div className="w-full">
       {step1 && (
         <div className="shadow-md rounded-md p-6 bg-white">
           <ProgressBar percent={20} unfilledBackground="gray" />
@@ -206,16 +180,48 @@ const ApplyForm = ({ setRight }) => {
               <p className="text-red-600 text-sm">{errors.email}</p>
             )}
 
-            <label className="block text-sm font-medium text-gray-700 mt-4">
-              Address
-            </label>
-            <input
-              type="text"
-              name="address"
-              onChange={handleChange}
-              value={input.address}
-              className="mt-1 w-full p-2 border border-gray-300 rounded-md"
-            />
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Address
+              </label>
+              <div className="flex space-x-4">
+                {/* City */}
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    name="city"
+                    placeholder="City"
+                    onChange={handleChange}
+                    value={input.city || ""}
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                  />
+                </div>
+
+                {/* State */}
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    name="state"
+                    placeholder="State"
+                    onChange={handleChange}
+                    value={input.state || ""}
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                  />
+                </div>
+
+                {/* Country */}
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    name="country"
+                    placeholder="Country"
+                    onChange={handleChange}
+                    value={input.country || ""}
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                  />
+                </div>
+              </div>
+            </div>
 
             <div className="flex items-start mt-4">
               <MdInfo className="text-gray-500 mr-2" />
@@ -281,6 +287,7 @@ const ApplyForm = ({ setRight }) => {
                   onChange={handleFileChange}
                   className="hidden"
                   id="resume-upload"
+                  name="resume"
                 />
                 <label
                   htmlFor="resume-upload"
@@ -363,6 +370,7 @@ const ApplyForm = ({ setRight }) => {
             name="jobTitle"
             onChange={handleChange}
             className="mt-1 w-full p-2 border border-gray-300 rounded-md"
+            value={input.jobTitle}
           />
           <label
             htmlFor="company"
@@ -375,6 +383,7 @@ const ApplyForm = ({ setRight }) => {
             name="company"
             onChange={handleChange}
             className="mt-1 w-full p-2 border border-gray-300 rounded-md"
+            value={input.company}
           />
 
           <h4 className="text-lg font-bold mt-6">
@@ -387,6 +396,7 @@ const ApplyForm = ({ setRight }) => {
             rows="6"
             className="mt-4 w-full p-2 border border-gray-300 rounded-md"
             placeholder="Add Experience..."
+            value={input.experience}
           ></textarea>
 
           <div className="flex justify-between items-center mt-6">
@@ -479,7 +489,7 @@ const ApplyForm = ({ setRight }) => {
               className="w-full p-3 border border-gray-300 rounded-md mt-4"
               rows="6"
               placeholder="Write your cover letter here..."
-              value={input.coverLetterText}
+              value={input.coverLetter}
               onChange={handleCoverLetterChange}
             />
           )}
@@ -499,13 +509,16 @@ const ApplyForm = ({ setRight }) => {
               Exit
             </Link>
             <button
-             onClick={() => {
-              if (coverLetter && (!input.coverLetterText || !input.coverLetterText.trim())) {
-                setShowCoverLetterError(true); // Display error message
-              } else {
-                handleReview(); // Proceed to the next step
-              }
-            }}
+              onClick={() => {
+                if (
+                  coverLetter &&
+                  (!input.coverLetter || !input.coverLetter.trim())
+                ) {
+                  setShowCoverLetterError(true); // Display error message
+                } else {
+                  handleReview(); // Proceed to the next step
+                }
+              }}
               className="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
             >
               Review your application
@@ -526,7 +539,6 @@ const ApplyForm = ({ setRight }) => {
           input={input}
           handleReview1={handleReview1}
           fileURL={fileURL}
-          jobId={jobId}
         />
       )}
     </div>

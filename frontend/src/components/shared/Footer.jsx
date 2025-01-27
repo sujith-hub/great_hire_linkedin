@@ -7,7 +7,7 @@ import { FaLinkedin } from "react-icons/fa6";
 
 const Footer = () => {
   return (
-    <footer className="border-t border-t-blue-200 py-8 bg-gray-300 text-black">
+    <footer className="border-t-2 border-t-gray-300 py-8 bg-gradient-to-r from-blue-200 via-gray-300 to-blue-300 text-black">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0">
           {/* Logo and Text */}

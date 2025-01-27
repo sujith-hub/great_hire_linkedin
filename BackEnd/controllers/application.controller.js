@@ -1,11 +1,12 @@
 import { Application } from "../models/application.model.js";
 import { User } from "../models/user.model.js";
 import { Job } from "../models/job.model.js";
+import getDataUri from "../utils/dataUri.js";
+import cloudinary from "../utils/cloudinary.js";
 
 export const applyJob = async (req, res) => {
   try {
     const userId = req.id;
-    const jobId = req.params.id;
     const {
       fullname,
       email,
@@ -17,8 +18,10 @@ export const applyJob = async (req, res) => {
       experience,
       jobTitle,
       company,
+      jobId
     } = req.body;
     const { resume } = req.files;
+    
 
     // Find the user by ID
     const user = await User.findById(userId);
@@ -27,7 +30,7 @@ export const applyJob = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const job = await Job.findById(jobId);
+    const job = await Job.findById({ _id: jobId });
     if (!job) {
       return res.status(404).json({ message: "Job not found" });
     }
@@ -82,7 +85,7 @@ export const applyJob = async (req, res) => {
     const newApplication = new Application({
       job: jobId,
       applicant: userId,
-      status: "pending",
+      status: "Pending",
     });
 
     // Save the application to the database
@@ -95,6 +98,7 @@ export const applyJob = async (req, res) => {
     await job.save();
 
     res.status(201).json({
+      success:true,
       message: "Applied successfully",
       user: updateUser,
     });
