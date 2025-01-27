@@ -10,7 +10,7 @@ const Home = () => {
   const [location, setLocation] = useState("");
 
   return (
-    <div className="bg-gradient-to-r from-gray-100 via-blue-100 to-gray-100">
+    <div className="bg-white">
       <Navbar />
       <HeroSection
         searchInfo={{ titleKeyword, setTitleKeyword, location, setLocation }}
