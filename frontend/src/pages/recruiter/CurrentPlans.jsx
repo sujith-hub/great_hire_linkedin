@@ -8,6 +8,8 @@ const CurrentPlans = () => {
  const navigate = useNavigate();
  const { user } = useSelector((state) => state.auth);
  const { company, currentPlan } = useSelector((state) => state.company);
+ const { jobPlan } = useSelector((state) => state.jobPlan);
+   
  
  if (!user || !company) return <p>Loading...</p>;
 

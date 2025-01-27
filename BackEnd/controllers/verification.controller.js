@@ -411,10 +411,10 @@ export const verifyPaymentForJobPlans = async (req, res) => {
             paymentId: razorpay_payment_id,
             signature: razorpay_signature,
           },
-          status: "Active", // active the plan after paymentStatus paid
+          status: "Active", // Activate the plan after paymentStatus is paid
         },
-        { new: true } // This ensures the updated document is returned
-      );
+        { new: true } // Return the updated document
+      ).select("jobBoost expiryDate planName price status purchaseDate");
 
       // here remove expired plan of company
       await JobSubscription.deleteOne({
@@ -434,7 +434,7 @@ export const verifyPaymentForJobPlans = async (req, res) => {
       if (jobBoost === null) {
         company.maxPostJobs = null; // this one set unlimited
       } else {
-        company.maxPostJobs += jobBoost; // Add the jobBoost to existing maxPostJobs
+        company.maxPostJobs = company.maxPostJobs + jobBoost; // Add the jobBoost to existing maxPostJobs
       }
 
       await company.save();

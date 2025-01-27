@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 const ApplyForm = ({ setRight }) => {
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
+  console.log(user);
 
   useEffect(() => {
     if (!user) {
@@ -71,24 +72,6 @@ const ApplyForm = ({ setRight }) => {
     }
   };
 
-  // const handleBack2 = (e) => {
-  //   e.preventDefault();
-  //   setStep2(false);
-  //   setStep1(true);
-  // };
-
-  // const handleBack3 = (e) => {
-  //   e.preventDefault();
-  //   setStep3(false);
-  //   setStep2(true);
-  // };
-
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   console.log("Form Submitted:", input);
-  //   setRight(false); // Assuming this closes the form
-  // };
-
   const handleCoverLetterChange = (e) => {
     setInput((prev) => ({ ...prev, coverLetter: e.target.value }));
     setShowCoverLetterError(false); // Clear the error message as soon as they type
@@ -98,17 +81,14 @@ const ApplyForm = ({ setRight }) => {
     fullname: user?.fullname,
     number: user?.phoneNumber.number,
     email: user?.emailId.email,
-    // address:
-    //   user?.address?.city || user?.address?.state || user?.address?.country
-    //     ? `${user?.address?.city || ""}, ${user?.address?.state || ""}, ${
-    //         user?.address?.country || ""
-    //       }`
-    //     : "",
     city: user?.address?.city || "",
-    state: user?.address?.state|| "",
+    state: user?.address?.state || "",
     country: user?.address?.country || "",
     resume: user?.profile?.resume,
     coverLetter: user?.profile?.coverLetter || "",
+    jobTitle: user?.profile?.experience.jobProfile,
+    experience: user?.profile?.experience.experienceDetails,
+    company: user?.profile?.experience.companyName,
   });
 
   const handleFileChange = (e) => {
@@ -140,12 +120,6 @@ const ApplyForm = ({ setRight }) => {
     setReview(false);
     setStep4(true);
   };
-
-  // const handleChoose = () => {
-  //   if (inputRef.current) {
-  //     inputRef.current.click();
-  //   }
-  // };
 
   const handleCoverLetter = (option) => {
     if (option === "write") {
@@ -205,17 +179,6 @@ const ApplyForm = ({ setRight }) => {
             {errors.email && (
               <p className="text-red-600 text-sm">{errors.email}</p>
             )}
-
-            {/* <label className="block text-sm font-medium text-gray-700 mt-4">
-              Address
-            </label>
-            <input
-              type="text"
-              name="address"
-              onChange={handleChange}
-              value={input.address}
-              className="mt-1 w-full p-2 border border-gray-300 rounded-md"
-            /> */}
 
             <div className="mt-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -324,6 +287,7 @@ const ApplyForm = ({ setRight }) => {
                   onChange={handleFileChange}
                   className="hidden"
                   id="resume-upload"
+                  name="resume"
                 />
                 <label
                   htmlFor="resume-upload"
@@ -406,6 +370,7 @@ const ApplyForm = ({ setRight }) => {
             name="jobTitle"
             onChange={handleChange}
             className="mt-1 w-full p-2 border border-gray-300 rounded-md"
+            value={input.jobTitle}
           />
           <label
             htmlFor="company"
@@ -418,6 +383,7 @@ const ApplyForm = ({ setRight }) => {
             name="company"
             onChange={handleChange}
             className="mt-1 w-full p-2 border border-gray-300 rounded-md"
+            value={input.company}
           />
 
           <h4 className="text-lg font-bold mt-6">
@@ -430,6 +396,7 @@ const ApplyForm = ({ setRight }) => {
             rows="6"
             className="mt-4 w-full p-2 border border-gray-300 rounded-md"
             placeholder="Add Experience..."
+            value={input.experience}
           ></textarea>
 
           <div className="flex justify-between items-center mt-6">
