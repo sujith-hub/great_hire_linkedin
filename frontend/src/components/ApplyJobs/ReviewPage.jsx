@@ -12,7 +12,7 @@ const ReviewPage = ({ handleReview1, input, fileURL }) => {
   const { user } = useSelector((state) => state.auth);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const jobId = useParams();
+const {jobId} = useParams();
   console.log(jobId);
   
 

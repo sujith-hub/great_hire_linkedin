@@ -5,8 +5,6 @@ import { Job } from "../models/job.model.js";
 export const applyJob = async (req, res) => {
   try {
     const userId = req.id;
-   // const jobId = req.params.id;
-   // console.log(req.params);
     const {
       fullname,
       email,
