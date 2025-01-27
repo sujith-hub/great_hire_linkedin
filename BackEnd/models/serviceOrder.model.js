@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-const orderSchema = new mongoose.Schema(
+const serviceOrderSchema = new mongoose.Schema(
   {
     userDetails: {
       name: { type: String, required: true },
@@ -31,4 +31,4 @@ const orderSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export const Order = mongoose.model("Order", orderSchema);
+export const serviceOrder = mongoose.model("Order", serviceOrderSchema);

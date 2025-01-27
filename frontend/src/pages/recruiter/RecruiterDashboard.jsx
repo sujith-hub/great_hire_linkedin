@@ -7,12 +7,15 @@ import axios from "axios";
 import { addCompany } from "@/redux/companySlice";
 import DashboardNavigations from "./DashboardNavigations";
 import { fetchRecruiters } from "@/redux/recruiterSlice";
+import { fetchCurrentPlan } from "@/redux/jobPlanSlice";
 import { useNavigate } from "react-router-dom";
 
 const RecruiterDashboard = () => {
   const { user } = useSelector((state) => state.auth);
   const { company } = useSelector((state) => state.company);
   const { recruiters } = useSelector((state) => state.recruiters);
+  const { jobPlan } = useSelector((state) => state.jobPlan);
+  
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -22,10 +25,14 @@ const RecruiterDashboard = () => {
       navigate("/login");
     }
   }, []);
-  
+
   useEffect(() => {
-    if (user?.isVerify && user?.isCompanyCreated && recruiters?.length === 0)
+    if (user?.isVerify && user?.isCompanyCreated && recruiters?.length === 0) {
       dispatch(fetchRecruiters(company?._id));
+    }
+    if (!jobPlan) {
+      dispatch(fetchCurrentPlan(company?._id));
+    }
   }, [company?._id]);
 
   useEffect(() => {
@@ -52,6 +59,8 @@ const RecruiterDashboard = () => {
     }
   }, [user, dispatch]);
 
+  useEffect(() => {}, [user]);
+
   return (
     <div className="flex flex-col min-h-screen ">
       {/* Navbar */}
@@ -60,7 +69,7 @@ const RecruiterDashboard = () => {
       {/* Main Content */}
       <div className="flex">
         <DashboardNavigations />
-        <div className="ml-52 w-full ">
+        <div className="ml-52 w-full bg-gradient-to-r from-gray-100 via-blue-100 to-gray-100 h-full">
           {" "}
           {/* Adjust margin for sidebar */}
           {loading ? (

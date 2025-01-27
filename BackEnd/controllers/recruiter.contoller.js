@@ -7,6 +7,7 @@ import { Admin } from "../models/admin.model.js";
 import { Company } from "../models/company.model.js";
 import { Job } from "../models/job.model.js";
 import { Application } from "../models/application.model.js";
+import { BlacklistedCompany } from "../models/blacklistedCompany.model.js";
 
 import { oauth2Client } from "../utils/googleConfig.js";
 import axios from "axios";
@@ -496,6 +497,15 @@ export const deleteAccount = async (req, res) => {
       await Recruiter.deleteMany({
         _id: { $in: company.userId.map((u) => u.user) },
       });
+
+      // Save the unique fields into the BlacklistedCompany collection
+      const blacklistedData = {
+        companyName: company.companyName,
+        email: company.email,
+        adminEmail: company.adminEmail,
+        CIN: company.CIN,
+      };
+      await BlacklistedCompany.create(blacklistedData);
 
       // Remove the company
       await Company.findByIdAndDelete(companyId);

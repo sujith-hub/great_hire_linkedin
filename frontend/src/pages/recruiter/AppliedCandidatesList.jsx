@@ -50,6 +50,7 @@ const initialApplicants = [
 ];
 
 const statusOptions = ["All", "Pending", "Selected", "Rejected"];
+
 const statusStyles = {
   Pending: "bg-yellow-200 text-yellow-700 hover:bg-yellow-100",
   Selected: "bg-green-200 text-green-700 hover:bg-green-100",
@@ -85,7 +86,7 @@ const AppliedCandidatesList = () => {
   };
 
   return (
-    <div className="p-5 bg-gray-50 shadow-md rounded-lg">
+    <div className="p-5 h-screen">
       <h1 className="text-2xl font-bold mb-4 text-center underline">
         Applied Candidates List
       </h1>
@@ -115,8 +116,8 @@ const AppliedCandidatesList = () => {
         </select>
       </div>
 
-      <Table className="w-full border-collapse border border-gray-200">
-        <TableHeader className="bg-gray-100">
+      <Table className="w-full border-collapse border border-gray-300">
+        <TableHeader className="bg-gray-300">
           <TableRow>
             <TableHead>Sr No.</TableHead>
             <TableHead>Name</TableHead>

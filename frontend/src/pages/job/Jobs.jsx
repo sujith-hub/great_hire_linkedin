@@ -10,17 +10,17 @@ const Jobs = () => {
   return (
     <div>
       <Navbar />
-      <div className="w-full mx-auto mt-5">
-        <div className="flex gap-2">
+      <div className="w-full mx-auto bg-gradient-to-r from-gray-100 via-blue-100 to-gray-100">
+        <div className="flex gap-2 ">
           {/* Filter Section */}
-          <div className="w-40 md:w-60 xl:md-80 px-4">
+          <div className=" w-40 md:w-60 xl:md-80 px-4">
             <div className="sticky top-20"> {/* Makes the filter section sticky */}
               <FilterCard />
             </div>
           </div>
 
           {/* Jobs Section */}
-          <div className="flex-1 pb-5">
+          <div className="flex-1 pb-5 mt-5 px-2">
             {jobsArray.length <= 0 ? (
               <span>Job not found</span>
             ) : (

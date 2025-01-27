@@ -15,6 +15,7 @@ import storage from "redux-persist/lib/storage"; // Defaults to localStorage for
 import authSlice from "./authSlice";
 import companySlice from "./companySlice";
 import recruiterSlice from './recruiterSlice.js';
+import jobPlanSlice from './jobPlanSlice.js'
 
 // Configure persist settings
 const persistConfig = {
@@ -27,7 +28,8 @@ const persistConfig = {
 const rootReducer = combineReducers({
   auth: authSlice,
   company: companySlice,
-  recruiters:recruiterSlice
+  recruiters:recruiterSlice,
+  jobPlan:jobPlanSlice
 });
 
 // Wrap the root reducer with persistReducer

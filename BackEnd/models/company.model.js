@@ -38,6 +38,7 @@ const companySchema = new mongoose.Schema(
     CIN: {
       type: String,
       required: true,
+      unique: true,
     },
     businessFile: {
       type: String, // Store the file path or URL
@@ -45,13 +46,20 @@ const companySchema = new mongoose.Schema(
     bussinessFileName: {
       type: String,
     },
-    maxPostJobs: {
+    maxJobPosts: {
+      type: Number,
+      default: 10, // Default for Free plan
+      validate: {
+        validator: function (v) {
+          return v === null || v >= 0; // Allow null for unlimited
+        },
+        message: "maxJobPosts must be null or a non-negative number",
+      },
+    },
+
+    creditedForCandidates: {
       type: Number,
       default: 10,
-    },
-    haveSubscription: {
-      type: Boolean,
-      default: false,
     },
     userId: [
       {

@@ -30,11 +30,13 @@ const companySlice = createSlice({
     changeAdminUser: (state, action) => {
       state.company.adminEmail = action.payload;
     },
-    // reducer function to update compnay data
-    updateCompanyField: (state, action) => {
-      const { field, value } = action.payload;
-      if (state.company) {
-        state.company[field] = value;
+    
+    // reducer function to update maxJobpost data
+    updateMaxPostJobs: (state, action) => {
+      if(action.payload === null){
+        state.company.maxPostJobs = action.payload
+      }else{
+        state.company.maxPostJobs += action.payload
       }
     },
   },
@@ -46,6 +48,7 @@ export const {
   removeCompany,
   removeUserFromCompany,
   changeAdminUser,
+  updateMaxPostJobs
 } = companySlice.actions;
 
 export default companySlice.reducer;

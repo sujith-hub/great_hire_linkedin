@@ -327,7 +327,17 @@ export const logout = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
   try {
-    const { fullname, email, phoneNumber, bio, skills, experience } = req.body;
+    const {
+      fullname,
+      email,
+      phoneNumber,
+      bio,
+      skills,
+      experience,
+      city,
+      state,
+      country,
+    } = req.body;
 
     const { profilePhoto, resume } = req.files; // Access files from req.files
     const userId = req.id;
@@ -375,12 +385,17 @@ export const updateProfile = async (req, res) => {
       : skills?.split(",").map((skill) => skill.trim()) || [];
 
     if (fullname && user.fullname !== fullname) user.fullname = fullname;
+
+    if (city) user.address.city = city;
+    if (state) user.address.state = state;
+    if (country) user.address.country = country;
+
     if (email && user.emailId.email !== email) {
       user.emailId.email = email;
       user.emailId.isVerified = false;
     }
     if (phoneNumber && user.phoneNumber.number !== phoneNumber) {
-      user.phoneNumber = phoneNumber;
+      user.phoneNumber.number = phoneNumber;
       user.phoneNumber.isVerified = false;
     }
     if (bio && user.profile.bio !== bio) user.profile.bio = bio;
@@ -453,7 +468,7 @@ export const sendMessage = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Our team touch with you soon!",
+      message: "our team will be in touch with you soon!",
       contact,
     });
   } catch (err) {
@@ -587,7 +602,7 @@ export const resetPassword = async (req, res) => {
       success: false,
     });
   }
-}; 
+};
 
 export const deleteAccount = async (req, res) => {
   const { email } = req.body;

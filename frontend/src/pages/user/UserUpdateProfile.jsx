@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { setUser } from "@/redux/authSlice"; 
-import { Button } from "@/components/ui/button"; 
-import { Input } from "@/components/ui/input"; 
-import { Label } from "@/components/ui/label"; 
-import { Loader2 } from "lucide-react"; 
-import { USER_API_END_POINT } from "@/utils/ApiEndPoint"; 
+import { setUser } from "@/redux/authSlice";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Loader2 } from "lucide-react";
+import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 
 const UserUpdateProfile = ({ open, setOpen }) => {
   const [loading, setLoading] = useState(false);
@@ -23,7 +23,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     skills: user?.profile?.skills?.join(", ") || "",
     resume: user?.profile?.resume || "",
     profilePhoto: user?.profile?.profilePhoto || "",
-    address: user?.address?.city || "",
+   
   });
 
   const [previewImage, setPreviewImage] = useState(
@@ -57,13 +57,15 @@ const UserUpdateProfile = ({ open, setOpen }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
-    
+
     formData.append("fullname", input.fullname);
     formData.append("email", input.email);
     formData.append("phoneNumber", input.phoneNumber);
     formData.append("bio", input.bio);
     formData.append("experience", input.experience);
     formData.append("skills", input.skills);
+    
+    
 
     if (input.resume) {
       formData.append("resume", input.resume);
@@ -71,7 +73,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     if (input.profilePhoto) {
       formData.append("profilePhoto", input.profilePhoto);
     }
-    
+
     try {
       setLoading(true);
       const response = await axios.put(
@@ -177,7 +179,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
               />
             </div>
 
-             {/* Phone Number */}
+            {/* Phone Number */}
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="phoneNumber" className="text-right">
                 Phone
@@ -189,22 +191,6 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                 onChange={handleChange}
                 className="col-span-3"
                 placeholder="Enter your phone number"
-              />
-            </div>
-
-             {/* Address */}
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="address" className="text-right">
-                Address
-              </Label>
-              <Input
-                id="address"
-                name="address"
-                type="text"
-                value={input.address}
-                onChange={handleChange}
-                className="col-span-3"
-                placeholder="Enter Address"
               />
             </div>
 

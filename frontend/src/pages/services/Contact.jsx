@@ -59,7 +59,7 @@ const ContactSection = () => {
               Get in Touch
             </h2>
             <p className="text-gray-600 mb-6 text-lg">
-              We're here to assist you with anything you need. Reach out to us
+              We are here to assist you with anything you need. Reach out to us
               for inquiries, support, or just to say hi!
             </p>
             <div className="space-y-6">
@@ -97,7 +97,7 @@ const ContactSection = () => {
                     Email Us
                   </h4>
                   <p className="text-sm text-gray-500">
-                    Send us an email, and we'll get back to you shortly.
+                    Send us an email, and we will get back to you shortly.
                     <br />
                     Email id :{" "}
                     <a

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-// import { ProgressBar } from "react-step-progress-bar";
+import { ProgressBar } from "react-step-progress-bar";
 import { MdInfo } from "react-icons/md";
 import { BiArrowBack } from "react-icons/bi";
 import { Viewer } from "@react-pdf-viewer/core";
@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 const ApplyForm = ({ setRight }) => {
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
+  console.log(user);
 
   useEffect(() => {
     if (!user) {
@@ -29,50 +30,78 @@ const ApplyForm = ({ setRight }) => {
   const [step4, setStep4] = useState(false);
   const [review, setReview] = useState(false);
   const [coverLetter, setCoverLetter] = useState(true);
-  const [coverLetterText, setCoverLetterText] = useState("");
+  // const [coverLetterText, setCoverLetterText] = useState("");
+  const [showCoverLetterError, setShowCoverLetterError] = useState(false);
+
   const [fileURL, setFileURL] = useState(null);
   const inputRef = useRef();
+
+  // Validation errors
+  const [errors, setErrors] = useState({});
+
+  const handleChange = (e) => {
+    setInput({ ...input, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: "" }); // Clear errors as user types
+  };
+
+  // Validate Step 1 fields
+  const validateStep1 = () => {
+    const newErrors = {};
+    if (!input.fullname.trim()) newErrors.fullname = "Full Name is required.";
+    if (!input.number.trim()) newErrors.number = "Phone Number is required.";
+    if (!input.email.trim()) newErrors.email = "Email is required.";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleContinue1 = (e) => {
+    e.preventDefault();
+    if (validateStep1()) {
+      setStep1(false);
+      setStep2(true);
+    }
+  };
+
+  const handleContinue2 = (e) => {
+    e.preventDefault();
+    if (input.resume) {
+      setStep2(false);
+      setStep3(true);
+    } else {
+      setErrors({ resume: "Resume is required to proceed." });
+    }
+  };
+
+  const handleCoverLetterChange = (e) => {
+    setInput((prev) => ({ ...prev, coverLetter: e.target.value }));
+    setShowCoverLetterError(false); // Clear the error message as soon as they type
+  };
 
   const [input, setInput] = useState({
     fullname: user?.fullname,
     number: user?.phoneNumber.number,
     email: user?.emailId.email,
-    address:
-      user?.address?.city +
-      ", " +
-      user?.address?.state +
-      ", " +
-      user?.address?.country,
+    city: user?.address?.city || "",
+    state: user?.address?.state || "",
+    country: user?.address?.country || "",
     resume: user?.profile?.resume,
+    coverLetter: user?.profile?.coverLetter || "",
+    jobTitle: user?.profile?.experience.jobProfile,
+    experience: user?.profile?.experience.experienceDetails,
+    company: user?.profile?.experience.companyName,
   });
 
   const handleFileChange = (e) => {
-    const file = e.target.files[0];  
+    const file = e.target.files[0]; // Get the uploaded file
     if (file) {
-      const fileUrl = URL.createObjectURL(file);
+      const fileUrl = URL.createObjectURL(file); // Generate a URL for the uploaded file
       setInput((prevData) => ({
         ...prevData,
-        resume: file,
+        resume: file, // Update the resume field with the uploaded file
       }));
-      setFileURL(fileUrl)
+      setFileURL(fileUrl); // Set the file URL for preview or further use
+      setErrors({ ...errors, resume: "" }); // Clear any errors related to the file upload
     }
-    
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setInput({ ...input, [name]: value });
-  };
-
-  const handleContinue1 = (e) => {
-    e.preventDefault();
-    setStep1(false);
-    setStep2(true);
-  };
-
-  const handleContinue2 = () => {
-    setStep2(false);
-    setStep3(true);
   };
 
   const handleContinue3 = (e) => {
@@ -92,106 +121,107 @@ const ApplyForm = ({ setRight }) => {
     setStep4(true);
   };
 
-  const handleChoose = () => {
-    if (inputRef.current) {
-      inputRef.current.click();
-    }
-  };
-
-  
-
   const handleCoverLetter = (option) => {
     if (option === "write") {
       setCoverLetter(true);
     } else {
       setCoverLetter(false);
-      setCoverLetterText("");
     }
   };
 
-  const ProgressBar = ({ percent, unfilledBackground }) => {
-    return (
-      <div className="w-full bg-gray-200 rounded-full h-3 dark:bg-gray-700">
-        <div
-          className={`h-3 rounded-full ${
-            percent > 0 ? "bg-gradient-to-r from-blue-400 to-blue-700" : ""
-          }`}
-          style={{ width: `${percent}%` }}
-        ></div>
-      </div>
-    );
-  };
-
-
   return (
-    <div>
+    <div className="w-full">
       {step1 && (
-        <div className="w-full max-w-xl mx-auto p-6 bg-white shadow-md rounded-md">
+        <div className="shadow-md rounded-md p-6 bg-white">
           <ProgressBar percent={20} unfilledBackground="gray" />
-          <h6 className="text-sm text-gray-500 mt-4">
-            Application step 1 of 5
-          </h6>
           <h4 className="text-xl font-semibold my-4">
             Add your contact information
           </h4>
           <form>
-            <label
-              htmlFor="fullname"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Full Name
+            <label className="block text-sm font-medium text-gray-700">
+              Full Name <span className="text-red-600">*</span>
             </label>
             <input
               type="text"
               name="fullname"
               onChange={handleChange}
-              className="mt-1 w-full p-2 border border-gray-300 rounded-md"
               value={input.fullname}
-              readOnly
+              className="mt-1 w-full p-2 border border-gray-300 rounded-md"
             />
+            {errors.fullname && (
+              <p className="text-red-600 text-sm">{errors.fullname}</p>
+            )}
 
-            <label
-              htmlFor="phoneNumber"
-              className="block text-sm font-medium text-gray-700 mt-4"
-            >
-              Phone number
+            <label className="block text-sm font-medium text-gray-700 mt-4">
+              Phone Number <span className="text-red-600">*</span>
             </label>
             <input
               type="text"
-              name="phoneNumber"
+              name="number"
               onChange={handleChange}
-              className="mt-1 w-full p-2 border border-gray-300 rounded-md"
               value={input.number}
-              readOnly
+              className="mt-1 w-full p-2 border border-gray-300 rounded-md"
             />
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700 mt-4"
-            >
-              Email
+            {errors.number && (
+              <p className="text-red-600 text-sm">{errors.number}</p>
+            )}
+
+            <label className="block text-sm font-medium text-gray-700 mt-4">
+              Email <span className="text-red-600">*</span>
             </label>
             <input
               type="email"
               name="email"
               onChange={handleChange}
-              className="mt-1 w-full p-2 border border-gray-300 rounded-md"
               value={input.email}
-              readOnly
-            />
-
-            <label
-              htmlFor="city"
-              className="block text-sm font-medium text-gray-700 mt-4"
-            >
-              City, State <small className="text-gray-400">(optional)</small>
-            </label>
-            <input
-              type="text"
-              name="city"
-              onChange={handleChange}
               className="mt-1 w-full p-2 border border-gray-300 rounded-md"
-              value={input.address}
             />
+            {errors.email && (
+              <p className="text-red-600 text-sm">{errors.email}</p>
+            )}
+
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Address
+              </label>
+              <div className="flex space-x-4">
+                {/* City */}
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    name="city"
+                    placeholder="City"
+                    onChange={handleChange}
+                    value={input.city || ""}
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                  />
+                </div>
+
+                {/* State */}
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    name="state"
+                    placeholder="State"
+                    onChange={handleChange}
+                    value={input.state || ""}
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                  />
+                </div>
+
+                {/* Country */}
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    name="country"
+                    placeholder="Country"
+                    onChange={handleChange}
+                    value={input.country || ""}
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                  />
+                </div>
+              </div>
+            </div>
 
             <div className="flex items-start mt-4">
               <MdInfo className="text-gray-500 mr-2" />
@@ -208,6 +238,7 @@ const ApplyForm = ({ setRight }) => {
               >
                 Return to job search
               </Link>
+
               <button
                 onClick={handleContinue1}
                 className="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
@@ -216,7 +247,6 @@ const ApplyForm = ({ setRight }) => {
               </button>
             </div>
           </form>
-
           <p className="text-sm text-gray-600 mt-4">
             Having an issue with this application?{" "}
             <Link to="/contact" className="text-blue-700 cursor-pointer">
@@ -226,8 +256,9 @@ const ApplyForm = ({ setRight }) => {
         </div>
       )}
 
+      {/* Step 2 */}
       {step2 && (
-        <div className="w-full max-w-xl mx-auto p-6 bg-white shadow-md rounded-md">
+        <div className="w-full  p-6 bg-white shadow-md rounded-md">
           <ProgressBar percent={40} unfilledBackground="gray" />
           <div className="flex items-center mt-4">
             <BiArrowBack
@@ -243,7 +274,7 @@ const ApplyForm = ({ setRight }) => {
             </h6>
           </div>
 
-          <div className="mt-4 h-full w-full flex flex-col items-center justify-center ">
+          <div className="mt-4 h-96 w-full flex flex-col items-center justify-center ">
             {fileURL || input.resume ? (
               <div className="w-full h-full">
                 <Viewer fileUrl={fileURL || input.resume} />
@@ -256,6 +287,7 @@ const ApplyForm = ({ setRight }) => {
                   onChange={handleFileChange}
                   className="hidden"
                   id="resume-upload"
+                  name="resume"
                 />
                 <label
                   htmlFor="resume-upload"
@@ -310,7 +342,7 @@ const ApplyForm = ({ setRight }) => {
       )}
 
       {step3 && (
-        <div className="w-full max-w-xl mx-auto p-6 bg-white shadow-md rounded-md">
+        <div className="w-full  p-6 bg-white shadow-md rounded-md">
           <ProgressBar percent={60} unfilledBackground="gray" />
 
           <div className="flex items-center mt-4">
@@ -338,6 +370,7 @@ const ApplyForm = ({ setRight }) => {
             name="jobTitle"
             onChange={handleChange}
             className="mt-1 w-full p-2 border border-gray-300 rounded-md"
+            value={input.jobTitle}
           />
           <label
             htmlFor="company"
@@ -350,6 +383,7 @@ const ApplyForm = ({ setRight }) => {
             name="company"
             onChange={handleChange}
             className="mt-1 w-full p-2 border border-gray-300 rounded-md"
+            value={input.company}
           />
 
           <h4 className="text-lg font-bold mt-6">
@@ -362,6 +396,7 @@ const ApplyForm = ({ setRight }) => {
             rows="6"
             className="mt-4 w-full p-2 border border-gray-300 rounded-md"
             placeholder="Add Experience..."
+            value={input.experience}
           ></textarea>
 
           <div className="flex justify-between items-center mt-6">
@@ -388,7 +423,7 @@ const ApplyForm = ({ setRight }) => {
         </div>
       )}
       {step4 && (
-        <div className="w-full max-w-xl mx-auto p-6 bg-white shadow-md rounded-md">
+        <div className="w-full p-6 bg-white shadow-md rounded-md">
           <ProgressBar percent={80} unfilledBackground="gray" />
 
           <div className="flex items-center mt-4">
@@ -399,7 +434,6 @@ const ApplyForm = ({ setRight }) => {
                 setStep3(true);
               }}
             />
-
             <h6 className="ml-2 text-sm text-gray-500">
               Application step 4 of 5
             </h6>
@@ -415,7 +449,9 @@ const ApplyForm = ({ setRight }) => {
 
           {/* Option to Apply Without Cover Letter */}
           <div
-            className="flex items-center p-4 border border-gray-300 rounded-md cursor-pointer mt-4"
+            className={`flex items-center p-4 border ${
+              coverLetter ? "border-gray-300" : "border-blue-500"
+            } rounded-md cursor-pointer mt-4`}
             onClick={() => handleCoverLetter("without")}
           >
             <CgFileRemove className="text-gray-500 mr-4" />
@@ -432,7 +468,9 @@ const ApplyForm = ({ setRight }) => {
 
           {/* Option to Write Cover Letter */}
           <div
-            className="flex items-center p-4 border border-gray-300 rounded-md cursor-pointer mt-4"
+            className={`flex items-center p-4 border ${
+              coverLetter ? "border-blue-500" : "border-gray-300"
+            } rounded-md cursor-pointer mt-4`}
             onClick={() => handleCoverLetter("write")}
           >
             <FaFileSignature className="text-gray-500 mr-4" />
@@ -451,9 +489,16 @@ const ApplyForm = ({ setRight }) => {
               className="w-full p-3 border border-gray-300 rounded-md mt-4"
               rows="6"
               placeholder="Write your cover letter here..."
-              value={coverLetterText}
-              onChange={(e) => setCoverLetterText(e.target.value)}
+              value={input.coverLetter}
+              onChange={handleCoverLetterChange}
             />
+          )}
+
+          {/* Error message if cover letter is empty */}
+          {coverLetter && showCoverLetterError && (
+            <p className="text-sm text-red-500 mt-2">
+              Please provide a cover letter before proceeding.
+            </p>
           )}
 
           <div className="flex justify-between items-center mt-6">
@@ -464,7 +509,16 @@ const ApplyForm = ({ setRight }) => {
               Exit
             </Link>
             <button
-              onClick={handleReview}
+              onClick={() => {
+                if (
+                  coverLetter &&
+                  (!input.coverLetter || !input.coverLetter.trim())
+                ) {
+                  setShowCoverLetterError(true); // Display error message
+                } else {
+                  handleReview(); // Proceed to the next step
+                }
+              }}
               className="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
             >
               Review your application
@@ -481,7 +535,11 @@ const ApplyForm = ({ setRight }) => {
       )}
 
       {review && (
-        <ReviewPage input={input} handleReview1={handleReview1} />
+        <ReviewPage
+          input={input}
+          handleReview1={handleReview1}
+          fileURL={fileURL}
+        />
       )}
     </div>
   );

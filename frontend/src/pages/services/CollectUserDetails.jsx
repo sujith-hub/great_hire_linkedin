@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { razorpay_key_id } from "@/utils/RazorpayCredentials";
-import {toast} from "react-hot-toast";
-import { VERIFICATION_API_END_POINT, ORDER_API_END_POINT } from "@/utils/ApiEndPoint";
+import { toast } from "react-hot-toast";
+import {
+  VERIFICATION_API_END_POINT,
+  ORDER_API_END_POINT,
+} from "@/utils/ApiEndPoint";
+import GreatHireLogo from "../../assets/Great.png";
 
 const CollectUserDetails = ({ selectedPlan }) => {
   const [formData, setFormData] = useState({
@@ -10,7 +14,6 @@ const CollectUserDetails = ({ selectedPlan }) => {
     email: "",
     phone: "",
   });
-  console.log(selectedPlan)
 
   const [errors, setErrors] = useState({
     name: "",
@@ -57,15 +60,18 @@ const CollectUserDetails = ({ selectedPlan }) => {
 
   const initiatePayment = async (userDetails, selectedPlan) => {
     try {
-      const response = await axios.post(`${ORDER_API_END_POINT}/create-order`, {
-        userDetails,
-        planDetails: {
-          planId: selectedPlan.planId,
-          planHead: selectedPlan.headline,
-          planSubHead: selectedPlan.subHeading,
-          amount: selectedPlan.price,
-        },
-      });
+      const response = await axios.post(
+        `${ORDER_API_END_POINT}/create-order-for-service`,
+        {
+          userDetails,
+          planDetails: {
+            planId: selectedPlan.planId,
+            planHead: selectedPlan.headline,
+            planSubHead: selectedPlan.subHeading,
+            amount: selectedPlan.price,
+          },
+        }
+      );
 
       const { orderId, amount, currency } = response.data;
 
@@ -75,14 +81,17 @@ const CollectUserDetails = ({ selectedPlan }) => {
         currency,
         name: "GreatHire",
         description: selectedPlan?.headline,
-        image: "/logo.png",
+        image: { GreatHireLogo },
         order_id: orderId,
         handler: async (response) => {
-          const verificationResponse = await axios.post(`${VERIFICATION_API_END_POINT}/verify-payment`, {
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_signature: response.razorpay_signature,
-          });
+          const verificationResponse = await axios.post(
+            `${VERIFICATION_API_END_POINT}/verify-payment-for-service`,
+            {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            }
+          );
 
           if (verificationResponse.data.success) {
             toast.success("Payment Successful!");

@@ -108,7 +108,7 @@ const CompanyDetails = () => {
   return (
     <>
       {company && user?.isVerify ? (
-        <div className="max-w-6xl mx-auto p-8 bg-white shadow-lg rounded-lg mt-10 border border-gray-300">
+        <div className="max-w-6xl mx-auto p-8  mt-10 min-h-screen">
           <h1 className="text-3xl font-semibold text-gray-800 mb-8 text-center">
             Company Details
           </h1>

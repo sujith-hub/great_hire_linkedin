@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logOut } from "@/redux/authSlice";
 import { removeCompany } from "@/redux/companySlice";
+import { removeJobPlan } from "@/redux/jobPlanSlice";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
@@ -74,6 +75,7 @@ const Navbar = () => {
         if (user.role === "recruiter") {
           dispatch(removeCompany());
           dispatch(cleanRecruiterRedux());
+          dispatch(removeJobPlan());
         }
 
         setIsProfileMenuOpen(false);
@@ -117,7 +119,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 bg-white shadow-md z-30">
+      <nav className="fixed top-0 left-0 right-0 bg-gradient-to-r from-white via-blue-100 to-white border-b-2 border-gray-300 z-30 ">
         <div className="flex items-center justify-between mx-auto max-w-7xl h-16 px-4 lg:px-2">
           {/* Logo */}
           <Link to="/" className="text-2xl font-bold relative z-30">
@@ -261,11 +263,7 @@ const Navbar = () => {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={2}
-                d={
-                  isMenuOpen
-                    ? "M9 19l7-7-7-7"
-                    : "M4 6h16M4 12h16M4 18h16"
-                }
+                d={isMenuOpen ? "M9 19l7-7-7-7" : "M4 6h16M4 12h16M4 18h16"}
               />
             </svg>
           </button>

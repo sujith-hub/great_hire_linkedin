@@ -1,105 +1,235 @@
-import React from "react";
-import { Label } from "@/components/ui/label";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import axios from "axios";
+import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
-const JobDetail = ({ jobData }) => {
-  if (!jobData) {
-    return <p className="text-center text-gray-500 mt-10">Loading job details...</p>;
+const JobDetail = () => {
+  const { id } = useParams();
+  const { user } = useSelector((state) => state.auth);
+  const { company } = useSelector((state) => state.company);
+  const [jobDetails, setJobDetails] = useState(null);
+  const [dloading, dsetLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  const [jobOwner, setJobOwner] = useState(null);
+
+  useEffect(() => {
+    const fetchJobDetails = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(`${JOB_API_END_POINT}/get/${id}`, {
+          withCredentials: true,
+        });
+
+        if (!response.data.success) {
+          setError(response.data.message || "Job details not found.");
+          setJobDetails(null);
+          return;
+        }
+        setJobOwner(response?.data.job.created_by);
+        setJobDetails(response.data.job.jobDetails);
+      } catch (err) {
+        setError(err.message || "An unexpected error occurred.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchJobDetails();
+    }
+  }, [id]);
+
+  const deleteJob = async (jobId) => {
+    try {
+      dsetLoading(true);
+      const response = await axios.delete(
+        `
+        ${JOB_API_END_POINT}/delete/${jobId}`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (response.data.success) {
+        setJobs((prevJobs) => prevJobs.filter((job) => job._id !== jobId));
+        toast.success(response.data.message);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.error("Error deleting job:", error);
+      toast.error(
+        "There was an error deleting the job. Please try again later."
+      );
+    } finally {
+      dsetLoading(true);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-full">
+        <p className="text-gray-600 text-xl animate-pulse">
+          Loading job details...
+        </p>
+      </div>
+    );
   }
 
-  const {
-    title,
-    companyName,
-    address,
-    salaryRange,
-    description,
-    benefits,
-    responsibilities,
-    jobType,
-    workingDays,
-    openings,
-    postedDate,
-    qualifications,
-    experience,
-    skills,
-  } = jobData;
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p className="text-red-500 text-lg">{error}</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4">
-      <div className="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6">
-        {/* Job Title and Overview */}
-        <div className="border-b pb-4 mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">{title}</h1>
-          <h5 className="text-sm text-gray-500 mt-1">{companyName}</h5>
-          <h6 className="text-sm text-gray-500">{address}</h6>
-          <h6 className="text-sm text-gray-700 font-medium mt-1">{salaryRange}</h6>
-        </div>
+    <div className="flex flex-col space-y-4 p-6 md:p-10 min-h-screen">
+      {/* Job Header Section */}
+      <div className="bg-blue-700 text-white p-6 rounded-lg shadow-md">
+        <h1 className="text-3xl font-bold mb-2">{jobDetails?.title}</h1>
+        <p className="text-lg">
+          {jobDetails?.companyName || "Company not specified"}
+        </p>
+        <p className="text-md mt-1">
+          {jobDetails?.location || "Location not specified"}
+        </p>
+        <p className="text-lg mt-1 font-semibold">
+          {jobDetails?.salary
+            ?.replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
+            .split("-")
+            .map((part, index) => (
+              <span key={index}>
+                ₹{part.trim()}
+                {index === 0 ? " - " : ""}
+              </span>
+            ))}{" "}
+          <span className="text-sm">Monthly</span>
+        </p>
+      </div>
 
-        {/* Job Description */}
-        <div className="mb-6">
-          <h2 className="text-lg font-semibold text-gray-800 mb-2">Job Description:</h2>
-          <p className="text-gray-600 text-sm leading-relaxed">{description}</p>
-        </div>
+      {/* Job Description */}
+      <div>
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">
+          Job Description
+        </h2>
+        <p className="text-gray-600 text-lg">
+          {jobDetails?.details || "No description provided."}
+        </p>
+      </div>
 
-        {/* Benefits, Responsibilities, and Additional Details */}
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">Benefits:</h3>
-            <ul className="list-disc list-inside text-sm text-gray-600">
-              {benefits.map((benefit, index) => (
+      {/* Benefits and Responsibilities */}
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+        <div>
+          <h3 className="text-xl font-bold text-gray-800 mb-2">Benefits</h3>
+          <ul className="list-disc list-inside text-gray-600">
+            {jobDetails?.benefits?.length > 0 ? (
+              jobDetails.benefits.map((benefit, index) => (
                 <li key={index}>{benefit}</li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">Responsibilities:</h3>
-            <ul className="list-disc list-inside text-sm text-gray-600">
-              {responsibilities.map((responsibility, index) => (
+              ))
+            ) : (
+              <li>Not specified</li>
+            )}
+          </ul>
+        </div>
+        <div>
+          <h3 className="text-xl font-bold text-gray-800 mb-2">
+            Responsibilities
+          </h3>
+          <ul className="list-disc list-inside text-gray-600">
+            {jobDetails?.responsibilities?.length > 0 ? (
+              jobDetails.responsibilities.map((responsibility, index) => (
                 <li key={index}>{responsibility}</li>
-              ))}
-            </ul>
-          </div>
+              ))
+            ) : (
+              <li>Not specified</li>
+            )}
+          </ul>
+        </div>
+      </div>
 
+      {/* Additional Details */}
+      <div>
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">
+          Additional Details
+        </h2>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
           <div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">Job Details:</h3>
-            <p className="text-sm text-gray-600">
-              <strong>Job Type:</strong> {jobType}
+            <h4 className="font-semibold text-gray-700">Job Type</h4>
+            <p className="text-gray-600">
+              {jobDetails?.jobType || "Not specified"}
             </p>
-            <p className="text-sm text-gray-600">
-              <strong>Working Days:</strong> {workingDays}
+          </div>
+          <div>
+            <h4 className="font-semibold text-gray-700">Working Days</h4>
+            <p className="text-gray-600">
+              {jobDetails?.duration || "Not specified"}
             </p>
-            <p className="text-sm text-gray-600">
-              <strong>No. of Openings:</strong> {openings}
-            </p>
-            <p className="text-sm text-gray-600">
-              <strong>Posted Date:</strong> {postedDate}
+          </div>
+          <div>
+            <h4 className="font-semibold text-gray-700">No. of Openings</h4>
+            <p className="text-gray-600">
+              {jobDetails?.numberOfOpening || "Not specified"}
             </p>
           </div>
         </div>
+      </div>
 
-        {/* Job Requirements */}
-        <div className="mt-6">
-          <h2 className="text-lg font-semibold text-gray-800 mb-2">Job Requirements:</h2>
-          <div className="space-y-4">
-            {/* Qualifications */}
-            <div>
-              <Label className="font-bold text-gray-700">Qualifications:</Label>{" "}
-              <span className="text-sm text-gray-600">{qualifications}</span>
-            </div>
-
-            {/* Experience */}
-            <div>
-              <Label className="font-bold text-gray-700">Experience:</Label>{" "}
-              <span className="text-sm text-gray-600">{experience}</span>
-            </div>
-
-            {/* Skills */}
-            <div>
-              <Label className="font-bold text-gray-700">Skills:</Label>{" "}
-              <span className="text-sm text-gray-600">{skills.join(", ")}</span>
-            </div>
+      {/* Job Requirements */}
+      <div>
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">
+          Job Requirements
+        </h2>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+          <div>
+            <h4 className="font-semibold text-gray-700">Qualifications</h4>
+            <p className="text-gray-600">
+              {jobDetails?.qualifications?.join(", ") || "Not specified"}
+            </p>
+          </div>
+          <div>
+            <h4 className="font-semibold text-gray-700">Experience</h4>
+            <p className="text-gray-600">
+              {jobDetails?.experience || "Not specified"} years
+            </p>
+          </div>
+          <div>
+            <h4 className="font-semibold text-gray-700">Skills</h4>
+            <p className="text-gray-600">
+              {jobDetails?.skills?.join(", ") || "Not specified"}
+            </p>
           </div>
         </div>
+      </div>
+
+      <div className="flex w-full justify-end space-x-2">
+        <Button
+          className="bg-green-600 hover:bg-green-700"
+          onClick={() =>
+            navigate(`/recruiter/dashboard/applicants-details/${id}`)
+          }
+        >
+          Applicants Details
+        </Button>
+        {(user?._id === jobOwner ||
+          user?.emailId.email === company?.adminEmail) && (
+          <Button
+            className={`bg-red-600 hover:bg-red-700 ${
+              dloading ? "cursor-not-allowed" : ""
+            }`}
+            onClick={() => deleteJob(id)}
+            disabled={dloading}
+          >
+            {dloading ? "Deleting..." : "Delete"}
+          </Button>
+        )}
+        
       </div>
     </div>
   );

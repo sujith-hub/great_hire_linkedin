@@ -5,6 +5,8 @@ import getDataUri from "../utils/dataUri.js";
 import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
+import { BlacklistedCompany } from "../models/blacklistedCompany.model.js";
+import { JobSubscription } from '../models/jobSubscription.model.js';
 
 export const registerCompany = async (req, res) => {
   try {
@@ -33,6 +35,18 @@ export const registerCompany = async (req, res) => {
     if (!isValidCIN(CIN)) {
       return res.status(400).json({
         message: "Invalid CIN format.",
+        success: false,
+      });
+    }
+
+    // Check if any unique field exists in the BlacklistedCompany collection
+    const isBlacklisted = await BlacklistedCompany.findOne({
+      $or: [{ companyName }, { email }, { adminEmail }, { CIN }],
+    });
+
+    if (isBlacklisted) {
+      return res.status(200).json({
+        message: "Company Already has been Used",
         success: false,
       });
     }
@@ -238,7 +252,7 @@ export const updateCompany = async (req, res) => {
   try {
     const { companyWebsite, address, industry, email, phone } = req.body;
     const companyId = req.params.id;
-    const userId = req.id; 
+    const userId = req.id;
 
     // Find the company by ID
     const company = await Company.findById(companyId);
@@ -335,3 +349,28 @@ export const changeAdmin = async (req, res) => {
     });
   }
 };
+
+export const getCurrentPlan = async (req, res) => {
+  try {
+    const companyId = req.params.id; // Get company ID from request parameters
+    
+    // Find the active subscription for the company
+    const currentPlan = await JobSubscription.findOne({
+      company: companyId,
+    }).select('jobBoost expiryDate planName price status purchaseDate'); // Select only required fields
+
+
+    res.status(200).json({
+      success: true,
+      message: "Current active plan retrieved successfully",
+      plan: currentPlan,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+

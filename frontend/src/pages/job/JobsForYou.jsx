@@ -21,6 +21,7 @@ const JobsForYou = () => {
     changeBookmarkStatus,
     changeBlockStatus,
   } = useJobDetails(); // Access functions from context
+ 
 
   const navigate = useNavigate();
   const [isClickOnThreeDot, setClickOnThreeDot] = useState(false);
@@ -143,7 +144,11 @@ const JobsForYou = () => {
 
             <div className="flex items-center text-sm text-blue-700">
               <IoMdSend className="mr-1" size={20} />
-              <span className="text-black">Easy Apply</span>
+              <span className="text-black"
+               onClick={() => {
+                navigate(`/apply/${selectedJob?._id}`);
+              }}
+              >Easy Apply</span>
             </div>
 
             {/* Job details in circle bullets */}
@@ -203,7 +208,7 @@ const JobsForYou = () => {
                 <button
                   className="flex items-center gap-1"
                   onClick={() => {
-                    navigate("/apply");
+                    navigate(`/apply/${selectedJob?._id}`);
                   }}
                 >
                   Apply Now <RiShareBoxFill />

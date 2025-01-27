@@ -4,7 +4,7 @@ import { RiHome4Line } from "react-icons/ri";
 import { IoCreateOutline } from "react-icons/io5";
 import { MdWorkOutline, MdPostAdd } from "react-icons/md";
 import { PiBuildingOffice, PiBuildingOfficeLight } from "react-icons/pi";
-import { BiDetail } from "react-icons/bi";
+import { GiUpgrade } from "react-icons/gi";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { BsPersonPlus } from "react-icons/bs";
 import { LuLayoutDashboard } from "react-icons/lu";
@@ -16,7 +16,6 @@ const DashboardNavigations = () => {
   const { user } = useSelector((state) => state.auth);
   const { company } = useSelector((state) => state.company);
 
-
   const navLinkClass = ({ isActive }) =>
     `flex items-center gap-2 px-2 py-2 rounded-lg w-full ${
       isActive ? "bg-blue-600 text-white" : "hover:bg-blue-100 text-gray-700"
@@ -25,7 +24,7 @@ const DashboardNavigations = () => {
   const iconClass = (isActive) => (isActive ? "text-white" : "text-blue-600");
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] w-52 bg-gray-100 p-4 justify-between fixed top-16 overflow-y-auto shadow-lg shadow-gray-700">
+    <div className="flex flex-col h-[calc(100vh-4rem)] w-52 bg-gradient-to-b from-white via-blue-100 to-white p-4 justify-between fixed top-16 overflow-y-auto  border-r-2 border-gray-300">
       {/* Main Navigation Section */}
       <section>
         <h2 className="flex gap-2 items-center text-lg font-semibold text-gray-700 mb-4">
@@ -81,19 +80,21 @@ const DashboardNavigations = () => {
                     )}
                   </NavLink>
                 )}
-              {user?.isVerify === 1 && user?.isCompanyCreated && user?.isActive && (
-                <NavLink
-                  to="/recruiter/dashboard/post-job"
-                  className={navLinkClass}
-                >
-                  {({ isActive }) => (
-                    <>
-                      <MdPostAdd size={25} className={iconClass(isActive)} />
-                      <span>Post Job</span>
-                    </>
-                  )}
-                </NavLink>
-              )}
+              {user?.isVerify === 1 &&
+                user?.isCompanyCreated &&
+                user?.isActive && (
+                  <NavLink
+                    to="/recruiter/dashboard/post-job"
+                    className={navLinkClass}
+                  >
+                    {({ isActive }) => (
+                      <>
+                        <MdPostAdd size={25} className={iconClass(isActive)} />
+                        <span>Post Job</span>
+                      </>
+                    )}
+                  </NavLink>
+                )}
             </ul>
           </li>
           <NavLink to="/recruiter/dashboard/jobs" className={navLinkClass}>
@@ -139,18 +140,22 @@ const DashboardNavigations = () => {
           </NavLink>
 
           {/* Plans details */}
-          <NavLink
-            to="/recruiter/dashboard/your-plans"
-            className={navLinkClass}
-          >
-            {({ isActive }) => (
-              <>
-                <BiDetail size={25} className={iconClass(isActive)} />
-                <span>Your Plans</span>
-              </>
-            )}
-          </NavLink>
-
+            <NavLink
+              to="/recruiter/dashboard/your-plans"
+              className={navLinkClass}
+            >
+              {({ isActive }) => (
+                <>
+                  <GiUpgrade size={25} className={iconClass(isActive)} />
+                  <span>
+                    {company?.maxPostJobs === 0
+                      ? "Upgrade Plans"
+                      : "Current Plan"}
+                  </span>
+                </>
+              )}
+            </NavLink>
+          
           {user?.emailId.email === company?.adminEmail && (
             <NavLink
               to="/recruiter/dashboard/delete-account"

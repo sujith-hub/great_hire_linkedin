@@ -10,6 +10,8 @@ import recruiterRoute from "./routes/recruiter.route.js";
 import verificationRoute from "./routes/verification.route.js";
 import orderRoute from "./routes/order.route.js";
 import connectDB from "./utils/db.js";
+import cron from "node-cron";
+import { JobSubscription } from "./models/jobSubscription.model.js";
 
 dotenv.config({});
 
@@ -40,4 +42,18 @@ app.use("/api/v1/order", orderRoute);
 app.listen(PORT, () => {
   connectDB();
   console.log(`Server running at port ${PORT}`);
+});
+
+
+cron.schedule("0 0 * * *", async () => {
+  console.log("Running daily subscription check...");
+
+  // Find all active subscriptions
+  const subscriptions = await JobSubscription.find({ status: "Active" });
+
+  for (const subscription of subscriptions) {
+    await subscription.checkValidity(); // Check and expire if needed
+  }
+
+  console.log("Subscription check completed.");
 });

@@ -27,6 +27,8 @@ const PostedJobList = () => {
   const { company } = useSelector((state) => state.company);
   const [loading, setLoading] = useState(false);
   const [statusLoading, setStatusLoading] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const jobsPerPage = 5;
 
   const handlePostJob = () => {
     navigate("/recruiter/dashboard/post-job");
@@ -72,11 +74,12 @@ const PostedJobList = () => {
     return matchesSearch && matchesStatus;
   });
 
-  useEffect(() => {
-    if (user && company) {
-      fetchAllJobs(company?._id);
-    }
-  }, [user]);
+  const currentJobs = filteredJobs.slice(
+    (currentPage - 1) * jobsPerPage,
+    currentPage * jobsPerPage
+  );
+
+  const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
 
   const toggleActive = async (event, jobId, isActive) => {
     event.stopPropagation();
@@ -115,10 +118,20 @@ const PostedJobList = () => {
     }
   };
 
+  useEffect(() => {
+    if (user && company) {
+      fetchAllJobs(company?._id);
+    }
+  }, [user]);
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
+
   return (
     <>
       {company && user.isVerify ? (
-        <div className="p-5 bg-gray-50 shadow-md rounded-lg">
+        <div className="p-5 bg-gray-50 shadow-md rounded-lg min-h-screen">
           <div className="mb-6">
             <div className="p-10 bg-white shadow-md rounded-lg flex justify-center items-center">
               <button
@@ -136,11 +149,6 @@ const PostedJobList = () => {
             </div>
           ) : (
             <>
-              <Table className="w-full border-collapse border border-gray-200">
-                <TableCaption className="underline mb-6 text-gray-800 text-lg font-bold text-center caption-top">
-                  Posted Job List
-                </TableCaption>
-              </Table>
               <div className="flex flex-wrap justify-between mb-2 gap-4">
                 <div className="relative w-full md:w-1/3">
                   <FiSearch className="absolute left-3 top-2.5 text-gray-500" />
@@ -166,7 +174,7 @@ const PostedJobList = () => {
                 </select>
               </div>
 
-              <Table className="w-full border-collapse border border-gray-200">
+              <Table className="w-full border-collapse border border-gray-300">
                 <TableHeader className="bg-gray-300 ">
                   <TableRow>
                     <TableHead className="text-center">Sr No.</TableHead>
@@ -178,13 +186,15 @@ const PostedJobList = () => {
                 </TableHeader>
 
                 <TableBody className="text-center">
-                  {filteredJobs.length > 0 ? (
-                    filteredJobs.map((job, index) => (
+                  {currentJobs.length > 0 ? (
+                    currentJobs.map((job, index) => (
                       <TableRow
                         key={job._id}
                         className="hover:bg-gray-50 transition duration-150"
                       >
-                        <TableCell>{index + 1}</TableCell>
+                        <TableCell>
+                          {(currentPage - 1) * jobsPerPage + index + 1}
+                        </TableCell>
                         <TableCell>
                           {new Date(job.createdAt).toLocaleDateString("en-GB", {
                             day: "2-digit",
@@ -193,44 +203,40 @@ const PostedJobList = () => {
                           })}
                         </TableCell>
                         <TableCell>{job.jobDetails.title}</TableCell>
-
                         {job?.created_by === user?._id ||
                         user?.emailId.email === company?.adminEmail ? (
-                          <>
-                            <TableCell className="py-3 px-6 flex justify-center">
-                              {statusLoading[job._id] ? (
-                                "loading..."
-                              ) : job.jobDetails.isActive ? (
-                                <FaToggleOn
-                                  className="text-green-500 cursor-pointer"
-                                  onClick={(event) =>
-                                    toggleActive(
-                                      event,
-                                      job._id,
-                                      !job.jobDetails.isActive
-                                    )
-                                  }
-                                  size={30}
-                                />
-                              ) : (
-                                <FaToggleOff
-                                  className="text-red-500 cursor-pointer"
-                                  onClick={(event) =>
-                                    toggleActive(
-                                      event,
-                                      job._id,
-                                      !job.jobDetails.isActive
-                                    )
-                                  }
-                                  size={30}
-                                />
-                              )}
-                            </TableCell>
-                          </>
+                          <TableCell className="py-3 px-6 flex justify-center">
+                            {statusLoading[job._id] ? (
+                              "loading..."
+                            ) : job.jobDetails.isActive ? (
+                              <FaToggleOn
+                                className="text-green-500 cursor-pointer"
+                                onClick={(event) =>
+                                  toggleActive(
+                                    event,
+                                    job._id,
+                                    !job.jobDetails.isActive
+                                  )
+                                }
+                                size={30}
+                              />
+                            ) : (
+                              <FaToggleOff
+                                className="text-red-500 cursor-pointer"
+                                onClick={(event) =>
+                                  toggleActive(
+                                    event,
+                                    job._id,
+                                    !job.jobDetails.isActive
+                                  )
+                                }
+                                size={30}
+                              />
+                            )}
+                          </TableCell>
                         ) : (
-                          <TableCell >-----</TableCell>
+                          <TableCell>-----</TableCell>
                         )}
-
                         <TableCell className="space-x-2">
                           <button
                             onClick={() => handleJobDetailsClick(job._id)}
@@ -259,6 +265,34 @@ const PostedJobList = () => {
                   )}
                 </TableBody>
               </Table>
+
+              <div className="flex justify-between items-center mt-4">
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className={`px-4 py-2 border ${
+                    currentPage === 1
+                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      : "bg-blue-700 text-white"
+                  }`}
+                >
+                  Previous
+                </button>
+                <span>
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className={`px-4 py-2 border ${
+                    currentPage === totalPages
+                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      : "bg-blue-700 text-white"
+                  }`}
+                >
+                  Next
+                </button>
+              </div>
             </>
           )}
         </div>

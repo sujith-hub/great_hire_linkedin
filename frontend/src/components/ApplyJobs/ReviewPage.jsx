@@ -1,54 +1,70 @@
-import React from "react";
+import React, { useState } from "react";
 import { BiArrowBack } from "react-icons/bi";
-import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Viewer } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
-import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
+import { toast } from "react-hot-toast";
+import axios from "axios";
+import { APPLICATION_API_END_POINT } from "@/utils/ApiEndPoint";
+import { setUser } from "@/redux/authSlice";
 
-const ReviewPage = ({ handleReview1, input }) => {
-  const { user } = useSelector((state) => state.auth);
-  console.log(input);
+const ReviewPage = ({ handleReview1, input, fileURL }) => {
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const { jobId } = useParams();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const formData = new FormData();
-    if (input.fullname !== user?.fullname)
-      formData.append("fullname", input.fullname);
-    if (input.email !== user.emailId.email)
-      formData.append("email", input.email);
-    if (input.phoneNumber !== user.phoneNumber.number)
-      formData.append("phoneNumber", input.phoneNumber);
+  const handleSubmit = async () => {
+    setLoading(true); // Show loading indicator
 
-    if (input.resume) {
-      formData.append("resume", input.resume);
-    }
+    console.log(jobId);
 
     try {
-      setLoading(true);
-      const response = await axios.put(
-        `${JOB_API_END_POINT}/apply-job`,
+      const formData = new FormData();
+      formData.append("fullname", input.fullname);
+      formData.append("email", input.email);
+      formData.append("number", input.number);
+      formData.append("city", input.city); // Flattened structure for compatibility
+      formData.append("state", input.state);
+      formData.append("country", input.country);
+      formData.append("coverLetter", input.coverLetter || "");
+      formData.append("experience", input.experience || "");
+      formData.append("jobTitle", input.jobTitle || "");
+      formData.append("company", input.company || "");
+      formData.append("jobId", jobId); // Add jobId to the request body
+      if (input.resume instanceof File) {
+        formData.append("resume", input.resume);
+      }
+
+      const response = await axios.post(
+        `${APPLICATION_API_END_POINT}/apply`,
         formData,
         {
-          headers: { "Content-Type": "multipart/form-data" },
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
           withCredentials: true,
         }
       );
 
       if (response.data.success) {
+        toast.success(response.data.message);
         dispatch(setUser(response.data.user));
-        toast.success("Profile updated successfully!");
-        setOpen(false);
+        navigate("/success"); // Navigate to success page or any other page
       }
-    } catch (err) {
-      console.error(err);
-      toast.error(err.response?.data?.message || "Something went wrong!");
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "Failed to submit the application."
+      );
+      console.error("Error submitting application:", error);
     } finally {
-      setLoading(false);
+      setLoading(false); // Hide loading indicator
     }
   };
+
   return (
-    <div className="max-w-6xl justify-center mx-auto p-6 bg-white shadow-lg rounded-lg">
+    <div className="flex justify-center flex-col p-6 bg-white shadow-lg rounded-lg w-full">
       <div className="flex items-center mb-6">
         <BiArrowBack
           className="text-gray-600 cursor-pointer text-2xl"
@@ -72,14 +88,16 @@ const ReviewPage = ({ handleReview1, input }) => {
           <h3 className="text-base font-semibold">{input.email}</h3>
           <small className="text-xs text-gray-500 block mt-2">
             To mitigate fraud, Great Hire may mask your email address. If
-            masked, the employer will see an address like
-            <strong> abc123@gmail.com</strong>. Some employers, however, may
+            masked, the employer will see an address like{" "}
+            <strong>abc123@gmail.com</strong>. Some employers, however, may
             still be able to unmask and see your actual email address.
           </small>
         </div>
         <div>
-          <p className="text-sm text-gray-500">City, State</p>
-          <h3 className="text-base font-semibold">{input.address}</h3>
+          <p className="text-sm text-gray-500">Address</p>
+          <h3 className="text-base font-semibold">
+            {`${input.city}, ${input.state}, ${input.country}`}
+          </h3>
         </div>
         <div>
           <p className="text-sm text-gray-500">Phone Number</p>
@@ -87,9 +105,9 @@ const ReviewPage = ({ handleReview1, input }) => {
         </div>
       </div>
 
-      <p className="text-sm text-gray-500">Resume</p>
-      <div className="w-full h-fit">
-        <Viewer fileUrl={input.resume} />
+      <p className="text-gray-500 text-2xl">Resume</p>
+      <div className="h-96">
+        <Viewer fileUrl={fileURL || input.resume} />
       </div>
 
       <h4 className="text-lg font-medium mb-4">Employee Questions</h4>
@@ -108,56 +126,24 @@ const ReviewPage = ({ handleReview1, input }) => {
           </p>
           <h3 className="text-base font-semibold">{input?.experience}</h3>
         </div>
-      </div>
 
-      <p className="text-sm text-gray-500 mb-6">
-        If you notice an error in your application, please <br />
-        <Link to="/contact" className="underline cursor-pointer">
-          contact Great Hire
-        </Link>
-      </p>
-
-      <div className="mb-6">
-        <div className="flex items-center space-x-2 mb-2">
-          <input
-            type="checkbox"
-            className="h-4 w-4 text-blue-500 border-gray-300 rounded focus:ring-blue-500"
-          />
-          <h3 className="text-sm text-gray-700">
-            Notify me by email when similar jobs are available
+        <div>
+          <p className="text-sm text-gray-500">Cover Letter</p>
+          <h3 className="text-base font-semibold">
+            {input.coverLetter || "No cover letter provided."}
           </h3>
         </div>
-        <small className="text-xs text-gray-500 block">
-          By creating a job alert, you agree to our{" "}
-          <Link
-            to="/policy/privacy-policy"
-            className="underline cursor-pointer"
-          >
-            Terms
-          </Link>
-          . You can change your consent settings at any time by unsubscribing or
-          as detailed in our terms.
-        </small>
       </div>
 
-      <small className="text-xs text-gray-500 block mb-6">
-        By pressing apply: 1) you agree to our{" "}
-        <Link to="/policy/privacy-policy" className="underline cursor-pointer">
-          Terms, Cookie & Privacy Policies
-        </Link>
-        ; 2) you consent to your application being transmitted to the Employer
-        (Great Hire does not guarantee receipt), & processed & analyzed in
-        accordance with its & Great Hire's terms & privacy policies; & 3) you
-        acknowledge that when you apply to jobs outside your country it may
-        involve you sending your personal data to countries with lower levels of
-        data protection.
-      </small>
-
       <div className="text-center mb-6">
-        <button className="bg-blue-700 hover:bg-blue-600 text-white px-6 py-2 rounded-md ">
-          <Link to="/success" className="text-white no-underline">
-            Submit your application
-          </Link>
+        <button
+          onClick={handleSubmit}
+          disabled={loading}
+          className={`${
+            loading ? "bg-blue-400" : "bg-blue-700 hover:bg-blue-600"
+          } text-white px-6 py-2 rounded-md`}
+        >
+          {loading ? "Submitting..." : "Submit your application"}
         </button>
       </div>
 
@@ -172,3 +158,4 @@ const ReviewPage = ({ handleReview1, input }) => {
 };
 
 export default ReviewPage;
+
