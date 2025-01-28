@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../../components/shared/Navbar";
 import { Avatar, AvatarImage } from "../../components/ui/avatar";
-import { Contact, Mail, Pen } from "lucide-react";
-import { FaRegAddressCard } from "react-icons/fa";
+import { Mail, Pen } from "lucide-react";
 import { LuPhoneIncoming } from "react-icons/lu";
 import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
@@ -34,7 +33,7 @@ const UserProfile = () => {
     try {
       setLoading(true);
       const response = await axios.delete(`${USER_API_END_POINT}/delete`, {
-        data: { email: user?.email }, // Pass email in the `data` property
+        data: { email: user?.email },
         withCredentials: true,
       });
       if (response.data.success) {
@@ -51,29 +50,27 @@ const UserProfile = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-100">
+    <div className="flex flex-col min-h-screen bg-gradient-to-b from-gray-50 to-gray-200">
       <Navbar />
       <div className="flex-grow">
         <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-lg mt-10 p-8">
           {/* User Info Section */}
           <div className="flex flex-col items-center text-center border-b pb-8">
-            <Avatar className="h-24 w-24">
+            <Avatar className="h-24 w-24 shadow-lg">
               <AvatarImage
-                src={
-                  user?.profile?.profilePhoto || "https://github.com/shadcn.png"
-                }
+                src={user?.profile?.profilePhoto || "https://github.com/shadcn.png"}
                 alt="Profile Photo"
+                onError={(e) => (e.target.src = "/default-avatar.png")}
               />
             </Avatar>
-            <h1 className="mt-4 text-2xl font-bold">
+            <h1 className="mt-4 text-3xl font-bold text-gray-800">
               {user?.fullname || "User Name"}
             </h1>
-            <p className="text-gray-700">
+            <p className="text-gray-600 mt-2">
               {user?.profile?.bio || "No bio available"}
             </p>
-            <p className="text-gray-500">
-              {`Experience: ${user?.profile?.experience?.duration} Year` ||
-                "No Experience"}
+            <p className="text-gray-500 mt-1">
+              {`Experience: ${user?.profile?.experience?.duration || 0} Year`}
             </p>
             <Button
               onClick={() => setOpen(true)}
@@ -86,19 +83,19 @@ const UserProfile = () => {
           </div>
 
           {/* Contact Information Section */}
-          <div className="mt-6">
+          <div className="mt-8">
             <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
               Contact Information
             </h2>
-            <div className="mt-4 space-y-2">
-              <div className="flex items-center gap-3">
-                <Mail className="text-gray-500" />
+            <div className="mt-4 space-y-4">
+              <div className="flex items-center gap-4">
+                <Mail className="text-blue-500" />
                 <span className="text-gray-700">
-                  {user?.emailId.email || "Not Provided"}
+                  {user?.emailId?.email || "Not Provided"}
                 </span>
-                {!user?.emailId.isVerified ? (
+                {!user?.emailId?.isVerified ? (
                   <span
-                    className="text-green-600 text-md cursor-pointer hover:text-green-700"
+                    className="text-blue-600 text-sm cursor-pointer hover:underline"
                     onClick={() => setOpenEmailOTPModal(true)}
                   >
                     Verify
@@ -109,14 +106,14 @@ const UserProfile = () => {
                   </span>
                 )}
               </div>
-              <div className="flex items-center gap-3">
-                <LuPhoneIncoming size={25} className="text-gray-500" />
+              <div className="flex items-center gap-4">
+                <LuPhoneIncoming size={25} className="text-blue-500" />
                 <span className="text-gray-700">
-                  {user?.phoneNumber.number || "Not Provided"}
+                  {user?.phoneNumber?.number || "Not Provided"}
                 </span>
-                {!user?.phoneNumber.isVerified ? (
+                {!user?.phoneNumber?.isVerified ? (
                   <span
-                    className="text-green-600 text-md cursor-pointer hover:text-green-700"
+                    className="text-blue-600 text-sm cursor-pointer hover:underline"
                     onClick={() => setOpenNumberOTPModal(true)}
                   >
                     Verify
@@ -127,19 +124,11 @@ const UserProfile = () => {
                   </span>
                 )}
               </div>
-              <div className="flex items-center gap-3">
-                <FaRegAddressCard size={25} className="text-gray-500" />
-                <span className="text-gray-700">
-                  {user?.address
-                    ? `${user.address.city}, ${user.address.state}, ${user.address.country}`
-                    : "Not Provided"}
-                </span>
-              </div>
             </div>
           </div>
 
           {/* Skills Section */}
-          <div className="mt-6">
+          <div className="mt-8">
             <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
               Skills
             </h2>
@@ -148,7 +137,7 @@ const UserProfile = () => {
                 user.profile.skills.map((skill, index) => (
                   <Badge
                     key={index}
-                    className="bg-gray-300 px-4 py-2 text-gray-800 hover:bg-gray-200 rounded-lg font-bold text-sm"
+                    className="bg-blue-100 hover:bg-gray-200 px-4 py-2 text-blue-800 rounded-lg font-medium text-sm"
                   >
                     {skill}
                   </Badge>
@@ -160,7 +149,7 @@ const UserProfile = () => {
           </div>
 
           {/* Resume Section */}
-          <div className="mt-6">
+          <div className="mt-8">
             <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
               Resume
             </h2>
@@ -175,19 +164,23 @@ const UserProfile = () => {
                   View Resume
                 </a>
               ) : (
-                <span className="text-gray-600">No resume uploaded</span>
+                <span className="text-gray-600">
+                  No resume uploaded.{" "}
+                  <a href="/upload" className="text-blue-600 underline">
+                    Upload now
+                  </a>
+                </span>
               )}
             </div>
           </div>
 
           {/* Delete Account Button */}
-          <div className="flex justify-center mt-6">
+          <div className="flex justify-center mt-8">
             <Button
               onClick={handleDeleteAccount}
               variant="destructive"
-              className={`bg-red-500 text-white hover:bg-red-700 ${
-                loading && "cursor-not-allowed bg-red-400"
-              }`}
+              className={`bg-red-500 text-white hover:bg-red-700 ${loading && "cursor-not-allowed bg-red-400"}`}
+              disabled={loading}
             >
               {loading ? "Deleting..." : "Delete Account"}
             </Button>

@@ -119,7 +119,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 bg-gradient-to-r from-white via-blue-100 to-white border-b-2 border-gray-300 z-30 ">
+      <nav className="fixed top-0 left-0 right-0 bg-white border-b-2 border-gray-300 z-30 ">
         <div className="flex items-center justify-between mx-auto max-w-7xl h-16 px-4 lg:px-2">
           {/* Logo */}
           <Link to="/" className="text-2xl font-bold relative z-30">
@@ -302,31 +302,14 @@ const Navbar = () => {
                   </div>
                 </div>
               ) : (
-                <div className="flex flex-col gap-4 mt-16 px-4">
-                  <Link
-                    to="/login"
-                    className="w-full bg-blue-700 text-white px-4 py-2 rounded-lg text-center hover:bg-blue-800 transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Login
-                  </Link>
-                  <button
-                    onClick={() => {
-                      setIsSignupModalOpen(true);
-                      setIsMenuOpen(false);
-                    }}
-                    className="w-full bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors"
-                  >
-                    Signup
-                  </button>
-                </div>
+                null  //remove the login and signup button from here and put that below policy
               )}
             </div>
 
             {/* Mobile Navigation Links */}
             <div className="py-4">
-              <div className="px-4 py-2">
-                <p className="text-sm font-medium text-gray-500">Navigation</p>
+              <div className="px-4 py-2 mt-4">
+                <p className="text-lg font-medium text-gray-500">Navigation</p>
               </div>
               {navLinks.map(({ to, label }) => (
                 <Link
@@ -342,7 +325,7 @@ const Navbar = () => {
               {/* Mobile Policy Section */}
               <div className="mt-4 border-t">
                 <div className="px-4 py-2">
-                  <p className="text-sm font-medium text-gray-500">Policies</p>
+                  <p className="text-lg font-medium text-gray-500">Policies</p>
                 </div>
                 {policyLinks.map(({ to, label }) => (
                   <Link
@@ -356,27 +339,43 @@ const Navbar = () => {
                 ))}
               </div>
 
-              {/* Mobile User Actions */}
-              {user && (
-                <div className="mt-4 border-t">
-                  <div className="px-4 py-2">
-                    <p className="text-sm font-medium text-gray-500">Account</p>
-                  </div>
-                  <Link
-                    to="/profile"
-                    className="block px-4 py-2.5 hover:bg-gray-50 transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    View Profile
-                  </Link>
-                  <button
-                    onClick={handleLogout}
-                    className="w-full text-left px-4 py-2.5 text-red-600 hover:bg-gray-50 transition-colors"
-                  >
-                    Logout
-                  </button>
-                </div>
-              )}
+              {/* Mobile User Actions updated with login and signup button */}
+              {!user ? (
+                <div className="mt-4 border-t p-4">
+                <Link
+                  to="/login"
+                  className="w-full bg-blue-700 text-white px-4 py-2 rounded-lg text-center hover:bg-blue-800 transition-colors block"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Login
+                </Link>
+                <button
+                  onClick={() => {
+                    setIsSignupModalOpen(true);
+                    setIsMenuOpen(false);
+                  }}
+                  className="w-full bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors block mt-2"
+                >
+                  Signup
+                </button>
+              </div>
+            ) : (
+              <div className="mt-4 border-t p-4">
+                <Link
+                  to="/profile"
+                  className="block px-4 py-2.5 hover:bg-gray-50 transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  View Profile
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left px-4 py-2.5 text-red-600 hover:bg-gray-50 transition-colors"
+                >
+                  Logout
+                </button>
+              </div>
+            )}
             </div>
           </div>
         </div>

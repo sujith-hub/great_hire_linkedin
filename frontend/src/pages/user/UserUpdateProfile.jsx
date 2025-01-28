@@ -23,12 +23,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     skills: user?.profile?.skills?.join(", ") || "",
     resume: user?.profile?.resume || "",
     profilePhoto: user?.profile?.profilePhoto || "",
-    address:
-      user?.address?.city || user?.address?.state || user?.address?.country
-        ? `${user?.address?.city || ""}, ${user?.address?.state || ""}, ${
-            user?.address?.country || ""
-          }`
-        : "",
+   
   });
 
   const [previewImage, setPreviewImage] = useState(
@@ -199,21 +194,6 @@ const UserUpdateProfile = ({ open, setOpen }) => {
               />
             </div>
 
-            {/* Address */}
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="address" className="text-right">
-                Address
-              </Label>
-              <Input
-                id="address"
-                name="address"
-                type="text"
-                value={input.address}
-                onChange={handleChange}
-                className="col-span-3"
-                placeholder="City, State, Country"
-              />
-            </div>
 
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="bio" className="text-right">
