@@ -33,6 +33,15 @@ const JobsForYou = () => {
       (application) => application.applicant === user?._id
     ) || false;
 
+  const hasAppliedToJob = (jobId) =>
+    jobs.some(
+      (job) =>
+        job._id === jobId && // Check if the job ID matches
+        job?.application?.some(
+          (application) => application.applicant === user?._id // Check if the user has applied
+        )
+    );
+
   // for bookmark job for particular user
   const handleBookmark = () => {};
 
@@ -154,15 +163,21 @@ const JobsForYou = () => {
             </div>
 
             <div className="flex items-center text-sm text-blue-700">
-              <IoMdSend className="mr-1" size={20} />
-              <span
-                className="text-black"
-                onClick={() => {
-                  navigate(`/apply/${selectedJob?._id}`);
-                }}
-              >
-                Easy Apply
-              </span>
+              {hasAppliedToJob(job._id) ? (
+                <span className="text-green-600">Applied</span>
+              ) : (
+                <>
+                  <IoMdSend className="mr-1" size={20} />
+                  <span
+                    className="text-black"
+                    onClick={() => {
+                      navigate(`/apply/${selectedJob?._id}`);
+                    }}
+                  >
+                    Easy Apply
+                  </span>
+                </>
+              )}
             </div>
 
             {/* Job details in circle bullets */}
