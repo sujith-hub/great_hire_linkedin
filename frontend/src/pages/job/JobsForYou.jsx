@@ -25,6 +25,7 @@ const JobsForYou = () => {
 
   const navigate = useNavigate();
   const [isClickOnThreeDot, setClickOnThreeDot] = useState(false);
+  
 
   // for bookmark job for particular user
   const handleBookmark = () => {};
