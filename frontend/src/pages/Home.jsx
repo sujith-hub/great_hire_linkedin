@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
 import HeroSection from "../components/HeroSection";
@@ -10,7 +10,7 @@ const Home = () => {
   const [location, setLocation] = useState("");
 
   return (
-    <div className="bg-gradient-to-r from-gray-100 via-blue-100 to-gray-100">
+    <div className="bg-white">
       <Navbar />
       <HeroSection
         searchInfo={{ titleKeyword, setTitleKeyword, location, setLocation }}

@@ -16,7 +16,6 @@ import { useNavigate } from "react-router-dom";
 const ApplyForm = ({ setRight }) => {
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
-  console.log(user);
 
   useEffect(() => {
     if (!user) {
@@ -86,9 +85,9 @@ const ApplyForm = ({ setRight }) => {
     country: user?.address?.country || "",
     resume: user?.profile?.resume,
     coverLetter: user?.profile?.coverLetter || "",
-    jobTitle: user?.profile?.experience.jobProfile,
-    experience: user?.profile?.experience.experienceDetails,
-    company: user?.profile?.experience.companyName,
+    jobTitle: user?.profile?.experience?.jobProfile,
+    experience: user?.profile?.experience?.experienceDetails,
+    company: user?.profile?.experience?.companyName,
   });
 
   const handleFileChange = (e) => {

@@ -349,7 +349,7 @@ export const changeAdmin = async (req, res) => {
     });
   }
 };
-
+ 
 export const getCurrentPlan = async (req, res) => {
   try {
     const companyId = req.params.id; // Get company ID from request parameters

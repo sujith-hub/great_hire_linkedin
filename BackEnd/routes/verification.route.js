@@ -9,6 +9,7 @@ import {
   verifyPaymentForJobPlans,
   updateEmailVerification,
   updateNumberVerification,
+  sendEmailToApplicant
 } from "../controllers/verification.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 
@@ -23,5 +24,6 @@ router.post("/verify-payment-for-jobplan", verifyPaymentForJobPlans);
 
 router.post("/update-email-verification", updateEmailVerification);
 router.post("/update-number-verification", updateNumberVerification);
+router.post("/send-email-applicants/:id",isAuthenticated, sendEmailToApplicant);
 
 export default router;

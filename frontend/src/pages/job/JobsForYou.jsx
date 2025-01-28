@@ -12,6 +12,8 @@ import { BsFlagFill } from "react-icons/bs";
 import JobMajorDetails from "./JobMajorDetails";
 import { useNavigate } from "react-router-dom";
 import { useJobDetails } from "@/context/JobDetailsContext";
+import { useSelector, useDispatch } from "react-redux";
+//import { selectIsJobApplied } from "@/redux/appliedJobSlice";
 
 const JobsForYou = () => {
   const {
@@ -21,11 +23,15 @@ const JobsForYou = () => {
     changeBookmarkStatus,
     changeBlockStatus,
   } = useJobDetails(); // Access functions from context
- 
 
   const navigate = useNavigate();
   const [isClickOnThreeDot, setClickOnThreeDot] = useState(false);
-  
+  const { user } = useSelector((state) => state.auth);
+
+  const isApplied =
+    selectedJob?.application?.some(
+      (application) => application.applicant === user?._id
+    ) || false;
 
   // for bookmark job for particular user
   const handleBookmark = () => {};
@@ -54,6 +60,10 @@ const JobsForYou = () => {
     const activeDays = Math.floor(timeDifference / (1000 * 60 * 60 * 24)); // Divide by the number of milliseconds in a day
 
     return activeDays;
+  };
+
+  const checkIfJobApplied = (jobId) => {
+    return false;
   };
 
   return (
@@ -145,11 +155,14 @@ const JobsForYou = () => {
 
             <div className="flex items-center text-sm text-blue-700">
               <IoMdSend className="mr-1" size={20} />
-              <span className="text-black"
-               onClick={() => {
-                navigate(`/apply/${selectedJob?._id}`);
-              }}
-              >Easy Apply</span>
+              <span
+                className="text-black"
+                onClick={() => {
+                  navigate(`/apply/${selectedJob?._id}`);
+                }}
+              >
+                Easy Apply
+              </span>
             </div>
 
             {/* Job details in circle bullets */}
@@ -205,15 +218,25 @@ const JobsForYou = () => {
             </div>
 
             <div className="flex items-center gap-2">
-              <div className="py-2 px-5 bg-blue-600 rounded-lg text-white hover:bg-blue-700">
-                <button
-                  className="flex items-center gap-1"
-                  onClick={() => {
-                    navigate(`/apply/${selectedJob?._id}`);
-                  }}
-                >
-                  Apply Now <RiShareBoxFill />
-                </button>
+              <div
+                className={`py-2 px-5 rounded-lg text-white ${
+                  isApplied
+                    ? "bg-green-600 hover:bg-green-700 "
+                    : "bg-blue-600 hover:bg-blue-700"
+                }`}
+              >
+                {isApplied ? (
+                  <div className="flex items-center gap-1 ">Applied</div>
+                ) : (
+                  <button
+                    className="flex items-center gap-1"
+                    onClick={() => {
+                      navigate(`/apply/${selectedJob?._id}`);
+                    }}
+                  >
+                    Apply Now <RiShareBoxFill />
+                  </button>
+                )}
               </div>
               <div
                 className={`p-2 ${
@@ -236,9 +259,7 @@ const JobsForYou = () => {
           </div>
 
           <div className="overflow-y-scroll scrollbar-hide h-screen">
-            <JobMajorDetails
-              selectedJob={selectedJob}
-            />
+            <JobMajorDetails selectedJob={selectedJob} />
           </div>
         </div>
       )}

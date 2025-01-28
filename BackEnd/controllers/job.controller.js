@@ -56,7 +56,7 @@ export const postJob = async (req, res) => {
     }
 
     // Expire plan if maxPostJobs is 0
-    if (company.maxPostJobs === 0) {
+    if (company.maxJobPosts === 0) {
       return res.status(400).json({
         success: false,
         message: "Company need job plans",
@@ -120,22 +120,27 @@ export const postJob = async (req, res) => {
 
     // Save the job to the database
     const savedJob = await newJob.save();
-    if (company.maxPostJobs !== null) {
-      company.maxPostJobs = company.maxPostJobs - 1;
-      await company.save();
-    }
 
-    if (company.maxPostJobs === 0) {
-      const activeSubscription = await JobSubscription.findOne({
-        company: companyId,
-        status: "Active",
-      });
+    if (company.maxJobPosts !== null && company.maxJobPosts > 0) {
+      // Ensure `maxJobPosts` is decremented only if it's a number
+      const updatedCompany = await Company.findOneAndUpdate(
+        { _id: company._id }, // Find the company by ID
+        { $inc: { maxPostJobs: -1 } }, // Decrement maxJobPosts by 1
+        { new: true } // Return the updated document
+      ); 
 
-      if (activeSubscription) {
-        // Check if the current plan is not the Free plan
-        if (activeSubscription.planName !== "Free") {
-          activeSubscription.status = "Expired";
-          await activeSubscription.save();
+      // Check if maxJobPosts reached 0
+      if (updatedCompany && updatedCompany.maxJobPosts === 0) {
+        const activeSubscription = await JobSubscription.findOne({
+          company: company._id,
+          status: "Active",
+        });
+
+        if (activeSubscription) {
+          if (activeSubscription.planName !== "Free") {
+            activeSubscription.status = "Expired";
+            await activeSubscription.save();
+          }
         }
       }
     }
@@ -160,15 +165,11 @@ export const getAllJobs = async (req, res) => {
   res.setHeader("Cache-Control", "no-cache");
 
   try {
-    const userId = req.id; // Assuming user ID is passed in the request for checking applications
-
     // Using cursor to stream the data in LIFO order (newest to oldest)
     const cursor = Job.find()
       .sort({ createdAt: -1 })
       .populate({
         path: "application",
-        match: { applicant: userId }, // Match applications for the specific user
-        select: "status", // Only select the 'status' field or other fields you need
       })
       .cursor();
 
@@ -496,30 +497,34 @@ export const getJobsStatistics = async (req, res) => {
       });
     }
 
+    // Get all job IDs associated with the company
+    const jobs = await Job.find({ company: companyId }, { _id: 1 });
+    const jobIds = jobs.map((job) => job._id);
+
     // Get the total number of jobs posted by the company
-    const totalJobs = await Job.countDocuments({ company: companyId });
+    const totalJobs = jobs.length;
 
     // Get the number of active jobs posted by the company
     const activeJobs = await Job.countDocuments({
       company: companyId,
-      "jobDetails.isActive": true, // Accessing isActive inside jobDetails
+      "jobDetails.isActive": true,
     });
 
     // Get the number of inactive jobs posted by the company
     const inactiveJobs = await Job.countDocuments({
       company: companyId,
-      "jobDetails.isActive": false, // Accessing isActive inside jobDetails
+      "jobDetails.isActive": false,
     });
 
-    // Get the total number of applicants for the company
+    // Get the total number of applicants for the company's jobs
     const totalApplicants = await Application.countDocuments({
-      company: companyId,
+      job: { $in: jobIds },
     });
 
-    // Get the number of selected candidates for the company
+    // Get the number of selected candidates for the company's jobs
     const selectedCandidates = await Application.countDocuments({
-      company: companyId,
-      status: "selected",
+      job: { $in: jobIds },
+      status: "Selected",
     });
 
     // Format the response

@@ -4,16 +4,17 @@ import * as Yup from "yup";
 import Stepper from "react-stepper-horizontal";
 import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { decreaseMaxPostJobs } from "@/redux/companySlice";
 
 const PostJob = () => {
   const [step, setStep] = useState(0);
   const { company } = useSelector((state) => state.company);
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
   const formik = useFormik({
     initialValues: {
@@ -68,6 +69,7 @@ const PostJob = () => {
           }
         );
         if (response.data.success) {
+          if (company?.maxPostJobs !== null) dispatch(decreaseMaxPostJobs(1));
           toast.success("Job post successfully");
         } else {
           toast.error("Job post failed");
