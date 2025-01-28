@@ -15,7 +15,7 @@ const RecruiterDashboard = () => {
   const { company } = useSelector((state) => state.company);
   const { recruiters } = useSelector((state) => state.recruiters);
   const { jobPlan } = useSelector((state) => state.jobPlan);
-  
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -25,15 +25,6 @@ const RecruiterDashboard = () => {
       navigate("/login");
     }
   }, []);
-
-  useEffect(() => {
-    if (user?.isVerify && user?.isCompanyCreated && recruiters?.length === 0) {
-      dispatch(fetchRecruiters(company?._id));
-    }
-    if (!jobPlan) {
-      dispatch(fetchCurrentPlan(company?._id));
-    }
-  }, [company?._id]);
 
   useEffect(() => {
     const fetchCompanyByUserId = async () => {
@@ -58,6 +49,22 @@ const RecruiterDashboard = () => {
       fetchCompanyByUserId();
     }
   }, [user, dispatch]);
+
+  useEffect(() => {
+    if (company) {
+      if (
+        user?.isVerify &&
+        user?.isCompanyCreated &&
+        recruiters?.length === 0
+      ) {
+        dispatch(fetchRecruiters(company?._id));
+      }
+      if (!jobPlan) {
+        console.log(company?._id);
+        dispatch(fetchCurrentPlan(company?._id));
+      }
+    }
+  }, [company]);
 
   useEffect(() => {}, [user]);
 

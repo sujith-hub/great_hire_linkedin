@@ -8,17 +8,17 @@ import { toast } from "react-hot-toast";
 import axios from "axios";
 import { APPLICATION_API_END_POINT } from "@/utils/ApiEndPoint";
 import { setUser } from "@/redux/authSlice";
+import { useJobDetails } from "@/context/JobDetailsContext";
 
 const ReviewPage = ({ handleReview1, input, fileURL }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { jobId } = useParams();
+  const { addApplicationToJob } = useJobDetails();
 
   const handleSubmit = async () => {
     setLoading(true); // Show loading indicator
-
-    console.log(jobId);
 
     try {
       const formData = new FormData();
@@ -51,6 +51,7 @@ const ReviewPage = ({ handleReview1, input, fileURL }) => {
       if (response.data.success) {
         toast.success(response.data.message);
         dispatch(setUser(response.data.user));
+        addApplicationToJob(jobId, response.data.newApplication);
         navigate("/success"); // Navigate to success page or any other page
       }
     } catch (error) {

@@ -7,7 +7,7 @@ export const useJobDetails = () => useContext(JobDetailsContext);
 
 export const JobDetailsProvider = ({ children }) => {
   const [jobsList, setJobsList] = useState([]);
-  const [originalJobsList, setOriginalJobsList] = useState([]); // State for original job list
+  const [originalJobsList, setOriginalJobsList] = useState([]);
   const [selectedJob, setSelectedJob] = useState(null);
   const [error, setError] = useState(null);
 
@@ -20,8 +20,8 @@ export const JobDetailsProvider = ({ children }) => {
         }
         const jobs = await response.json();
         setJobsList(jobs);
-        setOriginalJobsList(jobs); // Store the original job list
-        setSelectedJob(jobs[0] || null); // Set the first job as selected by default
+        setOriginalJobsList(jobs);
+        setSelectedJob(jobs[0] || null);
       } catch (err) {
         console.error("Error fetching jobs:", err);
         setError("An error occurred while fetching jobs.");
@@ -64,7 +64,7 @@ export const JobDetailsProvider = ({ children }) => {
             jobDetails.title,
             jobDetails.companyName,
             jobDetails.location,
-            jobDetails.details, // Including details for a broader match
+            jobDetails.details,
           ]
             .map((field) => (field ? field.toLowerCase().trim() : ""))
             .some((field) => field.includes(titleKeyword.toLowerCase().trim()))
@@ -89,8 +89,46 @@ export const JobDetailsProvider = ({ children }) => {
   };
 
   const resetFilter = () => {
-    setJobsList(originalJobsList); // Reset to original jobs list
-    setSelectedJob(originalJobsList[0] || null); // Reset selected job
+    setJobsList(originalJobsList);
+    setSelectedJob(originalJobsList[0] || null);
+  };
+
+  // New function to add an application to a job
+  const addApplicationToJob = (jobId, newApplication) => {
+    setJobsList((prevJobsList) =>
+      prevJobsList.map((job) => {
+        if (job._id === jobId) {
+          return {
+            ...job,
+            application: [...(job.application || []), newApplication],
+          };
+        }
+        return job;
+      })
+    );
+
+    setOriginalJobsList((prevOriginalJobsList) =>
+      prevOriginalJobsList.map((job) => {
+        if (job._id === jobId) {
+          return {
+            ...job,
+            application: [...(job.application || []), newApplication],
+          };
+        }
+        return job;
+      })
+    );
+
+    // Update the selected job if it's the one being modified
+    setSelectedJob((prevSelectedJob) => {
+      if (prevSelectedJob && prevSelectedJob._id === jobId) {
+        return {
+          ...prevSelectedJob,
+          application: [...(prevSelectedJob.application || []), newApplication],
+        };
+      }
+      return prevSelectedJob;
+    });
   };
 
   return (
@@ -103,6 +141,7 @@ export const JobDetailsProvider = ({ children }) => {
         resetFilter,
         changeBookmarkStatus,
         changeBlockStatus,
+        addApplicationToJob,
         error,
       }}
     >

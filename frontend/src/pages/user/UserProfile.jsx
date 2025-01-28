@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../../components/shared/Navbar";
 import { Avatar, AvatarImage } from "../../components/ui/avatar";
 import { Contact, Mail, Pen } from "lucide-react";
@@ -21,12 +21,14 @@ import VerifyNumber from "@/components/VerifyNumber";
 
 const UserProfile = () => {
   const [open, setOpen] = useState(false);
-  const { user } = useSelector((store) => store.auth);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const {user} = useSelector((state)=>state.auth);
+  
   const [openEmailOTPModal, setOpenEmailOTPModal] = useState(false);
   const [openNumberOTPModal, setOpenNumberOTPModal] = useState(false);
+
 
   const handleDeleteAccount = async () => {
     try {
@@ -58,8 +60,7 @@ const UserProfile = () => {
             <Avatar className="h-24 w-24">
               <AvatarImage
                 src={
-                  user?.profile?.profilePhoto ||
-                  "https://github.com/shadcn.png"
+                  user?.profile?.profilePhoto || "https://github.com/shadcn.png"
                 }
                 alt="Profile Photo"
               />
@@ -208,8 +209,12 @@ const UserProfile = () => {
       <Footer className="mt-auto" />
 
       {/* OTP Modals */}
-      {openEmailOTPModal && <VerifyEmail setOpenEmailOTPModal={setOpenEmailOTPModal} />}
-      {openNumberOTPModal && <VerifyNumber setOpenNumberOTPModal={setOpenNumberOTPModal} />}
+      {openEmailOTPModal && (
+        <VerifyEmail setOpenEmailOTPModal={setOpenEmailOTPModal} />
+      )}
+      {openNumberOTPModal && (
+        <VerifyNumber setOpenNumberOTPModal={setOpenNumberOTPModal} />
+      )}
     </div>
   );
 };

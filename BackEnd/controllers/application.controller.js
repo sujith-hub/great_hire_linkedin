@@ -7,8 +7,6 @@ import cloudinary from "../utils/cloudinary.js";
 export const applyJob = async (req, res) => {
   try {
     const userId = req.id;
-   // const jobId = req.params.id;
-   // console.log(req.params);
     const {
       fullname,
       email,
@@ -20,27 +18,23 @@ export const applyJob = async (req, res) => {
       experience,
       jobTitle,
       company,
-      jobId
+      jobId,
     } = req.body;
     const { resume } = req.files;
-    
 
     // Find the user by ID
     const user = await User.findById(userId);
-
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const job = await Job.findById({ _id: jobId });
+    const job = await Job.findById(jobId).populate("company");
     if (!job) {
       return res.status(404).json({ message: "Job not found" });
     }
 
-    // Check and update user details if necessary
-    if (fullname && fullname !== user.fullname) {
-      user.fullname = fullname;
-    }
+    // Update user details if necessary
+    if (fullname && fullname !== user.fullname) user.fullname = fullname;
     if (email && email !== user.emailId.email) {
       user.emailId.email = email;
       user.emailId.isVerified = false;
@@ -49,28 +43,15 @@ export const applyJob = async (req, res) => {
       user.phoneNumber.number = number;
       user.phoneNumber.isVerified = false;
     }
-    if (city && city !== user.address.city) {
-      user.address.city = city;
-    }
-    if (state && state !== user.address.state) {
-      user.address.state = state;
-    }
-    if (country && country !== user.address.country) {
+    if (city && city !== user.address.city) user.address.city = city;
+    if (state && state !== user.address.state) user.address.state = state;
+    if (country && country !== user.address.country)
       user.address.country = country;
-    }
 
-    if (coverLetter) {
-      user.profile.coverLetter = coverLetter;
-    }
-    if (experience) {
-      user.profile.experience.experienceDetails = experience;
-    }
-    if (jobTitle) {
-      user.profile.experience.jobProfile = jobTitle;
-    }
-    if (company) {
-      user.profile.experience.companyName = company;
-    }
+    if (coverLetter) user.profile.coverLetter = coverLetter;
+    if (experience) user.profile.experience.experienceDetails = experience;
+    if (jobTitle) user.profile.experience.jobProfile = jobTitle;
+    if (company) user.profile.experience.companyName = company;
 
     // Update resume if provided
     if (resume && resume.length > 0) {
@@ -82,6 +63,19 @@ export const applyJob = async (req, res) => {
 
     // Save the updated user
     const updateUser = await user.save();
+
+    // Check if the user has already applied for the job
+    const existingApplication = await Application.findOne({
+      job: jobId,
+      applicant: userId,
+    });
+
+    if (existingApplication) {
+      return res.status(400).json({
+        message: "You have already applied for this job",
+        success: false,
+      });
+    }
 
     // Create a new application
     const newApplication = new Application({
@@ -100,9 +94,10 @@ export const applyJob = async (req, res) => {
     await job.save();
 
     res.status(201).json({
-      success:true,
+      success: true,
       message: "Applied successfully",
       user: updateUser,
+      newApplication
     });
   } catch (err) {
     console.error("Error applying for job:", err);
@@ -145,25 +140,23 @@ export const getAppliedJobs = async (req, res) => {
 export const getApplicants = async (req, res) => {
   try {
     const jobId = req.params.id;
-    const job = await Job.findById(jobId).populate({
-      path: "application",
-      options: { sort: { createdAt: -1 } },
-      populate: {
-        path: "applicant",
-      },
-    });
-    if (!job) {
-      return res.status(404).json({
-        message: "Job not found.",
-        success: false,
-      });
-    }
+
+    // Find all applications for the given job and populate the applicant details
+    const applicants = await Application.find({ job: jobId })
+      .populate("applicant") // Populating applicant details
+      .sort({ createdAt: -1 }); // Sorting by createdAt in descending order
+
     return res.status(200).json({
-      job,
       success: true,
+      applicants, // Returning only the list of applicants
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message,
+    });
   }
 };
 
@@ -172,6 +165,7 @@ export const updateStatus = async (req, res) => {
   try {
     const { status } = req.body;
     const applicaionId = req.params.id;
+
     if (!status) {
       return res.status(404).json({
         message: "Status is required.",
@@ -188,7 +182,7 @@ export const updateStatus = async (req, res) => {
     }
 
     //update status...
-    application.status = status.toLowerCase();
+    application.status = status;
     await application.save();
 
     return res.status(200).json({
