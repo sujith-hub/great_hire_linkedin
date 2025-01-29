@@ -79,7 +79,7 @@ const Login = () => {
       <Navbar />
       <div className="flex flex-col-reverse md:flex-row h-screen">
         {/* Left Section - Form */}
-        <div className="w-full md:w-1/2 flex items-center justify-center bg-gradient-to-l from-white to-blue-100 p-6">
+        <div className="w-full h-full flex items-center justify-center bg-gradient-to-l from-white to-blue-100 p-6">
           <form className="w-full max-w-md space-y-4" onSubmit={handleSubmit}>
             <h1 className="text-3xl font-bold text-center">
               Great<span className="text-blue-700">Hire</span>
@@ -143,12 +143,12 @@ const Login = () => {
           </form>
         </div>
 
-        {/* Right Section - Background Image */}
-        <div className="relative w-full md:w-1/2 md:h-full ">
+        {/* Updated Right Section - Background Image */}
+        <div className="relative w-full hidden xl:flex">
           <img
             src={img2}
             alt="Background"
-            className="w-full h-full object-cover opacity-80"
+            className="absolute inset-0 w-full h-full object-cover lg:object-fill"
           />
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center space-y-4 p-4 z-10">
             <h1 className="font-bold text-3xl md:text-4xl text-gray-600">
