@@ -60,7 +60,6 @@ const RecruiterDashboard = () => {
         dispatch(fetchRecruiters(company?._id));
       }
       if (!jobPlan) {
-        console.log(company?._id);
         dispatch(fetchCurrentPlan(company?._id));
       }
     }

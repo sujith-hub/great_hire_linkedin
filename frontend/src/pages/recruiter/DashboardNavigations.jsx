@@ -10,6 +10,7 @@ import { BsPersonPlus } from "react-icons/bs";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { IoSettingsOutline } from "react-icons/io5";
 import { FiUsers } from "react-icons/fi";
+import { PiStudent } from "react-icons/pi";
 import { useSelector } from "react-redux";
 
 const DashboardNavigations = () => {
@@ -113,6 +114,17 @@ const DashboardNavigations = () => {
               <>
                 <PiBuildingOffice size={25} className={iconClass(isActive)} />
                 <span>Company Details</span>
+              </>
+            )}
+          </NavLink>
+          <NavLink
+            to="/recruiter/dashboard/candidate-list"
+            className={navLinkClass}
+          >
+            {({ isActive }) => (
+              <>
+                <PiStudent size={25} className={iconClass(isActive)} />
+                <span>Candidate List</span>
               </>
             )}
           </NavLink>

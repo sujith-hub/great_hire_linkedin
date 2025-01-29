@@ -31,7 +31,6 @@ const Job = ({ job }) => {
     job?.application?.some(
       (application) => application.applicant === user?._id
     ) || false;
-  console.log(isApplied)
 
   const handleEasyApply = () => {
     setSelectedJob(job); // Set selected job

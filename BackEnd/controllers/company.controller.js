@@ -1,4 +1,5 @@
 import { Company } from "../models/company.model.js";
+import { User } from "../models/user.model.js";
 import { Recruiter } from "../models/recruiter.model.js";
 import cloudinary from "../utils/cloudinary.js";
 import getDataUri from "../utils/dataUri.js";
@@ -6,7 +7,7 @@ import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import { BlacklistedCompany } from "../models/blacklistedCompany.model.js";
-import { JobSubscription } from '../models/jobSubscription.model.js';
+import { JobSubscription } from "../models/jobSubscription.model.js";
 
 export const registerCompany = async (req, res) => {
   try {
@@ -349,16 +350,15 @@ export const changeAdmin = async (req, res) => {
     });
   }
 };
- 
+
 export const getCurrentPlan = async (req, res) => {
   try {
     const companyId = req.params.id; // Get company ID from request parameters
-    
+
     // Find the active subscription for the company
     const currentPlan = await JobSubscription.findOne({
       company: companyId,
-    }).select('jobBoost expiryDate planName price status purchaseDate'); // Select only required fields
-
+    }).select("jobBoost expiryDate planName price status purchaseDate"); // Select only required fields
 
     res.status(200).json({
       success: true,
@@ -374,3 +374,66 @@ export const getCurrentPlan = async (req, res) => {
   }
 };
 
+export const getCandidateData = async (req, res) => {
+  try {
+    // Destructure filters from the query parameters
+    const { jobTitle, experience, salaryBudget, companyId } = req.query;
+    const userId = req.id;
+
+    // Find the company by ID
+    const company = await Company.findById(companyId);
+    if (!company) {
+      return res.status(404).json({
+        message: "Company not found.",
+        success: false,
+      });
+    }
+
+    // Check if the user is associated with the company
+    const isUserAssociated = company.userId.some(
+      (userObj) => userObj.user.toString() === userId
+    );
+
+    if (!isUserAssociated) {
+      return res.status(403).json({
+        message: "You are not authorized",
+        success: false,
+      });
+    }
+
+    // Build filter query object
+    let filterQuery = {};
+
+    
+    // Search jobTitle in coverLetter, bio, and skills
+    if (jobTitle) {
+      const regex = new RegExp(jobTitle, "i"); // Case-insensitive match
+      filterQuery.$or = [
+        { "profile.coverLetter": regex },
+        { "profile.bio": regex },
+        { "profile.skills": { $elemMatch: { $regex: regex, $options: "i" } } },
+      ];
+    }
+
+    // Filter by experience (string comparison)
+    if (experience) {
+      filterQuery["profile.experience.duration"] = { $gte: experience }; // Direct string comparison
+    }
+
+    // Filter by salary budget (expectedCTC field in profile)
+    if (salaryBudget) {
+      filterQuery["profile.expectedCTC"] = Number(salaryBudget);
+    }
+
+    console.log(filterQuery);
+
+    // Fetch candidates from the database based on the filters
+    const candidates = await User.find(filterQuery);
+
+    // Return the candidates data
+    res.status(200).json({ success: true, candidates });
+  } catch (error) {
+    console.error("Error fetching candidate data:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};

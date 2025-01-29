@@ -64,6 +64,15 @@ const userSchema = new mongoose.Schema(
           type: String,
         },
       },
+      currentCTC: {
+        type: Number,
+        default: 0,
+      },
+      expectedCTC: {
+        type: Number,
+        default: 0,
+      },
+
       skills: [{ type: String }],
       resume: { type: String }, // URL for the resume
       resumeOriginalName: { type: String },

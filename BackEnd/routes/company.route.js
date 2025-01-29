@@ -6,7 +6,8 @@ import {
   updateCompany,
   companyByUserId,
   changeAdmin,
-  getCurrentPlan
+  getCurrentPlan,
+  getCandidateData,
 } from "../controllers/company.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 import { singleUpload } from "../middlewares/multer.js";
@@ -19,7 +20,8 @@ router.route("/company-by-userid").post(isAuthenticated, companyByUserId);
 router.route("/change-admin").put(isAuthenticated, changeAdmin);
 
 // router.route("/get").get(isAuthenticated,getCompanyList);
-
+// Define the route to get candidates
+router.get("/candidate-list", isAuthenticated, getCandidateData);
 router.route("/update/:id").put(isAuthenticated, updateCompany);
 router.route("/current-plan/:id").get(isAuthenticated, getCurrentPlan);
 

@@ -362,7 +362,7 @@ const ApplyForm = ({ setRight }) => {
             </div>
           </div>
 
-          <p className="text-sm text-center text-gray-600 mt-4 text-center">
+          <p className="text-sm text-center text-gray-600 mt-4">
             Having an issue with this application?{" "}
             <Link to="/contact" className="text-blue-700 cursor-pointer">
               Tell us more

@@ -38,6 +38,7 @@ import AppliedCandidatesList from "./pages/recruiter/AppliedCandidatesList";
 import RecruitersDetails from "./pages/recruiter/rec_job_details/RecruitersDetails";
 import CurrentPlans from "./pages/recruiter/CurrentPlans";
 import RecruiterSuccess from "./pages/recruiter/RecruiterSuccess";
+import CandidateList from "./pages/recruiter/candidate/CandidateList";
 
 // Admin Routes
 import AdminSignup from "./components/auth/admin/AdminSignup";
@@ -146,6 +147,7 @@ const appRouter = createBrowserRouter([
       { path: "post-job", element: <PostJob /> },
       { path: "jobs", element: <PostedJobList /> },
       { path: "company-details", element: <CompanyDetails /> },
+      { path: "candidate-list", element: <CandidateList /> },
       { path: "your-plans", element: <CurrentPlans /> },
       { path: "upgrade-plans", element: <RecruiterPlans /> },
       { path: "delete-account", element: <DeleteAccount /> },
