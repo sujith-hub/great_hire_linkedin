@@ -7,10 +7,12 @@ import { AiOutlineThunderbolt } from "react-icons/ai";
 import { FaHeart } from "react-icons/fa";
 import { IoMdSend } from "react-icons/io";
 import { useJobDetails } from "@/context/JobDetailsContext";
+import { useSelector } from "react-redux";
 
 const Job = ({ job }) => {
   const navigate = useNavigate();
   const { setSelectedJob } = useJobDetails();
+  const { user } = useSelector((state) => state.auth);
 
   const calculateActiveDays = (createdAt) => {
     const jobCreatedDate = new Date(createdAt); // Convert the 'createdAt' timestamp to a Date object
@@ -25,6 +27,11 @@ const Job = ({ job }) => {
     return activeDays;
   };
 
+  const isApplied =
+    job?.application?.some(
+      (application) => application.applicant === user?._id
+    ) || false;
+  console.log(isApplied)
 
   const handleEasyApply = () => {
     setSelectedJob(job); // Set selected job
@@ -33,7 +40,7 @@ const Job = ({ job }) => {
 
   return (
     <div className="flex flex-col space-y-2 p-5 rounded-md bg-white border border-grey-100">
-      <div className="flex justify-between items-center mb-2">
+      <div className="flex justify-between items-center mb-2 ">
         {job?.jobDetails?.urgentHiring && (
           <p className="text-sm bg-violet-100 rounded-md p-1 text-violet-800 font-bold">
             Urgent Hiring
@@ -58,9 +65,7 @@ const Job = ({ job }) => {
       <div className="p-1 flex items-center w-full text-sm bg-blue-100 justify-center text-blue-800 rounded-md">
         <div className="flex items-center gap-1">
           <AiOutlineThunderbolt />
-          <span>
-                Typically Respond in {job.jobDetails?.respondTime} days
-              </span>
+          <span>Typically Respond in {job.jobDetails?.respondTime} days</span>
         </div>
       </div>
       <div className="text-sm flex flex-col space-y-2">
@@ -78,22 +83,25 @@ const Job = ({ job }) => {
         </div>
         <div className="w-full">
           <p className="p-1 text-center font-semibold text-gray-700 rounded-md bg-gray-200">
-          {job.jobDetails?.duration} +1
+            {job.jobDetails?.duration} +1
           </p>
         </div>
       </div>
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm text-gray-500">
-          Active {calculateActiveDays(job?.createdAt)} days ago
+            Active {calculateActiveDays(job?.createdAt)} days ago
           </p>
         </div>
-        <div
-          className="flex items-center text-sm text-blue-700 gap-2 cursor-pointer"
-          onClick={handleEasyApply}
-        >
-          <span className="text-black">Easy Apply</span>
-          <IoMdSend size={20} />
+        <div className="flex items-center text-sm text-blue-700 gap-2">
+          {isApplied ? (
+            <span className="text-green-600">Applied</span>
+          ) : (
+            <div onClick={handleEasyApply}>
+              <span className="text-black cursor-pointer">Easy Apply</span>
+              <IoMdSend size={20} />
+            </div>
+          )}
         </div>
       </div>
       <div className="flex w-full items-center justify-between gap-4 ">

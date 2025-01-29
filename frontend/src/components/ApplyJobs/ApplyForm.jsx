@@ -12,14 +12,26 @@ import { Link } from "react-router-dom";
 import "react-step-progress-bar/styles.css";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useJobDetails } from "@/context/JobDetailsContext";
+import { toast } from "react-hot-toast";
 
 const ApplyForm = ({ setRight }) => {
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
+  const { selectedJob } = useJobDetails();
+
+  const isApplied =
+    selectedJob?.application?.some(
+      (application) => application.applicant === user?._id
+    ) || false;
 
   useEffect(() => {
     if (!user) {
       navigate("/login");
+    }
+    if (isApplied) {
+      toast("You have already applied this job.");
+      navigate("/jobs");
     }
   }, [user]);
 
