@@ -12,15 +12,26 @@ import { Link } from "react-router-dom";
 import "react-step-progress-bar/styles.css";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useJobDetails } from "@/context/JobDetailsContext";
+import { toast } from "react-hot-toast";
 
 const ApplyForm = ({ setRight }) => {
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
-  console.log(user);
+  const { selectedJob } = useJobDetails();
+
+  const isApplied =
+    selectedJob?.application?.some(
+      (application) => application.applicant === user?._id
+    ) || false;
 
   useEffect(() => {
     if (!user) {
       navigate("/login");
+    }
+    if (isApplied) {
+      toast("You have already applied this job.");
+      navigate("/jobs");
     }
   }, [user]);
 
@@ -86,9 +97,9 @@ const ApplyForm = ({ setRight }) => {
     country: user?.address?.country || "",
     resume: user?.profile?.resume,
     coverLetter: user?.profile?.coverLetter || "",
-    jobTitle: user?.profile?.experience.jobProfile,
-    experience: user?.profile?.experience.experienceDetails,
-    company: user?.profile?.experience.companyName,
+    jobTitle: user?.profile?.experience?.jobProfile,
+    experience: user?.profile?.experience?.experienceDetails,
+    company: user?.profile?.experience?.companyName,
   });
 
   const handleFileChange = (e) => {
@@ -247,7 +258,7 @@ const ApplyForm = ({ setRight }) => {
               </button>
             </div>
           </form>
-          <p className="text-sm text-gray-600 mt-4">
+          <p className="text-sm text-center text-gray-600 mt-4">
             Having an issue with this application?{" "}
             <Link to="/contact" className="text-blue-700 cursor-pointer">
               Tell us more
@@ -258,7 +269,7 @@ const ApplyForm = ({ setRight }) => {
 
       {/* Step 2 */}
       {step2 && (
-        <div className="w-full  p-6 bg-white shadow-md rounded-md">
+        <div className="w-full p-6 bg-white shadow-md rounded-md">
           <ProgressBar percent={40} unfilledBackground="gray" />
           <div className="flex items-center mt-4">
             <BiArrowBack
@@ -268,16 +279,31 @@ const ApplyForm = ({ setRight }) => {
                 setStep1(true);
               }}
             />
-
             <h6 className="ml-2 text-sm text-gray-500">
               Application step 2 of 5
             </h6>
           </div>
 
-          <div className="mt-4 h-96 w-full flex flex-col items-center justify-center ">
+          <div className="mt-4 h-96 w-full flex flex-col items-center justify-center">
             {fileURL || input.resume ? (
               <div className="w-full h-full">
                 <Viewer fileUrl={fileURL || input.resume} />
+                <button
+                  onClick={() =>
+                    document.getElementById("resume-upload").click()
+                  }
+                  className="mt-4 bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
+                >
+                  Update Resume
+                </button>
+                <input
+                  type="file"
+                  accept=".pdf,.doc,.docx,.txt"
+                  onChange={handleFileChange}
+                  className="hidden"
+                  id="resume-upload"
+                  name="resume"
+                />
               </div>
             ) : (
               <div className="mt-2 border-2 border-dashed border-blue-700 p-6 rounded-lg text-center">
@@ -317,22 +343,26 @@ const ApplyForm = ({ setRight }) => {
               </div>
             )}
           </div>
-
-          <div className="flex justify-between items-center mt-6">
-            <Link
-              to="/"
-              className="text-blue-600 hover:underline text-sm font-medium"
-            >
-              Return to job search
-            </Link>
-            <button
-              onClick={handleContinue2}
-              className="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
-            >
-              Continue
-            </button>
+          <div className="flex items-center justify-between mt-6">
+            <div className="flex-1 flex justify-center">
+              <Link
+                to="/"
+                className="text-blue-600 hover:underline text-sm font-medium"
+              >
+                Return to job search
+              </Link>
+            </div>
+            <div className="flex justify-end">
+              <button
+                onClick={handleContinue2}
+                className="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
+              >
+                Continue
+              </button>
+            </div>
           </div>
-          <p className="text-sm text-gray-600 mt-4">
+
+          <p className="text-sm text-center text-gray-600 mt-4 text-center">
             Having an issue with this application?{" "}
             <Link to="/contact" className="text-blue-700 cursor-pointer">
               Tell us more
@@ -414,7 +444,7 @@ const ApplyForm = ({ setRight }) => {
             </button>
           </div>
 
-          <p className="text-sm text-gray-600 mt-4">
+          <p className="text-sm text-center text-gray-600 mt-4">
             Having an issue with this application?{" "}
             <Link to="/contact" className="text-blue-700 cursor-pointer">
               Tell us more
@@ -525,7 +555,7 @@ const ApplyForm = ({ setRight }) => {
             </button>
           </div>
 
-          <p className="text-sm text-gray-600 mt-4">
+          <p className="text-sm text-center text-gray-600 mt-4">
             Having an issue with this application?{" "}
             <Link to="/contact" className="text-blue-700 cursor-pointer">
               Tell us more

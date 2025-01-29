@@ -60,7 +60,7 @@ const Login = () => {
           password: "",
         });
         const userRole = response.data.user.role;
-        if (userRole.includes("student")) navigate("/");
+        if (userRole.includes("student")) navigate(-1);
         else if (userRole.includes("recruiter"))
           navigate("/recruiter/dashboard/home");
       } else {

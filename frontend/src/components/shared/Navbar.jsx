@@ -81,7 +81,7 @@ const Navbar = () => {
         setIsProfileMenuOpen(false);
         setIsMenuOpen(false);
         toast.success(response.data.message);
-        navigate("/login");
+        navigate("/");
       } else {
         toast.error("error in logout");
       }

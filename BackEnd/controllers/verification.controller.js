@@ -4,6 +4,7 @@ import { Recruiter } from "../models/recruiter.model.js";
 import { User } from "../models/user.model.js";
 import { Admin } from "../models/admin.model.js";
 import { Company } from "../models/company.model.js";
+import { Job } from "../models/job.model.js";
 import randomstring from "randomstring";
 import { serviceOrder } from "../models/serviceOrder.model.js";
 import { JobSubscription } from "../models/jobSubscription.model.js";
@@ -11,6 +12,7 @@ import { hmac } from "fast-sha256";
 import { TextEncoder } from "util";
 // otpService.js
 import twilio from "twilio";
+import { read } from "fs";
 // Setup nodemailer
 const transporter = nodemailer.createTransport({
   service: "Gmail",
@@ -526,3 +528,66 @@ export const updateNumberVerification = async (req, res) => {
     });
   }
 };
+
+
+export const sendEmailToApplicant = async (req, res) => {
+  try {
+    const jobId = req.params.id; // Job ID from the URL
+    const { email, status } = req.body; // Recipient email and status from the request body
+
+    // Find the job details
+    const job = await Job.findById(jobId).populate("company"); // Ensure "company" is populated for company name
+    if (!job) {
+      return res.status(404).json({ success: false, message: "Job not found" });
+    }
+
+    // Extract important job details
+    const { title, jobDetails, company } = job;
+    const companyName = company?.companyName || "Our Company"; // Fallback in case the company name is missing
+
+    // Create email content
+    const subject = status === "Shortlisted" 
+      ? "Congratulations! You've been Shortlisted" 
+      : "Application Status Update: Rejected";
+
+    const message = status === "Shortlisted"
+      ? `
+        <p>Dear Applicant,</p>
+        <p>We are pleased to inform you that you have been shortlisted for the position of <strong>${jobDetails.title}</strong> at <strong>${companyName}</strong>.</p>
+        <p>Here are the key details of the job:</p>
+        <ul>
+          <li><strong>Job Title:</strong> ${jobDetails.title}</li>
+          <li><strong>Location:</strong> ${jobDetails.location}</li>
+          <li><strong>Salary:</strong> ${jobDetails.salary}</li>
+          <li><strong>Experience Required:</strong> ${jobDetails.experience} years</li>
+        </ul>
+        <p>We will contact you shortly with the next steps in the process.</p>
+        <p>Thank you for applying to <strong>${companyName}</strong>. We wish you all the best!</p>
+        <p>Warm Regards,</p>
+        <p>The ${companyName} Team</p>
+      `
+      : `
+        <p>Dear Applicant,</p>
+        <p>Thank you for applying for the position of <strong>${jobDetails.title}</strong> at <strong>${companyName}</strong>.</p>
+        <p>After careful consideration, we regret to inform you that you have not been shortlisted for this role. Please don't be discouraged, as there will be other opportunities in the future.</p>
+        <p>We encourage you to continue your job search and wish you the best in your career journey.</p>
+        <p>Thank you once again for your interest in <strong>${companyName}</strong>.</p>
+        <p>Warm Regards,</p>
+        <p>The ${companyName} Team</p>
+      `;
+
+    // Send email
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject,
+      html: message,
+    });
+
+    return res.status(200).json({ success: true, message: "Email sent successfully" });
+  } catch (err) {
+    console.error("Error sending email:", err);
+    return res.status(500).json({ success: false, message: "Server error", error: err.message });
+  }
+};
+

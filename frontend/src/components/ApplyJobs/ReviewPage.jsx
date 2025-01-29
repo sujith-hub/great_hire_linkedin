@@ -8,17 +8,17 @@ import { toast } from "react-hot-toast";
 import axios from "axios";
 import { APPLICATION_API_END_POINT } from "@/utils/ApiEndPoint";
 import { setUser } from "@/redux/authSlice";
+import { useJobDetails } from "@/context/JobDetailsContext";
 
 const ReviewPage = ({ handleReview1, input, fileURL }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { jobId } = useParams();
+  const { addApplicationToJob } = useJobDetails();
 
   const handleSubmit = async () => {
     setLoading(true); // Show loading indicator
-
-    console.log(jobId);
 
     try {
       const formData = new FormData();
@@ -51,6 +51,7 @@ const ReviewPage = ({ handleReview1, input, fileURL }) => {
       if (response.data.success) {
         toast.success(response.data.message);
         dispatch(setUser(response.data.user));
+        addApplicationToJob(jobId, response.data.newApplication);
         navigate("/success"); // Navigate to success page or any other page
       }
     } catch (error) {
@@ -80,57 +81,57 @@ const ReviewPage = ({ handleReview1, input, fileURL }) => {
       <h4 className="text-lg font-medium mb-4">Contact Information</h4>
       <div className="space-y-4 mb-6">
         <div>
-          <p className="text-sm text-gray-500">Full Name</p>
-          <h3 className="text-base font-semibold">{`${input.fullname}`}</h3>
+          <p className="text-sm font-small">Full Name</p>
+          <h3 className="text-base text-gray-500">{`${input.fullname}`}</h3>
         </div>
         <div>
-          <p className="text-sm text-gray-500">Email Address</p>
-          <h3 className="text-base font-semibold">{input.email}</h3>
+          <p className="text-sm font-small">Email Address</p>
+          <h3 className="text-base text-gray-500">{input.email}</h3>
           <small className="text-xs text-gray-500 block mt-2">
             To mitigate fraud, Great Hire may mask your email address. If
             masked, the employer will see an address like{" "}
-            <strong>abc123@gmail.com</strong>. Some employers, however, may
+            <strong> Hr@greathire.in</strong>. Some employers, however, may
             still be able to unmask and see your actual email address.
           </small>
         </div>
         <div>
-          <p className="text-sm text-gray-500">Address</p>
-          <h3 className="text-base font-semibold">
+          <p className="text-sm font-small">Address</p>
+          <h3 className="text-base text-gray-500">
             {`${input.city}, ${input.state}, ${input.country}`}
           </h3>
         </div>
         <div>
-          <p className="text-sm text-gray-500">Phone Number</p>
-          <h3 className="text-base font-semibold">{input.number}</h3>
+          <p className="text-sm font-small">Phone Number</p>
+          <h3 className="text-base text-gray-500">{input.number}</h3>
         </div>
       </div>
 
-      <p className="text-gray-500 text-2xl">Resume</p>
+      <p className="text-gray-500 text-2xl mb-5">Resume</p>
       <div className="h-96">
         <Viewer fileUrl={fileURL || input.resume} />
       </div>
 
-      <h4 className="text-lg font-medium mb-4">Employee Questions</h4>
+      <h4 className="text-lg font-medium mt-5 mb-5">Employee Questions</h4>
       <div className="space-y-4 mb-6">
         <div>
-          <p className="text-sm text-gray-500">Job Profile</p>
-          <h3 className="text-base font-semibold">{input?.jobTitle}</h3>
+          <p className="text-sm font-small">Job Profile</p>
+          <h3 className="text-base text-gray-500">{input?.jobTitle}</h3>
         </div>
         <div>
-          <p className="text-sm text-gray-500">Company Name</p>
-          <h3 className="text-base font-semibold">{input?.company}</h3>
+          <p className="text-sm font-small">Company Name</p>
+          <h3 className="text-base text-gray-500">{input?.company}</h3>
         </div>
         <div>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm font-small">
             How many years of total work experience do you have?
           </p>
-          <h3 className="text-base font-semibold">{input?.experience}</h3>
+          <h3 className="text-sm text-gray-500">{input?.experience}</h3>
         </div>
 
         <div>
-          <p className="text-sm text-gray-500">Cover Letter</p>
-          <h3 className="text-base font-semibold">
-            {input.coverLetter || "No cover letter provided."}
+          <p className="text-sm font-small">Cover Letter</p>
+          <h3 className="text-sm text-gray-500">
+            {input.coverLetter}
           </h3>
         </div>
       </div>
