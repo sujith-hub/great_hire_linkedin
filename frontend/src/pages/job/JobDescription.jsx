@@ -1,11 +1,58 @@
-import React from "react";
-import { Label } from "@/components/ui/label";
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { JOB_API_END_POINT } from "@/utils/ApiEndPoint";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
-import { useNavigate } from "react-router-dom";
 
 const JobDescription = () => {
+  const { id } = useParams(); // Get Job ID from URL
   const navigate = useNavigate();
+  const [jobDetails, setJobDetails] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchJobDetails = async () => {
+      try {
+        const response = await axios.get(`${JOB_API_END_POINT}/get/${id}`, {
+          withCredentials: true,
+        });
+
+        if (!response.data.success) {
+          setError(response.data.message || "Job details not found.");
+          return;
+        }
+
+        setJobDetails(response.data.job.jobDetails);
+      } catch (err) {
+        setError(err.message || "An unexpected error occurred.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchJobDetails();
+    }
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p className="text-gray-600 text-xl animate-pulse">Loading job details...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p className="text-red-500 text-lg">{error}</p>
+      </div>
+    );
+  }
+
   return (
     <div>
       <Navbar />
@@ -16,20 +63,20 @@ const JobDescription = () => {
             {/* Left Section */}
             <div>
               <h1 className="text-2xl font-bold text-gray-800">
-                Fullstack Developer
+                {jobDetails?.title || "Job Title Not Available"}
               </h1>
-              <h5 className="text-sm text-gray-500 mt-1">Company Name</h5>
-              <h6 className="text-sm text-gray-500">Address</h6>
+              <h5 className="text-sm text-gray-500 mt-1">
+                {jobDetails?.companyName || "Company Not Specified"}
+              </h5>
+              <h6 className="text-sm text-gray-500">{jobDetails?.location || "Location Not Available"}</h6>
               <h6 className="text-sm text-gray-700 font-medium mt-1">
-                3LPA - 5LPA
+                ₹{jobDetails?.salary || "Salary Not Specified"}
               </h6>
             </div>
 
             {/* Right Section - Apply Now Button */}
             <button
-              onClick={() => {
-                navigate("/apply");
-              }}
+              onClick={() => navigate(`/apply/${id}`)}
               className="bg-blue-700 text-white px-4 py-2 rounded-md shadow hover:bg-blue-800 focus:outline-none focus:ring focus:ring-blue-300"
             >
               Apply Now
@@ -38,93 +85,74 @@ const JobDescription = () => {
 
           {/* Job Description */}
           <div className="mb-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-2">
-              Job Description:
-            </h2>
+            <h2 className="text-lg font-semibold text-gray-800 mb-2">Job Description:</h2>
             <p className="text-gray-600 text-sm leading-relaxed">
-              We are seeking a highly skilled and motivated Backend Developer to
-              join our dynamic team. The ideal candidate will be responsible for
-              creating and maintaining server-side application logic, ensuring
-              high performance and responsiveness to requests from the front
-              end. You will work closely with front-end developers, architects,
-              and stakeholders to build scalable and robust applications.
+              {jobDetails?.details || "No description provided."}
             </p>
           </div>
 
           {/* Benefits, Responsibilities, and Additional Details */}
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                Benefits:
-              </h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">Benefits:</h3>
               <ul className="list-disc list-inside text-sm text-gray-600">
-                <li>Flexible working hours</li>
-                <li>Opportunity to work with a highly collaborative team</li>
-                <li>Learning and development budget</li>
-                <li>Health and wellness benefits</li>
+                {jobDetails?.benefits?.length > 0 ? (
+                  jobDetails.benefits.map((benefit, index) => <li key={index}>{benefit}</li>)
+                ) : (
+                  <li>Not specified</li>
+                )}
               </ul>
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                Responsibilities:
-              </h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">Responsibilities:</h3>
               <ul className="list-disc list-inside text-sm text-gray-600">
-                <li>Develop and maintain website</li>
-                <li>Debugging the code</li>
-                <li>Implement new functionalities</li>
+                {jobDetails?.responsibilities?.length > 0 ? (
+                  jobDetails.responsibilities.map((responsibility, index) => <li key={index}>{responsibility}</li>)
+                ) : (
+                  <li>Not specified</li>
+                )}
               </ul>
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                Job Details:
-              </h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">Job Details:</h3>
               <p className="text-sm text-gray-600">
-                <strong>Job Type:</strong> Full-time
+                <strong>Job Type:</strong> {jobDetails?.jobType || "Not specified"}
               </p>
               <p className="text-sm text-gray-600">
-                <strong>Working Days:</strong> Monday-Friday
+                <strong>Working Days:</strong> {jobDetails?.duration || "Not specified"}
               </p>
               <p className="text-sm text-gray-600">
-                <strong>No. of Openings:</strong> 5
+                <strong>No. of Openings:</strong> {jobDetails?.numberOfOpening || "Not specified"}
               </p>
               <p className="text-sm text-gray-600">
-                <strong>Posted Date:</strong> 7-01-2025
+                <strong>Posted Date:</strong> {jobDetails?.postedDate || "Not specified"}
               </p>
             </div>
           </div>
 
           {/* Job Requirements */}
           <div className="mt-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-2">
-              Job Requirements:
-            </h2>
+            <h2 className="text-lg font-semibold text-gray-800 mb-2">Job Requirements:</h2>
             <div className="space-y-4">
-              {/* Qualifications */}
               <div>
-                <Label className="font-bold text-gray-700">
-                  Qualifications:
-                </Label>{" "}
-                <span className="text-sm text-gray-600">
-                  Bachelor's in Computer Science or related field
-                </span>
+                <h4 className="font-semibold text-gray-700">Qualifications:</h4>
+                <p className="text-sm text-gray-600">
+                  {jobDetails?.qualifications?.join(", ") || "Not specified"}
+                </p>
               </div>
-
-              {/* Experience */}
               <div>
-                <Label className="font-bold text-gray-700">Experience:</Label>{" "}
-                <span className="text-sm text-gray-600">
-                  2-4 years of experience in web development
-                </span>
+                <h4 className="font-semibold text-gray-700">Experience:</h4>
+                <p className="text-sm text-gray-600">
+                  {jobDetails?.experience || "Not specified"} years
+                </p>
               </div>
-
-              {/* Skills */}
               <div>
-                <Label className="font-bold text-gray-700">Skills:</Label>{" "}
-                <span className="text-sm text-gray-600">
-                  JavaScript, React, Node.js, MongoDB
-                </span>
+                <h4 className="font-semibold text-gray-700">Skills:</h4>
+                <p className="text-sm text-gray-600">
+                  {jobDetails?.skills?.join(", ") || "Not specified"}
+                </p>
               </div>
             </div>
           </div>
@@ -136,3 +164,4 @@ const JobDescription = () => {
 };
 
 export default JobDescription;
+
