@@ -8,6 +8,7 @@ import { google_client_id } from "../../../utils/GoogleOAuthCredentials.js";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import Navbar from "@/components/shared/Navbar";
+import Footer from "@/components/shared/Footer";
 import { RECRUITER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { setUser } from "@/redux/authSlice";
 import { useDispatch } from "react-redux";
@@ -74,44 +75,44 @@ const Signup = () => {
 
   return (
     <>
+    <div className="flex flex-col min-h-screen">
       <Navbar />
-      <div className="flex flex-col md:flex-row h-screen ">
-        {/* Left Section - Background Image and Content */}
-        <div className="relative w-full md:w-2/3 h-1/2 md:h-full">
-          {/* Background Image */}
+      <div className="flex flex-col md:flex-row flex-grow">
+        {/* Updated Left Section - Background Image and Content */}
+        <div className="relative w-full md:w-2/3 hidden xl:flex">
           <img
             src={img3}
             alt="Image 1"
             className="w-full h-full object-cover  opacity-70"
           />
           {/* Centered Content */}
-          <div className="absolute inset-0 flex flex-col items-center text-center space-y-4 justify-center">
-            <h1 className="font-semibold  m-4 p-2 rounded-xl  text-2xl md:text-3xl text-gray-500">
+          <div className="absolute inset-0 flex flex-col items-center text-center space-y-4 justify-center px-4">
+            <h1 className="font-semibold text-2xl md:text-3xl text-gray-500">
               Powerful recruiting tools to find your{" "}
               <span className="text-black"> Perfect Team!</span>
             </h1>
-            <p className=" flex items-center gap-2 font-semibold  text-lg md:text-xl w-4/5 md:w-3/5  p-1 rounded-xl text-gray-600">
-              <MdOutlineVerified size={35} color="red" />
+            <p className=" flex items-center gap-2 font-semibold  text-lg md:text-xl text-gray-600">
+              <MdOutlineVerified size={30} color="red" />
               Post your job and source candidates.
             </p>
-            <p className=" flex items-center gap-2 font-semibold  text-lg md:text-xl w-4/5 md:w-3/5  p-1 rounded-xl text-gray-600">
-              <MdOutlineVerified size={35} color="red" />
+            <p className=" flex items-center gap-2 font-semibold  text-lg md:text-xl text-gray-600">
+              <MdOutlineVerified size={30} color="red" />
               Save time with intelligent applicant sorting.
             </p>
-            <p className=" flex items-center gap-2 font-semibold  text-lg md:text-xl w-4/5 md:w-3/5  p-1 rounded-xl text-gray-600">
-              <MdOutlineVerified size={35} color="red" />
+            <p className=" flex items-center gap-2 font-semibold  text-lg md:text-xl text-gray-600">
+              <MdOutlineVerified size={30} color="red" />
               Free built-in ATS to manage your pipeline.
             </p>
-            <p className=" flex items-center gap-2 font-semibold  text-lg md:text-xl w-4/5 md:w-3/5  p-1 rounded-xl text-gray-600">
-              <MdOutlineVerified size={35} color="red" />
+            <p className=" flex items-center gap-2 font-semibold  text-lg md:text-xl text-gray-600">
+              <MdOutlineVerified size={30} color="red" />
               Industry high 40% candidate response rate.
             </p>
           </div>
         </div>
 
-        {/* Right Section - Form */}
-        <div className="w-full md:w-1/3 flex items-center justify-center bg-gradient-to-r from-white to-blue-100">
-          <form className="w-4/5 space-y-4" onSubmit={handleSubmit}>
+        {/* Updated Right Section - Form */}
+        <div className="w-full md:w-1/3 flex items-center justify-center bg-gradient-to-r from-white to-blue-100 py-10 md:py-0 flex-grow min-h-screen">
+          <form className="w-4/5 max-w-lg space-y-4" onSubmit={handleSubmit}>
             <h1 className="text-3xl font-bold text-center">
               Great<span className="text-blue-700">Hire</span>
             </h1>
@@ -185,6 +186,8 @@ const Signup = () => {
             </p>
           </form>
         </div>
+      </div>
+      <Footer />
       </div>
     </>
   );

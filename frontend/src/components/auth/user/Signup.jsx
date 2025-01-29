@@ -6,6 +6,7 @@ import { google_client_id } from "../../../utils/GoogleOAuthCredentials.js";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import Navbar from "@/components/shared/Navbar";
+import Footer from "@/components/shared/Footer";
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -70,16 +71,17 @@ const Signup = () => {
 
   return (
     <>
+    <div className="flex flex-col min-h-screen">
       <Navbar />
-      <div className="flex flex-col md:flex-row h-screen">
-        {/* Left Section - Background Image and Content */}
-        <div className="relative w-full md:w-2/3 h-1/2 md:h-full">
+      <div className="flex flex-col md:flex-row flex-grow">
+        {/* Updated Left Section - Background Image and Content */}
+        <div className="relative w-full md:w-2/3 hidden xl:flex">
           <img
             src={img1}
             alt="Image 1"
             className="w-full h-full object-cover opacity-80"
           />
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-center space-y-4">
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
             <h1 className="font-bold text-3xl md:text-4xl">
               Find the job made for you.
             </h1>
@@ -89,10 +91,10 @@ const Signup = () => {
           </div>
         </div>
 
-        {/* Right Section - Form */}
+        {/* Updated Right Section - Form */}
 
-        <div className="w-full md:w-1/3 flex items-center justify-center bg-gradient-to-r from-white to-blue-100">
-          <form className="w-4/5 space-y-4" onSubmit={handleSubmit}>
+        <div className="w-full md:w-1/3 flex items-center justify-center bg-gradient-to-r from-white to-blue-100 py-10 md:py-0 flex-grow min-h-screen">
+          <form className="w-4/5 max-w-lg space-y-4" onSubmit={handleSubmit}>
             <h1 className="text-3xl font-bold text-center">
               Great<span className="text-blue-700">Hire</span>
             </h1>
@@ -165,6 +167,8 @@ const Signup = () => {
             </p>
           </form>
         </div>
+      </div>
+      <Footer />
       </div>
     </>
   );
