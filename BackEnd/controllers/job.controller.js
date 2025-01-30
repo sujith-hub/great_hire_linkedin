@@ -1,9 +1,6 @@
 import { Job } from "../models/job.model.js";
 import { Application } from "../models/application.model.js";
-import { User } from "../models/user.model.js";
 import { Company } from "../models/company.model.js";
-import cloudinary from "../utils/cloudinary.js";
-import getDataUri from "../utils/dataUri.js";
 import { JobSubscription } from "../models/jobSubscription.model.js";
 
 export const postJob = async (req, res) => {
@@ -125,9 +122,9 @@ export const postJob = async (req, res) => {
       // Ensure `maxJobPosts` is decremented only if it's a number
       const updatedCompany = await Company.findOneAndUpdate(
         { _id: company._id }, // Find the company by ID
-        { $inc: { maxPostJobs: -1 } }, // Decrement maxJobPosts by 1
+        { $inc: { maxJobPosts: -1 } }, // Decrement maxJobPosts by 1
         { new: true } // Return the updated document
-      ); 
+      );
 
       // Check if maxJobPosts reached 0
       if (updatedCompany && updatedCompany.maxJobPosts === 0) {
@@ -183,16 +180,7 @@ export const getAllJobs = async (req, res) => {
         isFirst = false;
       }
 
-      // Check if the user has applied to this job
-      const isApplied = doc.application.length > 0; // If the array has items, the user has applied
-
-      // Add the application status to the job details
-      const jobWithApplicationStatus = {
-        ...doc.toObject(),
-        isApplied, // Add 'isApplied' field to indicate if the user applied for the job
-      };
-
-      res.write(JSON.stringify(jobWithApplicationStatus)); // Write the job with application status
+      res.write(JSON.stringify(doc.toObject())); // Write the job with application status
     });
 
     cursor.on("end", () => {

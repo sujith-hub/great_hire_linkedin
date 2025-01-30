@@ -101,14 +101,16 @@ const ApplicantDetails = ({
           </div>
 
           {/* Skills */}
-          <div className="flex flex-col gap-2">
-            <h2 className="text-xl font-semibold text-gray-700">Skills</h2>
-            <div className="flex space-x-3 flex-wrap">
+          <div>
+            <h2 className="text-lg font-semibold text-gray-800  pb-2">
+              Skills
+            </h2>
+            <div className=" flex flex-wrap gap-3">
               {applicant?.profile?.skills?.length > 0 ? (
                 applicant.profile.skills.map((skill, index) => (
                   <Badge
                     key={index}
-                    className="bg-gray-300 px-4 py-2 text-gray-800 hover:bg-gray-200 rounded-lg font-bold text-sm "
+                    className="bg-blue-100 hover:bg-gray-200 px-4 py-2 text-blue-800 rounded-lg font-medium text-sm"
                   >
                     {skill}
                   </Badge>

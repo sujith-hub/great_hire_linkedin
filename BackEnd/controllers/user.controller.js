@@ -337,6 +337,7 @@ export const updateProfile = async (req, res) => {
       city,
       state,
       country,
+      jobProfile,
     } = req.body;
 
     const { profilePhoto, resume } = req.files; // Access files from req.files
@@ -403,6 +404,12 @@ export const updateProfile = async (req, res) => {
       user.profile.experience = {
         ...user.profile.experience,
         duration: experience,
+      };
+    }
+    if (jobProfile) {
+      user.profile.experience = {
+        ...user.profile.experience,
+        jobProfile,
       };
     }
     if (skillsArray.length) user.profile.skills = skillsArray;

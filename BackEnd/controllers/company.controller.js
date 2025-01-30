@@ -376,64 +376,86 @@ export const getCurrentPlan = async (req, res) => {
 
 export const getCandidateData = async (req, res) => {
   try {
-    // Destructure filters from the query parameters
     const { jobTitle, experience, salaryBudget, companyId } = req.query;
     const userId = req.id;
 
-    // Find the company by ID
+    // Check if company exists
     const company = await Company.findById(companyId);
     if (!company) {
-      return res.status(404).json({
-        message: "Company not found.",
-        success: false,
-      });
+      return res
+        .status(404)
+        .json({ message: "Company not found.", success: false });
     }
 
-    // Check if the user is associated with the company
+    // Check if user is associated with company
     const isUserAssociated = company.userId.some(
       (userObj) => userObj.user.toString() === userId
     );
 
     if (!isUserAssociated) {
-      return res.status(403).json({
-        message: "You are not authorized",
-        success: false,
-      });
+      return res
+        .status(403)
+        .json({ message: "You are not authorized", success: false });
     }
 
-    // Build filter query object
-    let filterQuery = {};
+    const candidates = await User.find({
+      "profile.bio": jobTitle,
+      "profile.experience.duration": experience,
+      "profile.expectedCTC": salaryBudget,
+      "profile.resume": { $exists: true, $ne: "" }, // Ensure resume exists
+    }).select({
+      fullname: 1,
+      "profile.bio": 1,
+      "profile.skills": 1,
+      "profile.experience.duration": 1,
+      "profile.expectedCTC": 1,
+      "profile.resume": 1,
+      "profile.profilePhoto": 1,
+    });
 
-    
-    // Search jobTitle in coverLetter, bio, and skills
-    if (jobTitle) {
-      const regex = new RegExp(jobTitle, "i"); // Case-insensitive match
-      filterQuery.$or = [
-        { "profile.coverLetter": regex },
-        { "profile.bio": regex },
-        { "profile.skills": { $elemMatch: { $regex: regex, $options: "i" } } },
-      ];
-    }
-
-    // Filter by experience (string comparison)
-    if (experience) {
-      filterQuery["profile.experience.duration"] = { $gte: experience }; // Direct string comparison
-    }
-
-    // Filter by salary budget (expectedCTC field in profile)
-    if (salaryBudget) {
-      filterQuery["profile.expectedCTC"] = Number(salaryBudget);
-    }
-
-    console.log(filterQuery);
-
-    // Fetch candidates from the database based on the filters
-    const candidates = await User.find(filterQuery);
-
-    // Return the candidates data
     res.status(200).json({ success: true, candidates });
   } catch (error) {
     console.error("Error fetching candidate data:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ message: "Internal Server Error", error });
+  }
+};
+
+export const decreaseCandidateCredits = async (req, res) => {
+  try {
+    const companyId = req.params.id;
+    const userId = req.id;
+
+    // Check if company exists
+    const company = await Company.findById(companyId);
+    if (!company) {
+      return res
+        .status(404)
+        .json({ message: "Company not found.", success: false });
+    }
+
+    // Check if user is associated with company
+    const isUserAssociated = company.userId.some(
+      (userObj) => userObj.user.toString() === userId
+    );
+
+    if (!isUserAssociated) {
+      return res
+        .status(403)
+        .json({ message: "You are not authorized", success: false });
+    }
+
+    // If creditedForCandidates is null, no need to decrease
+    if (company.creditedForCandidates !== null) {
+      if (company.creditedForCandidates > 0) {
+        company.creditedForCandidates -= 1;
+        await company.save();
+      }
+    }
+    return res.status(200).json({
+      success: true,
+    });
+  } catch (error) {
+    console.error("Error decreasing candidate credits:", error);
+    res.status(500).json({ message: "Internal Server Error", error });
   }
 };

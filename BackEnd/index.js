@@ -2,6 +2,8 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
+import { createServer } from "http"; // Import HTTP server
+import { Server } from "socket.io"; // Import Socket.IO
 import applicationRoute from "./routes/application.route.js";
 import companyRoute from "./routes/company.route.js";
 import jobRoute from "./routes/job.route.js";
@@ -12,10 +14,18 @@ import orderRoute from "./routes/order.route.js";
 import connectDB from "./utils/db.js";
 import cron from "node-cron";
 import { JobSubscription } from "./models/jobSubscription.model.js";
+import { CandidateSubscription } from "./models/candidateSubscription.model.js";
 
 dotenv.config({});
 
 const app = express();
+const server = createServer(app); // Create an HTTP server
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173", // Allow frontend access
+    credentials: true,
+  },
+});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -29,8 +39,7 @@ app.use(cors(corsOptions));
 
 const PORT = process.env.PORT || 3000;
 
-
-//api's
+// API Routes
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/recruiter", recruiterRoute);
 app.use("/api/v1/verification", verificationRoute);
@@ -39,21 +48,53 @@ app.use("/api/v1/job", jobRoute);
 app.use("/api/v1/application", applicationRoute);
 app.use("/api/v1/order", orderRoute);
 
-app.listen(PORT, () => {
-  connectDB();
-  console.log(`Server running at port ${PORT}`);
+// Socket.IO Handling
+io.on("connection", (socket) => {
+  console.log("A user connected:", socket.id);
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected:", socket.id);
+  });
 });
 
+// Cron Job to Check for Expired Plans
+cron.schedule("* * * * *", async () => {
+  try {
+    const [jobSubscriptions, candidateSubscriptions] = await Promise.all([
+      JobSubscription.find({ status: "Active" }),
+      CandidateSubscription.find({ status: "Active" }),
+    ]);
 
-cron.schedule("0 0 * * *", async () => {
-  console.log("Running daily subscription check...");
+    await Promise.all([
+      ...jobSubscriptions.map(async (subscription) => {
+        const expired = await subscription.checkValidity();
+        if (expired) {
+          io.emit("planExpired", {
+            companyId: subscription.company,
+            type: "job", // Job plan expired
+            message: "Job plan expired, please renew.",
+          });
+        }
+      }),
+      ...candidateSubscriptions.map(async (subscription) => {
+        const expired = await subscription.checkValidity();
+        if (expired) {
+          io.emit("planExpired", {
+            companyId: subscription.company,
+            type: "candidate", // Candidate plan expired
+            message: "Candidate data plan expired, please renew.",
+          });
 
-  // Find all active subscriptions
-  const subscriptions = await JobSubscription.find({ status: "Active" });
-
-  for (const subscription of subscriptions) {
-    await subscription.checkValidity(); // Check and expire if needed
+        }
+      }),
+    ]);
+  } catch (error) {
+    console.error("Error in subscription check:", error);
   }
+});
 
-  console.log("Subscription check completed.");
+// Start Server with WebSockets
+server.listen(PORT, () => {
+  connectDB();
+  console.log(`Server running at port ${PORT}`);
 });

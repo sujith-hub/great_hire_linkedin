@@ -124,7 +124,7 @@ const DashboardNavigations = () => {
             {({ isActive }) => (
               <>
                 <PiStudent size={25} className={iconClass(isActive)} />
-                <span>Candidate List</span>
+                <span>Find Candidates</span>
               </>
             )}
           </NavLink>
