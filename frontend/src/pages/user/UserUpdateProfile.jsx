@@ -7,10 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
+import { Pencil } from "lucide-react";
 import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 
 const UserUpdateProfile = ({ open, setOpen }) => {
   const [loading, setLoading] = useState(false);
+  const [resume, setResume] = useState(null);
+  const [resumeUrl, setResumeUrl] = useState("");
   const dispatch = useDispatch();
   const { user } = useSelector((store) => store.auth);
 
@@ -23,7 +26,12 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     skills: user?.profile?.skills?.join(", ") || "",
     resume: user?.profile?.resume || "",
     profilePhoto: user?.profile?.profilePhoto || "",
-   
+    currentCTC: user?.profile?.currentCTC || "",
+    expectedCTC: user?.profile?.expectedCTC || "",
+    jobProfile: user?.profile?.experience?.jobProfile || "",
+    city: user?.address?.city || "",
+    state: user?.address?.state || "",
+    country: user?.address?.country || "",
   });
 
   const [previewImage, setPreviewImage] = useState(
@@ -36,8 +44,20 @@ const UserUpdateProfile = ({ open, setOpen }) => {
   };
 
   const handleFileChange = (e) => {
-    const file = e.target.files?.[0];
-    setInput((prev) => ({ ...prev, resume: file }));
+    const file = e.target.files[0];
+    if (file) {
+      const fileUrl = URL.createObjectURL(file);
+      setInput((prevData) => ({
+        ...prevData,
+        resume: file,
+      }));
+      setResumeUrl(file.name);
+    }
+  };
+
+  const removeResume = () => {
+    setInput({ resume: null });
+    setResumeUrl("");
   };
 
   const handleImageChange = (e) => {
@@ -50,29 +70,27 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     }
   };
 
-  const removeResume = () => {
-    setInput((prev) => ({ ...prev, resume: "" }));
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
-
     formData.append("fullname", input.fullname);
     formData.append("email", input.email);
-    formData.append("phoneNumber", input.phoneNumber);
-    formData.append("bio", input.bio);
-    formData.append("experience", input.experience);
-    formData.append("skills", input.skills);
-    
-    
-
-    if (input.resume) {
+    formData.append("number", input.number);
+    formData.append("city", input.city); 
+    formData.append("state", input.state);
+    formData.append("country", input.country);
+    formData.append("experience", input.experience || "");
+    formData.append("jobProfile", input.jobProfile || "");
+    formData.append("currentCTC", input.currentCTC || "");
+    formData.append("expectedCTC", input.expectedCTC); 
+    formData.append("bio", input.bio) || "";
+    formData.append("skills", input.skills || "");
+    if (input.resume instanceof File) {
       formData.append("resume", input.resume);
     }
-    if (input.profilePhoto) {
-      formData.append("profilePhoto", input.profilePhoto);
-    }
+
+    console.log(formData);
+    console.log(input);
 
     try {
       setLoading(true);
@@ -106,82 +124,85 @@ const UserUpdateProfile = ({ open, setOpen }) => {
       onClick={() => setOpen(false)}
     >
       <div
-        className="bg-white sm:max-w-[500px] w-full p-6 rounded-lg shadow-lg"
+        className="bg-white sm:max-w-[850px] w-full p-6 rounded-lg shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex justify-between items-center">
-          <h2 className="text-lg font-semibold">Update Profile</h2>
-          <button
-            type="button"
-            onClick={() => setOpen(false)}
-            className="text-gray-500 hover:text-gray-700 focus:outline-none"
-            aria-label="Close"
-          >
-            ✖
-          </button>
-        </div>
-        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-          <div className="grid gap-2 py-4">
+        <h2 className="text-lg text-center font-semibold mb-4">
+          Update Profile
+        </h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Profile Image and Name-Email Grid */}
+          <div className="grid grid-cols-3 gap-2 items-center">
             {/* Profile Image */}
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="profilePhoto" className="text-right">
+            <div className="relative flex flex-col items-center">
+              <label htmlFor="profilePhoto" className="font-semibold mb-2">
                 Profile Image
-              </Label>
-              <div className="col-span-3 space-y-2">
+              </label>
+
+              {/* Profile Image with Pencil Icon */}
+              <div className="relative w-24 h-24">
                 {previewImage ? (
                   <img
                     src={previewImage}
-                    alt="Preview"
-                    className="w-20 h-20 rounded-full object-cover border"
+                    alt="Profile Preview"
+                    className="w-full h-full rounded-full object-cover border"
                   />
                 ) : (
-                  <p>No image uploaded</p>
+                  <div className="w-full h-full flex items-center justify-center bg-gray-200 rounded-full border">
+                    <p>No Image</p>
+                  </div>
                 )}
+
+                {/* Pencil Icon */}
+                <label
+                  htmlFor="profilePhoto"
+                  className="absolute bottom-1 right-1 bg-white p-1 rounded-full shadow-lg cursor-pointer"
+                >
+                  <Pencil className="w-5 h-5 text-gray-700" />
+                </label>
+              </div>
+
+              {/* Hidden file input for image upload */}
+              <input
+                type="file"
+                id="profilePhoto"
+                className="hidden"
+                accept="image/*"
+                onChange={handleImageChange} // Handle image selection
+              />
+            </div>
+
+            {/* Name and Email Fields */}
+            <div className="col-span-2 grid gap-2">
+              <div className="flex items-center gap-2">
+                <Label htmlFor="fullname" className="w-20">
+                  Name
+                </Label>
                 <Input
-                  id="profilePhoto"
-                  name="profilePhoto"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
+                  id="fullname"
+                  name="fullname"
+                  value={input.fullname}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <Label htmlFor="email" className="w-20">
+                  Email
+                </Label>
+                <Input
+                  id="email"
+                  name="email"
+                  value={input.email}
+                  onChange={handleChange}
                 />
               </div>
             </div>
+          </div>
 
-            {/* Fullname */}
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="fullname" className="text-right">
-                Name
-              </Label>
-              <Input
-                id="fullname"
-                name="fullname"
-                type="text"
-                value={input.fullname}
-                onChange={handleChange}
-                className="col-span-3"
-                placeholder="Enter your name"
-              />
-            </div>
-
-            {/* Email */}
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="email" className="text-right">
-                Email
-              </Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                value={input.email}
-                onChange={handleChange}
-                className="col-span-3"
-                placeholder="Enter your email"
-              />
-            </div>
-
-            {/* Phone Number */}
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="phoneNumber" className="text-right">
+          {/* Remaining Fields in Grid Layout */}
+          <div className="grid grid-cols-2 gap-2">
+            <div className="flex items-center gap-2">
+              <Label htmlFor="phoneNumber" className="w-32">
                 Phone
               </Label>
               <Input
@@ -189,27 +210,23 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                 name="phoneNumber"
                 value={input.phoneNumber}
                 onChange={handleChange}
-                className="col-span-3"
-                placeholder="Enter your phone number"
               />
             </div>
 
-
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="bio" className="text-right">
-                Bio
+            <div className="flex items-center gap-2">
+              <Label htmlFor="jobProfile" className="w-32">
+                Job Profile
               </Label>
               <Input
-                id="bio"
-                name="bio"
-                value={input.bio}
+                id="jobProfile"
+                name="jobProfile"
+                value={input.jobProfile}
                 onChange={handleChange}
-                className="col-span-3"
-                placeholder="Write a short bio"
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="experience" className="text-right">
+
+            <div className="flex items-center gap-2">
+              <Label htmlFor="experience" className="w-32">
                 Experience
               </Label>
               <Input
@@ -217,12 +234,12 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                 name="experience"
                 value={input.experience}
                 onChange={handleChange}
-                className="col-span-3"
-                placeholder="Experience in years (1, 2, 3..)"
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="skills" className="text-right">
+
+            {/* Skills */}
+            <div className="flex items-center gap-2">
+              <Label htmlFor="skills" className="w-32">
                 Skills
               </Label>
               <Input
@@ -230,49 +247,138 @@ const UserUpdateProfile = ({ open, setOpen }) => {
                 name="skills"
                 value={input.skills}
                 onChange={handleChange}
-                className="col-span-3"
-                placeholder="Enter your skills, separated by commas"
+                placeholder="Enter skills (comma separated)"
               />
             </div>
 
-            {/* Resume */}
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="resume" className="text-right">
-                Resume
+            <div className="flex items-center gap-2">
+              <Label htmlFor="currentCTC" className="w-32">
+                Current CTC
               </Label>
-              <div className="col-span-3 flex items-center space-x-2">
-                <Input
-                  id="resume"
-                  name="resume"
-                  type="file"
-                  accept=".pdf"
-                  onChange={handleFileChange}
-                />
-                {input.resume && (
-                  <button
-                    type="button"
-                    onClick={removeResume}
-                    className="text-red-500 hover:text-red-700 text-sm"
-                  >
-                    Remove
-                  </button>
-                )}
-              </div>
+              <Input
+                id="currentCTC"
+                name="currentCTC"
+                value={input.currentCTC}
+                onChange={handleChange}
+                placeholder="Enter Current CTC (In LPA)"
+              />
             </div>
 
-            {/* Submit Button */}
-            <div>
-              {loading ? (
-                <Button className="w-full my-2" disabled>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait
-                </Button>
-              ) : (
-                <Button type="submit" className="w-full my-2">
-                  Update
-                </Button>
+            <div className="flex items-center gap-2">
+              <Label htmlFor="expectedCTC" className="w-32">
+                Expected CTC
+              </Label>
+              <Input
+                id="expectedCTC"
+                name="expectedCTC"
+                value={input.expectedCTC}
+                onChange={handleChange}
+                placeholder="Enter Expected CTC (In LPA)"
+              />
+            </div>
+          </div>
+
+          {/* Bio */}
+          <div className="col-span-2 flex items-start gap-2 w-full">
+            <Label htmlFor="bio" className="w-32 pt-2">
+              Profile Summary
+            </Label>
+            <textarea
+              id="bio"
+              name="bio"
+              value={input.bio}
+              onChange={handleChange}
+              className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              rows="2" 
+              placeholder="Enter your bio..."
+            />
+          </div>
+
+          <div className="grid grid-cols-3 gap-2 w-full">
+            <div className="flex items-center gap-2 w-full">
+              <Label htmlFor="city" className="w-24">
+                City
+              </Label>
+              <Input
+                id="city"
+                name="city"
+                value={input.city}
+                onChange={handleChange}
+                className="w-full"
+              />
+            </div>
+
+            <div className="flex items-center gap-2 w-full">
+              <Label htmlFor="state" className="w-24">
+                State
+              </Label>
+              <Input
+                id="state"
+                name="state"
+                value={input.state}
+                onChange={handleChange}
+                className="w-full"
+              />
+            </div>
+
+            <div className="flex items-center gap-2 w-full">
+              <Label htmlFor="country" className="w-24">
+                Country
+              </Label>
+              <Input
+                id="country"
+                name="country"
+                value={input.country}
+                onChange={handleChange}
+                className="w-full"
+              />
+            </div>
+          </div>
+
+          <div className="col-span-2 flex items-center gap-2 relative">
+            <Label htmlFor="resume" className="w-32">
+              Resume
+            </Label>
+
+            <div className="relative w-full">
+              {/* File Input */}
+              <Input
+                id="resume"
+                name="resume"
+                type="text"
+                value={resumeUrl}
+                placeholder="Upload your resume"
+                readOnly
+                className="pr-10"
+              />
+              <input
+                type="file"
+                id="resume-upload"
+                accept=".pdf"
+                onChange={handleFileChange}
+                className="absolute inset-0 opacity-0 cursor-pointer"
+              />
+
+              {/* Display remove button inside input field */}
+              {resumeUrl && (
+                <button
+                  type="button"
+                  onClick={removeResume}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-red-500"
+                >
+                  ✖
+                </button>
               )}
             </div>
           </div>
+          {/* Submit Button */}
+          <Button type="submit" className="w-full mt-2" disabled={loading}>
+            {loading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              "Update"
+            )}
+          </Button>
         </form>
       </div>
     </div>
