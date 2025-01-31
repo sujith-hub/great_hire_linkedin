@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Navbar from "../../components/shared/Navbar";
 import { Avatar, AvatarImage } from "../../components/ui/avatar";
 import { Mail, Pen } from "lucide-react";
-import { LuPhoneIncoming } from "react-icons/lu";
+import { LuPhoneIncoming, LuMapPin } from "react-icons/lu";
 import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
 import AppliedJobTable from "../job/AppliedJobTable";
@@ -23,11 +23,10 @@ const UserProfile = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {user} = useSelector((state)=>state.auth);
-  
+  const { user } = useSelector((state) => state.auth);
+
   const [openEmailOTPModal, setOpenEmailOTPModal] = useState(false);
   const [openNumberOTPModal, setOpenNumberOTPModal] = useState(false);
-
 
   const handleDeleteAccount = async () => {
     try {
@@ -58,7 +57,9 @@ const UserProfile = () => {
           <div className="flex flex-col items-center text-center border-b pb-8">
             <Avatar className="h-24 w-24 shadow-lg">
               <AvatarImage
-                src={user?.profile?.profilePhoto || "https://github.com/shadcn.png"}
+                src={
+                  user?.profile?.profilePhoto || "https://github.com/shadcn.png"
+                }
                 alt="Profile Photo"
                 onError={(e) => (e.target.src = "/default-avatar.png")}
               />
@@ -66,11 +67,11 @@ const UserProfile = () => {
             <h1 className="mt-4 text-3xl font-bold text-gray-800">
               {user?.fullname || "User Name"}
             </h1>
-            <p className="text-gray-600 mt-2">
-              {user?.profile?.bio || "No bio available"}
-            </p>
+            <h1 className="mt-1 text-gray-600">
+              {user?.profile?.experience?.jobProfile || "job title"}
+            </h1>
             <p className="text-gray-500 mt-1">
-              {`Experience: ${user?.profile?.experience?.duration || 0} Year`}
+              {`Experience: ${user?.profile?.experience?.duration} Year`}
             </p>
             <Button
               onClick={() => setOpen(true)}
@@ -80,6 +81,17 @@ const UserProfile = () => {
               <Pen className="h-4 w-4" />
               Edit Profile
             </Button>
+          </div>
+
+          <div className="mt-8">
+            <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
+              Profile Summary
+            </h2>
+            <div>
+              <p className="text-gray-600 mt-2">
+                {user?.profile?.bio || "No bio available"}
+              </p>
+            </div>
           </div>
 
           {/* Contact Information Section */}
@@ -124,6 +136,13 @@ const UserProfile = () => {
                   </span>
                 )}
               </div>
+
+              <div className="flex items-center gap-4">
+                <LuMapPin size={25} className="text-blue-500" />
+                <span className="text-gray-700">
+                {`${user?.address?.city}, ${user?.address?.state}, ${user?.address?.country}`}
+                </span>
+              </div>
             </div>
           </div>
 
@@ -145,6 +164,17 @@ const UserProfile = () => {
               ) : (
                 <span className="text-gray-600">No skills listed</span>
               )}
+            </div>
+          </div>
+
+          {/* salary Section */}
+          <div className="mt-8">
+            <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
+              Salary
+            </h2>
+            <div className="flex mt-2">
+              <h2 className="w-1/2 text-gray-700">Current CTC: {user?.profile?.currentCTC || ""} </h2>
+              <h2 className="text-gray-700 text-right">Expected CTC: {user?.profile?.expectedCTC || ""} </h2>
             </div>
           </div>
 
@@ -179,7 +209,9 @@ const UserProfile = () => {
             <Button
               onClick={handleDeleteAccount}
               variant="destructive"
-              className={`bg-red-500 text-white hover:bg-red-700 ${loading && "cursor-not-allowed bg-red-400"}`}
+              className={`bg-red-500 text-white hover:bg-red-700 ${
+                loading && "cursor-not-allowed bg-red-400"
+              }`}
               disabled={loading}
             >
               {loading ? "Deleting..." : "Delete Account"}
@@ -187,28 +219,29 @@ const UserProfile = () => {
           </div>
         </div>
 
-        {/* Applied Jobs Section */}
-        <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-lg mt-8 p-8">
-          <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
-            Applied Jobs
-          </h2>
-          <div className="mt-4">
-            <AppliedJobTable />
-          </div>
-        </div>
+         {/* Applied Jobs Section */}
+         <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-lg mt-8 p-8">
+           <h2 className="text-lg text-center font-semibold text-gray-800 border-b pb-2">
+             Applied Jobs
+           </h2>
+           <div className="mt-4">
+             <AppliedJobTable />
+           </div>
+         </div>
       </div>
-
+     
       <UserUpdateProfile open={open} setOpen={setOpen} />
       <Footer className="mt-auto" />
 
       {/* OTP Modals */}
-      {openEmailOTPModal && (
+     {openEmailOTPModal && (
         <VerifyEmail setOpenEmailOTPModal={setOpenEmailOTPModal} />
       )}
       {openNumberOTPModal && (
         <VerifyNumber setOpenNumberOTPModal={setOpenNumberOTPModal} />
       )}
     </div>
+    
   );
 };
 
