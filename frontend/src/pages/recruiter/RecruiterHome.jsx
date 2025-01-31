@@ -84,7 +84,7 @@ const RecruiterHome = () => {
       description: "Total number of applicants for your jobs.",
     },
     {
-      title: "Selected Candidates",
+      title: "Shortlisted Candidates",
       count: jobsStatistics?.selectedCandidates,
       icon: <FaUsers className="text-4xl text-teal-600" />,
       description: "Candidates who have been selected.",

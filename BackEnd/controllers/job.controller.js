@@ -512,7 +512,7 @@ export const getJobsStatistics = async (req, res) => {
     // Get the number of selected candidates for the company's jobs
     const selectedCandidates = await Application.countDocuments({
       job: { $in: jobIds },
-      status: "Selected",
+      status: "Shortlisted",
     });
 
     // Format the response

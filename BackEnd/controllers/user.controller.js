@@ -338,6 +338,8 @@ export const updateProfile = async (req, res) => {
       state,
       country,
       jobProfile,
+      currentCTC,
+      expectedCTC,
     } = req.body;
 
     const { profilePhoto, resume } = req.files; // Access files from req.files
@@ -412,6 +414,8 @@ export const updateProfile = async (req, res) => {
         jobProfile,
       };
     }
+    if (currentCTC) user.profile.currentCTC = currentCTC;
+    if (expectedCTC) user.profile.expectedCTC = expectedCTC;
     if (skillsArray.length) user.profile.skills = skillsArray;
 
     await user.save();

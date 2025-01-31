@@ -609,7 +609,7 @@ export const sendEmailToApplicant = async (req, res) => {
     }
 
     // Extract important job details
-    const { title, jobDetails, company } = job;
+    const { jobDetails, company } = job;
     const companyName = company?.companyName || "Our Company"; // Fallback in case the company name is missing
 
     // Create email content
@@ -645,7 +645,7 @@ export const sendEmailToApplicant = async (req, res) => {
 
     // Send email
     await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+      from: `"GreatHire Team" <${process.env.EMAIL_USER}>`,
       to: email,
       subject,
       html: message,

@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { FiSearch, FiEye, FiDownload } from "react-icons/fi";
+import { FiSearch, FiEye } from "react-icons/fi";
 import { APPLICATION_API_END_POINT } from "@/utils/ApiEndPoint";
 import axios from "axios";
 import ApplicantDetails from "./ApplicantDetails";
@@ -59,7 +58,7 @@ const AppliedCandidatesList = () => {
       .toLowerCase()
       .includes(search.toLowerCase());
     const matchesStatus =
-      statusFilter === "All" || applicant.status === statusFilter;
+      statusFilter === "All" || data.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
@@ -167,6 +166,7 @@ const AppliedCandidatesList = () => {
           jobId={jobId}
           setApplicantDetailsModal={setApplicantDetailsModal}
           applicantStatus={applicantStatus}
+          setApplicantStatus={setApplicantStatus}
         />
       )}
     </div>

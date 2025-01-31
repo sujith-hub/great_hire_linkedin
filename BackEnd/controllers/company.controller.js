@@ -1,6 +1,8 @@
 import { Company } from "../models/company.model.js";
 import { User } from "../models/user.model.js";
 import { Recruiter } from "../models/recruiter.model.js";
+import { Job } from "../models/job.model.js";
+import { Application } from "../models/application.model.js";
 import cloudinary from "../utils/cloudinary.js";
 import getDataUri from "../utils/dataUri.js";
 import nodemailer from "nodemailer";
@@ -8,6 +10,25 @@ import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import { BlacklistedCompany } from "../models/blacklistedCompany.model.js";
 import { JobSubscription } from "../models/jobSubscription.model.js";
+
+export const isUserAssociated = async (companyId, userId) => {
+  try {
+    // Check if company exists
+    const company = await Company.findById(companyId);
+    if (!company) {
+      return res
+        .status(404)
+        .json({ message: "Company not found.", success: false });
+    }
+
+    // Check if user is associated with company
+    const isUserAssociated = company.userId.some(
+      (userObj) => userObj.user.toString() === userId
+    );
+  } catch (err) {
+    console.log("error in recruiter validation");
+  }
+};
 
 export const registerCompany = async (req, res) => {
   try {
@@ -177,27 +198,6 @@ export const registerCompany = async (req, res) => {
   }
 };
 
-//company get
-
-export const getCompanyList = async (req, res) => {
-  try {
-    const userId = req.id; //logged in userId
-    const companies = await Company.find({ userId });
-    if (!companies) {
-      return res.status(404).json({
-        message: "Companies not found.",
-        success: false,
-      });
-    }
-    return res.status(200).json({
-      companies,
-      success: true,
-    });
-  } catch (error) {
-    console.log(error);
-  }
-};
-
 //get  company by id ...
 export const getCompanyById = async (req, res) => {
   try {
@@ -255,24 +255,10 @@ export const updateCompany = async (req, res) => {
     const companyId = req.params.id;
     const userId = req.id;
 
-    // Find the company by ID
-    const company = await Company.findById(companyId);
-    if (!company) {
-      return res.status(404).json({
-        message: "Company not found.",
-        success: false,
-      });
-    }
-
-    // Check if the user is associated with the company
-    const isUserAssociated = company.userId.some(
-      (userObj) => userObj.user.toString() === userId
-    );
-    if (!isUserAssociated) {
-      return res.status(403).json({
-        message: "You are not authorized to update this company.",
-        success: false,
-      });
+    if (!isUserAssociated(companyId, userId)) {
+      return res
+        .status(403)
+        .json({ message: "You are not authorized", success: false });
     }
 
     // Update only provided fields
@@ -354,6 +340,13 @@ export const changeAdmin = async (req, res) => {
 export const getCurrentPlan = async (req, res) => {
   try {
     const companyId = req.params.id; // Get company ID from request parameters
+    const userId = req.id;
+
+    if (!isUserAssociated(companyId, userId)) {
+      return res
+        .status(403)
+        .json({ message: "You are not authorized", success: false });
+    }
 
     // Find the active subscription for the company
     const currentPlan = await JobSubscription.findOne({
@@ -379,20 +372,7 @@ export const getCandidateData = async (req, res) => {
     const { jobTitle, experience, salaryBudget, companyId } = req.query;
     const userId = req.id;
 
-    // Check if company exists
-    const company = await Company.findById(companyId);
-    if (!company) {
-      return res
-        .status(404)
-        .json({ message: "Company not found.", success: false });
-    }
-
-    // Check if user is associated with company
-    const isUserAssociated = company.userId.some(
-      (userObj) => userObj.user.toString() === userId
-    );
-
-    if (!isUserAssociated) {
+    if (!isUserAssociated(companyId, userId)) {
       return res
         .status(403)
         .json({ message: "You are not authorized", success: false });
@@ -425,20 +405,7 @@ export const decreaseCandidateCredits = async (req, res) => {
     const companyId = req.params.id;
     const userId = req.id;
 
-    // Check if company exists
-    const company = await Company.findById(companyId);
-    if (!company) {
-      return res
-        .status(404)
-        .json({ message: "Company not found.", success: false });
-    }
-
-    // Check if user is associated with company
-    const isUserAssociated = company.userId.some(
-      (userObj) => userObj.user.toString() === userId
-    );
-
-    if (!isUserAssociated) {
+    if (!isUserAssociated(companyId, userId)) {
       return res
         .status(403)
         .json({ message: "You are not authorized", success: false });
@@ -457,5 +424,35 @@ export const decreaseCandidateCredits = async (req, res) => {
   } catch (error) {
     console.error("Error decreasing candidate credits:", error);
     res.status(500).json({ message: "Internal Server Error", error });
+  }
+};
+
+export const getCompanyApplicants = async (req, res) => {
+  try {
+    const { companyId } = req.params; // Extract company const userId = req.id;
+    const userId = req.id;
+
+    if (!isUserAssociated(companyId, userId)) {
+      return res
+        .status(403)
+        .json({ message: "You are not authorized", success: false });
+    }
+
+    // Find all job postings under this company
+    const jobIds = await Job.find({ company: companyId }).distinct("_id");
+
+    // Find applications for these jobs
+    const applications = await Application.find({ job: { $in: jobIds } })
+      .populate("applicant") // Only populate applicant details
+      .sort({ createdAt: -1 }); // Sort latest first
+    
+    res.status(200).json({
+      success: true,
+      totalApplications: applications.length,
+      applications,
+    });
+  } catch (error) {
+    console.error("Error fetching applicants:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };

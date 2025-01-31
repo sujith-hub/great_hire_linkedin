@@ -48,6 +48,12 @@ app.use("/api/v1/job", jobRoute);
 app.use("/api/v1/application", applicationRoute);
 app.use("/api/v1/order", orderRoute);
 
+// Start Server with WebSockets
+server.listen(PORT, () => {
+  connectDB();
+  console.log(`Server running at port ${PORT}`);
+});
+
 // Socket.IO Handling
 io.on("connection", (socket) => {
   console.log("A user connected:", socket.id);
@@ -58,7 +64,7 @@ io.on("connection", (socket) => {
 });
 
 // Cron Job to Check for Expired Plans
-cron.schedule("* * * * *", async () => {
+cron.schedule("0 * * * *", async () => {
   try {
     const [jobSubscriptions, candidateSubscriptions] = await Promise.all([
       JobSubscription.find({ status: "Active" }),
@@ -93,8 +99,4 @@ cron.schedule("* * * * *", async () => {
   }
 });
 
-// Start Server with WebSockets
-server.listen(PORT, () => {
-  connectDB();
-  console.log(`Server running at port ${PORT}`);
-});
+
