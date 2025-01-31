@@ -8,6 +8,7 @@ import { Job } from "../models/job.model.js";
 import randomstring from "randomstring";
 import { serviceOrder } from "../models/serviceOrder.model.js";
 import { JobSubscription } from "../models/jobSubscription.model.js";
+import { CandidateSubscription } from "../models/candidateSubscription.model.js";
 import { hmac } from "fast-sha256";
 import { TextEncoder } from "util";
 // otpService.js
@@ -457,6 +458,72 @@ export const verifyPaymentForJobPlans = async (req, res) => {
   }
 };
 
+export const verifyPaymentForCandidatePlans = async (req, res) => {
+  try {
+    const {
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+      creditBoost,
+      companyId,
+    } = req.body;
+
+    if (
+      matchSignature(razorpay_order_id, razorpay_payment_id, razorpay_signature)
+    ) {
+      // Update the order status in the database
+      const currentPlan = await CandidateSubscription.findOneAndUpdate(
+        { razorpayOrderId: razorpay_order_id },
+        {
+          paymentStatus: "paid",
+          paymentDetails: {
+            paymentId: razorpay_payment_id,
+            signature: razorpay_signature,
+          },
+          status: "Active", // Activate the plan after paymentStatus is paid
+        },
+        { new: true } // Return the updated document
+      ).select("creditBoost expiryDate planName price status purchaseDate");
+
+      // here remove expired plan of company
+      await CandidateSubscription.deleteOne({
+        company: companyId,
+        status: "Expired",
+      });
+
+      // Find the company and update maxPostJobs
+      const company = await Company.findById(companyId);
+      if (!company) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Company not found" });
+      }
+
+      // If the plan is unlimited, set maxPostJobs accordingly
+      if (creditBoost === null) {
+        company.creditedForCandidates = null; // this one set unlimited
+      } else {
+        company.creditedForCandidates = company.creditedForCandidates + creditBoost; // Add the creditBoost to existing creditedForCandidates
+      }
+
+      await company.save();
+
+      res.status(200).json({
+        success: true,
+        plan: currentPlan,
+        message: "Payment verified successfully",
+      });
+    } else {
+      res
+        .status(400)
+        .json({ success: false, message: "Payment verification failed" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
 // update user email verification
 export const updateEmailVerification = async (req, res) => {
   try {
@@ -542,7 +609,7 @@ export const sendEmailToApplicant = async (req, res) => {
     }
 
     // Extract important job details
-    const { title, jobDetails, company } = job;
+    const { jobDetails, company } = job;
     const companyName = company?.companyName || "Our Company"; // Fallback in case the company name is missing
 
     // Create email content
@@ -578,7 +645,7 @@ export const sendEmailToApplicant = async (req, res) => {
 
     // Send email
     await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+      from: `"GreatHire Team" <${process.env.EMAIL_USER}>`,
       to: email,
       subject,
       html: message,

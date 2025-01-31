@@ -33,14 +33,28 @@ const companySlice = createSlice({
 
     // reducer function to update maxJobpost data
     updateMaxPostJobs: (state, action) => {
-      if (action.payload === null) {
+      if (action.payload === null || action.payload === 0) {
         state.company.maxPostJobs = action.payload;
       } else {
         state.company.maxPostJobs = state.company.maxPostJobs + action.payload;
       }
     },
+
+    // reducer function to update maxJobpost data
+    updateCandidateCredits: (state, action) => {
+      if (action.payload === null || action.payload === 0) {
+        state.company.creditedForCandidates = action.payload;
+      } else {
+        state.company.creditedForCandidates =
+          state.company.creditedForCandidates + action.payload;
+      }
+    },
     decreaseMaxPostJobs: (state, action) => {
       state.company.maxPostJobs = state.company.maxPostJobs - action.payload;
+    },
+    decreaseCandidateCredits: (state, action) => {
+      state.company.creditedForCandidates =
+        state.company.creditedForCandidates - action.payload;
     },
   },
 });
@@ -53,6 +67,8 @@ export const {
   changeAdminUser,
   updateMaxPostJobs,
   decreaseMaxPostJobs,
+  updateCandidateCredits,
+  decreaseCandidateCredits,
 } = companySlice.actions;
 
 export default companySlice.reducer;

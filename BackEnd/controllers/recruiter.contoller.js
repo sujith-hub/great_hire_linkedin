@@ -14,6 +14,7 @@ import axios from "axios";
 import nodemailer from "nodemailer";
 import getDataUri from "../utils/dataUri.js";
 import cloudinary from "../utils/cloudinary.js";
+import { isUserAssociated } from "./company.controller.js";
 
 export const register = async (req, res) => {
   try {
@@ -261,6 +262,13 @@ export const getRecruiterById = async (req, res) => {
 export const addRecruiterToCompany = async (req, res) => {
   const { fullName, email, phoneNumber, password, position, companyId } =
     req.body;
+  const userId = req.id;
+
+  if (!isUserAssociated(companyId, userId)) {
+    return res
+      .status(403)
+      .json({ message: "You are not authorized", success: false });
+  }
 
   try {
     // Validate required fields
@@ -474,6 +482,12 @@ export const deleteAccount = async (req, res) => {
   try {
     const user = await Recruiter.findOne({ "emailId.email": userEmail });
     const userId = user?._id;
+
+    if (!isUserAssociated(companyId, userId)) {
+      return res
+        .status(403)
+        .json({ message: "You are not authorized", success: false });
+    }
 
     const company = await Company.findById(companyId);
     if (!company) {

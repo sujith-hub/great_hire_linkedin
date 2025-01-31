@@ -107,6 +107,17 @@ const DashboardNavigations = () => {
             )}
           </NavLink>
           <NavLink
+            to="/recruiter/dashboard/applicants-list"
+            className={navLinkClass}
+          >
+            {({ isActive }) => (
+              <>
+                <FiUsers size={25} className={iconClass(isActive)} />
+                <span>Applicants</span>
+              </>
+            )}
+          </NavLink>
+          <NavLink
             to="/recruiter/dashboard/company-details"
             className={navLinkClass}
           >
@@ -124,7 +135,7 @@ const DashboardNavigations = () => {
             {({ isActive }) => (
               <>
                 <PiStudent size={25} className={iconClass(isActive)} />
-                <span>Candidate List</span>
+                <span>Find Candidates</span>
               </>
             )}
           </NavLink>
@@ -152,22 +163,22 @@ const DashboardNavigations = () => {
           </NavLink>
 
           {/* Plans details */}
-            <NavLink
-              to="/recruiter/dashboard/your-plans"
-              className={navLinkClass}
-            >
-              {({ isActive }) => (
-                <>
-                  <GiUpgrade size={25} className={iconClass(isActive)} />
-                  <span>
-                    {company?.maxPostJobs === 0
-                      ? "Upgrade Plans"
-                      : "Current Plan"}
-                  </span>
-                </>
-              )}
-            </NavLink>
-          
+          <NavLink
+            to="/recruiter/dashboard/your-plans"
+            className={navLinkClass}
+          >
+            {({ isActive }) => (
+              <>
+                <GiUpgrade size={25} className={iconClass(isActive)} />
+                <span>
+                  {company?.maxPostJobs === 0
+                    ? "Upgrade Plans"
+                    : "Current Plan"}
+                </span>
+              </>
+            )}
+          </NavLink>
+
           {user?.emailId.email === company?.adminEmail && (
             <NavLink
               to="/recruiter/dashboard/delete-account"

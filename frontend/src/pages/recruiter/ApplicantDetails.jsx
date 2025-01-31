@@ -78,37 +78,39 @@ const ApplicantDetails = ({
             <div className="mt-4 grid grid-cols-2 gap-4">
               <p className="text-gray-600">
                 <span className="font-semibold">Full Name:</span>{" "}
-                {applicant.fullname}
+                {applicant?.fullname}
               </p>
               <p className="text-gray-600 flex space-x-2 items-center">
                 <span className="font-semibold">Email:</span>
-                <span>{applicant.emailId.email}</span>
-                {applicant.emailId.isVerified && (
+                <span>{applicant?.emailId.email}</span>
+                {applicant?.emailId.isVerified && (
                   <MdOutlineVerified size={25} color="green" title="Verified" />
                 )}
               </p>
               <p className="text-gray-600 items-center">
                 <span className="font-semibold">Phone Number:</span>{" "}
-                <span>{applicant.phoneNumber.number}</span>
-                {applicant.phoneNumber.isVerified && <MdOutlineVerified />}
+                <span>{applicant?.phoneNumber.number}</span>
+                {applicant?.phoneNumber.isVerified && <MdOutlineVerified />}
               </p>
               <p className="text-gray-600">
                 <span className="font-semibold">Address:</span>{" "}
-                {applicant.address.city}, {applicant.address.state},{" "}
-                {applicant.address.country}
+                {applicant?.address.city}, {applicant?.address.state},{" "}
+                {applicant?.address.country}
               </p>
             </div>
           </div>
 
           {/* Skills */}
-          <div className="flex flex-col gap-2">
-            <h2 className="text-xl font-semibold text-gray-700">Skills</h2>
-            <div className="flex space-x-3 flex-wrap">
+          <div>
+            <h2 className="text-lg font-semibold text-gray-800  pb-2">
+              Skills
+            </h2>
+            <div className=" flex flex-wrap gap-3">
               {applicant?.profile?.skills?.length > 0 ? (
-                applicant.profile.skills.map((skill, index) => (
+                applicant?.profile.skills.map((skill, index) => (
                   <Badge
                     key={index}
-                    className="bg-gray-300 px-4 py-2 text-gray-800 hover:bg-gray-200 rounded-lg font-bold text-sm "
+                    className="bg-blue-100 hover:bg-gray-200 px-4 py-2 text-blue-800 rounded-lg font-medium text-sm"
                   >
                     {skill}
                   </Badge>
@@ -123,9 +125,9 @@ const ApplicantDetails = ({
             <h2 className="text-xl font-semibold text-gray-700">Profile</h2>
             <p className="text-gray-600 mt-2 flex flex-col space-y-2">
               <span className="font-semibold">Bio</span>
-              <p>{applicant.profile.bio}</p>
+              <p>{applicant?.profile.bio}</p>
               <span className="font-semibold">Cover Letter</span>
-              <p>{applicant.profile.coverLetter}</p>
+              <p>{applicant?.profile.coverLetter}</p>
             </p>
           </div>
 
@@ -134,15 +136,15 @@ const ApplicantDetails = ({
             <h2 className="text-xl font-semibold text-gray-700">Experience</h2>
             <p className="text-gray-600 mt-2 flex  space-x-2">
               <span className="font-semibold">Company Name</span>
-              <span>{applicant.profile.experience.companyName}</span>
+              <span>{applicant?.profile.experience.companyName}</span>
             </p>
             <p className="text-gray-600 flex  space-x-2">
               <span className="font-semibold">Job Profile:</span>{" "}
-              <span>{applicant.profile.experience.jobProfile}</span>
+              <span>{applicant?.profile.experience.jobProfile}</span>
             </p>
             <p className="text-gray-600 flex flex-col space-y-2">
               <span className="font-semibold">Details:</span>{" "}
-              {applicant.profile.experience.experienceDetails}
+              {applicant?.profile.experience.experienceDetails}
             </p>
           </div>
 
@@ -150,12 +152,12 @@ const ApplicantDetails = ({
           <div>
             <h2 className="text-xl font-semibold text-gray-700">Resume</h2>
             <a
-              href={applicant.profile.resume}
+              href={applicant?.profile.resume}
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600 underline"
             >
-              {applicant.profile.resumeOriginalName}
+              {applicant?.profile.resumeOriginalName}
             </a>
           </div>
         </div>

@@ -6,3 +6,4 @@ export const VERIFICATION_API_END_POINT = "http://localhost:8000/api/v1/verifica
 export const JOB_API_END_POINT = "http://localhost:8000/api/v1/job";
 export const ORDER_API_END_POINT = "http://localhost:8000/api/v1/order";
 export const APPLICATION_API_END_POINT = "http://localhost:8000/api/v1/application";
+export const BACKEND_URL = "http://localhost:8000"

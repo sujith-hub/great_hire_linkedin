@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import axios from "axios";
 import {
   Combobox,
@@ -8,11 +8,17 @@ import {
   ComboboxOptions,
 } from "@headlessui/react";
 import { FaAngleDown } from "react-icons/fa6";
-
+import { Avatar, AvatarImage } from "../../../components/ui/avatar";
+import { Badge } from "../../../components/ui/badge";
+import { Button } from "../../../components/ui/button";
 import { COMPANY_API_END_POINT } from "@/utils/ApiEndPoint";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { decreaseCandidateCredits } from "@/redux/companySlice";
+import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
-const jobTitlesList = [
+const ITEMS_PER_PAGE = 10;
+const jobTitles = [
   // Software & IT
   "Software Engineer",
   "React Developer",
@@ -142,179 +148,247 @@ const jobTitlesList = [
 
 const CandidateList = () => {
   const [candidates, setCandidates] = useState([]);
-  const [query, setQuery] = useState("");
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [filters, setFilters] = useState({
     jobTitle: "",
     experience: "",
     salaryBudget: "",
   });
-  const [credits, setCredits] = useState(10);
-  const [message, setMessage] = useState(
-    "Enhance your team with talented candidates."
-  );
-  const {company} = useSelector((state)=>state.company);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const { company } = useSelector((state) => state.company);
+  const [message, setMessage] = useState("Find great talent for you team");
 
   const fetchCandidates = async () => {
     try {
       const response = await axios.get(
         `${COMPANY_API_END_POINT}/candidate-list`,
         {
-          params: {
-            ...filters,
-            companyId: company?._id, // Add your companyId here
-          },
-          withCredentials: true, // This ensures credentials (like cookies) are sent with the request
+          params: { ...filters, companyId: company?._id },
+          withCredentials: true,
         }
       );
-      console.log(response.data.candidates)
-      setCandidates(response.data.candidates);
+      if (response.data.success) {
+        if (response.data.candidates.length === 0)
+          setMessage("No Candidate founds");
+        setCandidates(response.data.candidates);
+        setCurrentPage(1);
+      }
     } catch (error) {
       console.error("Error fetching candidates:", error);
     }
   };
 
-  const handleViewCandidate = async (candidateId) => {
+  const handleViewCandidate = async (candidate) => {
     try {
-      if (credits <= 0)
-        return alert("Insufficient credits! Please purchase more.");
-      setCredits(credits - 10);
-      // API call logic for viewing candidate
+      const response = await axios.get(
+        `${COMPANY_API_END_POINT}/decrease-credit/${company?._id}`,
+        { withCredentials: true }
+      );
+
+      // Check if the API response is successful
+      if (response.data.success) {
+        dispatch(decreaseCandidateCredits(1));
+      }
     } catch (error) {
-      alert(error.response?.data?.error || "Error viewing candidate.");
+      console.error("Error:", error.response?.data?.message || error.message);
+      toast.error("Something went wrong!");
     }
   };
 
-  const filteredJobTitles = query
-    ? jobTitlesList.filter((title) =>
-        title.toLowerCase().includes(query.toLowerCase())
-      )
-    : jobTitlesList;
+  const totalPages = Math.ceil(candidates.length / ITEMS_PER_PAGE);
+  const currentCandidates = candidates.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   return (
-    <div className="p-6 min-h-screen">
-      <div className="flex justify-between">
-        <h1 className="text-2xl font-bold mb-4">Find Candidates</h1>
-        <p className="mb-4">
-          Remaining Credits: <strong>{credits}</strong>
-        </p>
-      </div>
+    <>
+      <div className="p-6 min-h-screen">
+        <div className="flex justify-between border-b-2 border-gray-300 py-2">
+          <h1 className="text-2xl font-bold mb-4">Find Candidates</h1>
+          <div className="flex gap-2 items-center">
+            <div>
+              <p className="text-xl text-gray-700">
+                Remaining Credits:{" "}
+                <strong className="text-black">
+                  {company?.creditedForCandidates}
+                </strong>
+              </p>
+              <p className="text-gray-500">
+                Viewing resume will decrease credits
+              </p>
+            </div>
+            {company?.creditedForCandidates === 0 && (
+              <Button
+                className="bg-blue-700 hover:bg-blue-800"
+                onClick={() => navigate("/recruiter/dashboard/candidate-plans")}
+              >
+                Upgrade Plan
+              </Button>
+            )}
+          </div>
+        </div>
 
-      {/* Filter Form */}
-      <div className="flex gap-4 mb-4 w-full justify-evenly">
-        {/* Job Title Dropdown */}
-        <div className="relative w-72">
+        <div className="flex gap-4 mt-4 mb-4 w-full justify-evenly">
           <Combobox
             value={filters.jobTitle}
             onChange={(value) => setFilters({ ...filters, jobTitle: value })}
           >
-            <div className="relative">
+            <div className="relative w-72">
               <ComboboxInput
-                className="w-full border border-gray-400 rounded-md p-2"
-                displayValue={(job) => job}
-                onChange={(event) => setQuery(event.target.value)}
+                className="p-2 border border-gray-400 rounded-md w-full"
                 placeholder="Select Job Title"
               />
-              <ComboboxButton className="absolute inset-y-0 right-0 flex items-center px-2">
-                <FaAngleDown className="w-5 h-5 text-gray-500" />
+              <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
+                <FaAngleDown />
               </ComboboxButton>
-            </div>
-
-            <ComboboxOptions className="absolute mt-1 w-full max-h-60 overflow-auto bg-white border border-gray-300 rounded-lg shadow-md">
-              {filteredJobTitles.length > 0 ? (
-                filteredJobTitles.map((job, index) => (
+              <ComboboxOptions className="absolute w-full bg-white border rounded-md mt-1 shadow-lg h-40 overflow-y-scroll">
+                {jobTitles.map((title) => (
                   <ComboboxOption
-                    key={index}
-                    value={job}
-                    className="cursor-pointer select-none p-2 hover:bg-blue-100"
+                    key={title}
+                    value={title}
+                    className="p-2 hover:bg-gray-200 cursor-pointer"
                   >
-                    {job}
+                    {title}
                   </ComboboxOption>
-                ))
-              ) : (
-                <ComboboxOption
-                  value={query}
-                  className="cursor-pointer select-none p-2 text-gray-500"
-                >
-                  Create "{query}"
-                </ComboboxOption>
-              )}
-            </ComboboxOptions>
+                ))}
+              </ComboboxOptions>
+            </div>
           </Combobox>
+          <input
+            type="text"
+            placeholder="Min Experience (years)"
+            className="p-2 border rounded-md w-72"
+            value={filters.experience}
+            onChange={(e) =>
+              setFilters({ ...filters, experience: e.target.value })
+            }
+          />
+          <input
+            type="text"
+            placeholder="Max CTC (₹) eg.. 50000"
+            className="p-2 border rounded-md w-72"
+            value={filters.salaryBudget}
+            onChange={(e) =>
+              setFilters({ ...filters, salaryBudget: e.target.value })
+            }
+          />
+          <Button onClick={fetchCandidates} className="bg-blue-700 hover:bg-blue-800 text-white">
+            Find Candidates
+          </Button>
         </div>
 
-        <input
-          type="text"
-          placeholder="Min Experience (years)"
-          className="p-2 border border-gray-400 rounded-md w-72"
-          value={filters.experience}
-          onChange={(e) =>
-            setFilters({ ...filters, experience: e.target.value })
-          }
-        />
-        <input
-          type="text"
-          placeholder="Max CTC eg.. 50000, 60000"
-          className="p-2 border border-gray-400 rounded-md w-72"
-          value={filters.salaryBudget}
-          onChange={(e) =>
-            setFilters({ ...filters, salaryBudget: e.target.value })
-          }
-        />
-        <button
-          className="p-2 bg-blue-700 hover:bg-blue-600 text-white rounded-md"
-          onClick={fetchCandidates}
-        >
-          Find Candidates
-        </button>
-      </div>
-
-      {/* Candidates List */}
-      <div className="grid grid-cols-3 gap-6">
-        {candidates.length === 0 ? (
-          <div className="col-span-3 flex items-center justify-center">
-            <p className="text-2xl text-gray-500">{message}</p>
-          </div>
-        ) : (
-          candidates.map((candidate) => (
-            <div
-              key={candidate._id}
-              className="p-4 border rounded-lg shadow-md bg-white"
-            >
-              <h2 className="text-lg font-semibold">{candidate.name}</h2>
-              <p>
-                <strong>Skills:</strong> {candidate.skills.join(", ")}
-              </p>
-              <p>
-                <strong>Experience:</strong> {candidate.experience} years
-              </p>
-              <p>
-                <strong>Salary Budget:</strong> ${candidate.salaryBudget}
-              </p>
-              <button
-                className="mt-2 bg-green-600 text-white p-2 rounded-md disabled:bg-gray-400"
-                onClick={() => handleViewCandidate(candidate._id)}
-                disabled={credits <= 0}
-              >
-                View Details
-              </button>
+        <div className="flex flex-col gap-4">
+          {currentCandidates.length === 0 ? (
+            <div className="col-span-3 flex items-center justify-center">
+              <p className="text-4xl text-gray-400">{message}</p>
             </div>
-          ))
+          ) : (
+            candidates.map((candidate) => (
+              <div
+                key={candidate._id}
+                className="flex justify-evenly items-center p-4 border rounded-lg shadow-md bg-white "
+              >
+                {/* User Info Section */}
+                <div className="flex items-center space-x-2 ">
+                  <Avatar className="h-24 w-24 shadow-lg">
+                    <AvatarImage
+                      src={
+                        candidate?.profile?.profilePhoto ||
+                        "https://github.com/shadcn.png"
+                      }
+                      alt="Profile Photo"
+                      onError={(e) => (e.target.src = "/default-avatar.png")}
+                    />
+                  </Avatar>
+                  <div>
+                    <h1 className="mt-4 text-3xl font-bold text-gray-800">
+                      {candidate?.fullname || "User Name"}
+                    </h1>
+                    <p className="text-gray-600 mt-2">
+                      {candidate?.profile?.bio || "No bio available"}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center space-x-4">
+                  {/* Skills Section */}
+                  <div>
+                    <h2 className="text-lg font-semibold text-gray-800  pb-2">
+                      Skills
+                    </h2>
+                    <div className=" flex flex-wrap gap-3">
+                      {candidate?.profile?.skills?.length > 0 ? (
+                        candidate.profile.skills.map((skill, index) => (
+                          <Badge
+                            key={index}
+                            className="bg-blue-100 hover:bg-gray-200 px-4 py-2 text-blue-800 rounded-lg font-medium text-sm"
+                          >
+                            {skill}
+                          </Badge>
+                        ))
+                      ) : (
+                        <span className="text-gray-600">No skills listed</span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <p>
+                      <strong>Experience:</strong>{" "}
+                      {candidate.profile.experience.duration} years
+                    </p>
+                    <p>
+                      <strong>Expected CTC:</strong> ₹
+                      {candidate.profile.expectedCTC}
+                    </p>
+                  </div>
+                </div>
+
+                <Button
+                  className="bg-green-600 hover:bg-green-700 text-white rounded-md disabled:bg-gray-400"
+                  onClick={async () => {
+                    // First, call the API to decrease credits
+                    await handleViewCandidate(candidate);
+
+                    // Open the resume link in a new tab
+                    window.open(candidate.profile.resume, "_blank");
+                  }}
+                  disabled={company?.creditedForCandidates <= 0}
+                >
+                  View Resume
+                </Button>
+              </div>
+            ))
+          )}
+        </div>
+
+        {totalPages > 1 && (
+          <div className="flex justify-center mt-6">
+            <Button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="mr-2"
+            >
+              Previous
+            </Button>
+            <span className="px-4 py-2 border rounded-md">
+              Page {currentPage} of {totalPages}
+            </span>
+            <Button
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
+              disabled={currentPage === totalPages}
+              className="ml-2"
+            >
+              Next
+            </Button>
+          </div>
         )}
       </div>
-
-      {/* Buy Credits Prompt */}
-      {credits <= 0 && (
-        <div className="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-          <p>
-            You have 0 credits left. Please{" "}
-            <a href="/pricing" className="text-blue-500 underline">
-              purchase a plan
-            </a>{" "}
-            to continue viewing candidates.
-          </p>
-        </div>
-      )}
-    </div>
+    </>
   );
 };
 

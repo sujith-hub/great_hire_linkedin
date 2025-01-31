@@ -4,11 +4,19 @@ import { Outlet } from "react-router-dom"; // Use Outlet for nested routing
 import Navbar from "@/components/shared/Navbar";
 import { COMPANY_API_END_POINT } from "@/utils/ApiEndPoint";
 import axios from "axios";
-import { addCompany } from "@/redux/companySlice";
+import {
+  addCompany,
+  updateCandidateCredits,
+  updateMaxPostJobs,
+} from "@/redux/companySlice";
 import DashboardNavigations from "./DashboardNavigations";
 import { fetchRecruiters } from "@/redux/recruiterSlice";
-import { fetchCurrentPlan } from "@/redux/jobPlanSlice";
+import { fetchCurrentPlan, removeJobPlan } from "@/redux/jobPlanSlice";
 import { useNavigate } from "react-router-dom";
+import { io } from "socket.io-client";
+import { BACKEND_URL } from "@/utils/ApiEndPoint";
+
+const socket = io(BACKEND_URL, { transports: ["websocket"] }); // Use your backend URL
 
 const RecruiterDashboard = () => {
   const { user } = useSelector((state) => state.auth);
@@ -65,10 +73,26 @@ const RecruiterDashboard = () => {
     }
   }, [company]);
 
-  useEffect(() => {}, [user]);
+  // 🔹 Socket.IO for Real-time Plan Expiration Updates
+  useEffect(() => {
+    socket.on("planExpired", ({ companyId, type }) => {
+      if (company && companyId === company?._id) {
+        if (type === "job") {
+          dispatch(updateMaxPostJobs(0));
+          dispatch(removeJobPlan());
+        } else if (type === "candidate") {
+          dispatch(updateCandidateCredits(0));
+        }
+      }
+    });
+
+    return () => {
+      socket.off("planExpired");
+    };
+  }, [company]);
 
   return (
-    <div className="flex flex-col min-h-screen ">
+    <div className="flex flex-col min-h-screen">
       {/* Navbar */}
       <Navbar />
 
@@ -76,8 +100,6 @@ const RecruiterDashboard = () => {
       <div className="flex">
         <DashboardNavigations />
         <div className="ml-52 w-full bg-gradient-to-r from-gray-100 via-blue-100 to-gray-100 h-full">
-          {" "}
-          {/* Adjust margin for sidebar */}
           {loading ? (
             <div className="text-center text-gray-500">Loading...</div>
           ) : (
