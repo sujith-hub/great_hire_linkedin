@@ -11,6 +11,7 @@ import cloudinary from "../utils/cloudinary.js";
 import getDataUri from "../utils/dataUri.js";
 import { oauth2Client } from "../utils/googleConfig.js";
 import axios from "axios";
+import { validationResult } from "express-validator";
 
 import nodemailer from "nodemailer";
 import { Application } from "../models/application.model.js";
@@ -26,19 +27,9 @@ export const register = async (req, res) => {
       });
     }
 
-    // Validate fullname length
-    if (fullname.length < 3) {
-      return res.status(200).json({
-        message: "Fullname must be at least 3 characters long.",
-        success: false,
-      });
-    }
-    // Validate password length
-    if (password.length < 8) {
-      return res.status(200).json({
-        message: "Password must be at least 8 characters long.",
-        success: false,
-      });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
     }
 
     // Check if user already exists
@@ -352,11 +343,9 @@ export const updateProfile = async (req, res) => {
       });
     }
 
-    if (fullname && fullname.length < 3) {
-      return res.status(200).json({
-        message: "Fullname must be at least 3 characters long.",
-        success: false,
-      });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
     }
 
     let user = await User.findById(userId);

@@ -12,16 +12,18 @@ import {
 } from "../controllers/user.controller.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
 import { singleUpload } from "../middlewares/multer.js";
+import { validateUser } from "../middlewares/userValidator.js";
+import { validateProfileUpdate } from "../middlewares/profileValidator.js";
 
 const router = express.Router();
 
-router.route("/register").post(register);
+router.route("/register").post(validateUser, register);
 router.route("/login").post(login);
 router.route("/googleLogin").post(googleLogin);
 
 router
   .route("/profile/update")
-  .put(isAuthenticated, singleUpload, updateProfile);
+  .put(isAuthenticated, singleUpload, validateProfileUpdate, updateProfile);
 
 router.route("/sendMessage").post(sendMessage);
 router.route("/forgot-password").post(forgotPassword);

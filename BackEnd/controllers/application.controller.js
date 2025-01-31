@@ -3,6 +3,7 @@ import { User } from "../models/user.model.js";
 import { Job } from "../models/job.model.js";
 import getDataUri from "../utils/dataUri.js";
 import cloudinary from "../utils/cloudinary.js";
+import { validationResult } from "express-validator";
 
 export const applyJob = async (req, res) => {
   try {
@@ -21,6 +22,11 @@ export const applyJob = async (req, res) => {
       jobId,
     } = req.body;
     const { resume } = req.files;
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
 
     // Find the user by ID
     const user = await User.findById(userId);
@@ -97,7 +103,7 @@ export const applyJob = async (req, res) => {
       success: true,
       message: "Applied successfully",
       user: updateUser,
-      newApplication
+      newApplication,
     });
   } catch (err) {
     console.error("Error applying for job:", err);

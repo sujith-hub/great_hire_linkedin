@@ -32,7 +32,7 @@ const DashboardNavigations = () => {
           <LuLayoutDashboard size={25} className="text-blue-700" />
           <span>Dashboard</span>
         </h2>
-        <ul className="w-full flex flex-col gap-4">
+        <ul className="w-full flex flex-col gap-3">
           <NavLink to="/recruiter/dashboard/home" className={navLinkClass}>
             {({ isActive }) => (
               <>
@@ -148,7 +148,7 @@ const DashboardNavigations = () => {
           <IoSettingsOutline size={25} className="text-blue-700" />
           <span>Settings</span>
         </h2>
-        <ul className="flex flex-col gap-4">
+        <ul className="flex flex-col gap-3">
           {/* Recruiter List */}
           <NavLink
             to="/recruiter/dashboard/recruiter-list"
