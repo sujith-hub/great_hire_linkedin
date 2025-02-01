@@ -28,10 +28,7 @@ export const validateProfileUpdate = [
     .withMessage("Bio cannot exceed 300 characters"),
 
   // Skills (If provided, should be an array)
-  body("skills")
-    .optional()
-    .isArray()
-    .withMessage("Skills should be an array"),
+  body("skills").optional().isArray().withMessage("Skills should be an array"),
 
   // Experience (If provided, must be a number)
   body("experience")
