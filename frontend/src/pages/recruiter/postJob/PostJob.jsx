@@ -123,9 +123,13 @@ const PostJob = () => {
   ];
 
   return (
-    <div className=" py-6 min-h-screen">
-      <div className="w-full max-w-3xl mx-auto  p-6 bg-white  shadow-lg rounded-lg">
-        <div className="mb-10">
+    <div className="px-2 py-4">
+      <div className="w-full max-w-3xl mx-auto px-4 md:p-6 bg-white  shadow-lg rounded-lg">
+        <h1>
+          {/* Display only the title of the current step */}
+          <h2 className="md:hidden font-bold text-2xl text-blue-700 py-7">{steps[step].title}</h2>
+        </h1>
+        <div className="mb-10 w-full hidden md:block">
           <Stepper
             steps={steps}
             activeStep={step}

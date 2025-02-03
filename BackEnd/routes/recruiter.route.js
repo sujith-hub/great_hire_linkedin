@@ -11,9 +11,10 @@ import {
 } from "../controllers/recruiter.contoller.js";
 import { singleUpload } from "../middlewares/multer.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
+import { validateUser } from "../middlewares/userValidator.js";
 
 const router = express.Router();
-router.route("/register").post(register);
+router.route("/register").post(validateUser, register);
 router.route("/googleLogin").post(googleLogin);
 router
   .route("/profile/update")

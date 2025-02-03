@@ -91,7 +91,7 @@ const AllApplicantsList = () => {
   return (
     <>
       {!applicantDetailsModal ? (
-        <div className="min-h-screen bg-gray-100 p-4 sm:p-8">
+        <div className="min-h-screen  p-4 sm:p-8">
           <div className="bg-white shadow-md rounded-lg p-6">
             <h1 className="text-2xl font-bold text-gray-700 mb-6 flex items-center gap-2">
               <FiUsers className="text-blue-500 text-3xl" /> All Applicants

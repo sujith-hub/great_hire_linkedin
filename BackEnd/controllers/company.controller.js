@@ -25,6 +25,7 @@ export const isUserAssociated = async (companyId, userId) => {
     const isUserAssociated = company.userId.some(
       (userObj) => userObj.user.toString() === userId
     );
+    return isUserAssociated;
   } catch (err) {
     console.log("error in recruiter validation");
   }
@@ -379,13 +380,15 @@ export const getCandidateData = async (req, res) => {
     }
 
     const candidates = await User.find({
-      "profile.bio": jobTitle,
+      "profile.experience.jobProfile": {
+        $regex: new RegExp(`^${jobTitle}$`, "i"),
+      }, // Case-insensitive match
       "profile.experience.duration": experience,
       "profile.expectedCTC": salaryBudget,
       "profile.resume": { $exists: true, $ne: "" }, // Ensure resume exists
     }).select({
       fullname: 1,
-      "profile.bio": 1,
+      "profile.experience.jobProfile": 1,
       "profile.skills": 1,
       "profile.experience.duration": 1,
       "profile.expectedCTC": 1,
@@ -445,7 +448,7 @@ export const getCompanyApplicants = async (req, res) => {
     const applications = await Application.find({ job: { $in: jobIds } })
       .populate("applicant") // Only populate applicant details
       .sort({ createdAt: -1 }); // Sort latest first
-    
+
     res.status(200).json({
       success: true,
       totalApplications: applications.length,

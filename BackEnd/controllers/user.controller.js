@@ -11,6 +11,7 @@ import cloudinary from "../utils/cloudinary.js";
 import getDataUri from "../utils/dataUri.js";
 import { oauth2Client } from "../utils/googleConfig.js";
 import axios from "axios";
+import { validationResult } from "express-validator";
 
 import nodemailer from "nodemailer";
 import { Application } from "../models/application.model.js";
@@ -26,19 +27,9 @@ export const register = async (req, res) => {
       });
     }
 
-    // Validate fullname length
-    if (fullname.length < 3) {
-      return res.status(200).json({
-        message: "Fullname must be at least 3 characters long.",
-        success: false,
-      });
-    }
-    // Validate password length
-    if (password.length < 8) {
-      return res.status(200).json({
-        message: "Password must be at least 8 characters long.",
-        success: false,
-      });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
     }
 
     // Check if user already exists
@@ -352,11 +343,9 @@ export const updateProfile = async (req, res) => {
       });
     }
 
-    if (fullname && fullname.length < 3) {
-      return res.status(200).json({
-        message: "Fullname must be at least 3 characters long.",
-        success: false,
-      });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
     }
 
     let user = await User.findById(userId);
@@ -394,6 +383,17 @@ export const updateProfile = async (req, res) => {
     if (country) user.address.country = country;
 
     if (email && user.emailId.email !== email) {
+      // Check if the email already exists in the database
+      const existingUser = await User.findOne({ "emailId.email": email });
+
+      if (existingUser) {
+        return res.status(401).json({
+          message: "Email already exist!",
+          success: false,
+        });
+      }
+
+      // If the email does not exist, update it
       user.emailId.email = email;
       user.emailId.isVerified = false;
     }

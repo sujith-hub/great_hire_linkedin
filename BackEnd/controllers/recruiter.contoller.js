@@ -8,6 +8,7 @@ import { Company } from "../models/company.model.js";
 import { Job } from "../models/job.model.js";
 import { Application } from "../models/application.model.js";
 import { BlacklistedCompany } from "../models/blacklistedCompany.model.js";
+import { validationResult } from "express-validator";
 
 import { oauth2Client } from "../utils/googleConfig.js";
 import axios from "axios";
@@ -27,20 +28,9 @@ export const register = async (req, res) => {
       });
     }
 
-    // Validate fullname length
-    if (fullname.length < 3) {
-      return res.status(200).json({
-        message: "Fullname must be at least 3 characters long.",
-        success: false,
-      });
-    }
-
-    // Validate password length
-    if (password.length < 8) {
-      return res.status(200).json({
-        message: "Password must be at least 8 characters long.",
-        success: false,
-      });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
     }
 
     // Check if user already exists
@@ -433,6 +423,12 @@ export const updateProfile = async (req, res) => {
         message: "Fullname must be at least 3 characters long.",
         success: false,
       });
+    }
+
+    // Validate phone number (India: 10-digit starting with 6-9, US: 10-digit)
+    const phoneRegex = /^[6789]\d{9}$|^\d{10}$/;
+    if (phoneNumber && !phoneRegex.test(phoneNumber)) {
+      return res.status(400).json({ message: "Invalid phone number" });
     }
 
     let user = await Recruiter.findById(userId);
