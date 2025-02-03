@@ -40,7 +40,9 @@ const JobDescription = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <p className="text-gray-600 text-xl animate-pulse">Loading job details...</p>
+        <p className="text-gray-600 text-xl animate-pulse">
+          Loading job details...
+        </p>
       </div>
     );
   }
@@ -58,6 +60,14 @@ const JobDescription = () => {
       <Navbar />
       <div className="min-h-screen bg-gray-50 py-10 px-4">
         <div className="max-w-6xl mx-auto bg-white shadow-md rounded-lg p-6">
+          {/* Back Button */}
+          <button
+            onClick={() => navigate(-1)}
+            className="mb-4 flex items-center text-blue-600 hover:underline text-2xl p-2"
+          >
+            ←
+          </button>
+
           {/* Job Title and Overview */}
           <div className="border-b pb-4 mb-6 flex justify-between items-center">
             {/* Left Section */}
@@ -68,7 +78,9 @@ const JobDescription = () => {
               <h5 className="text-sm text-gray-500 mt-1">
                 {jobDetails?.companyName || "Company Not Specified"}
               </h5>
-              <h6 className="text-sm text-gray-500">{jobDetails?.location || "Location Not Available"}</h6>
+              <h6 className="text-sm text-gray-500">
+                {jobDetails?.location || "Location Not Available"}
+              </h6>
               <h6 className="text-sm text-gray-700 font-medium mt-1">
                 ₹{jobDetails?.salary || "Salary Not Specified"}
               </h6>
@@ -85,7 +97,9 @@ const JobDescription = () => {
 
           {/* Job Description */}
           <div className="mb-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-2">Job Description:</h2>
+            <h2 className="text-lg font-semibold text-gray-800 mb-2">
+              Job Description:
+            </h2>
             <p className="text-gray-600 text-sm leading-relaxed">
               {jobDetails?.details || "No description provided."}
             </p>
@@ -94,10 +108,14 @@ const JobDescription = () => {
           {/* Benefits, Responsibilities, and Additional Details */}
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">Benefits:</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                Benefits:
+              </h3>
               <ul className="list-disc list-inside text-sm text-gray-600">
                 {jobDetails?.benefits?.length > 0 ? (
-                  jobDetails.benefits.map((benefit, index) => <li key={index}>{benefit}</li>)
+                  jobDetails.benefits.map((benefit, index) => (
+                    <li key={index}>{benefit}</li>
+                  ))
                 ) : (
                   <li>Not specified</li>
                 )}
@@ -105,10 +123,14 @@ const JobDescription = () => {
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">Responsibilities:</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                Responsibilities:
+              </h3>
               <ul className="list-disc list-inside text-sm text-gray-600">
                 {jobDetails?.responsibilities?.length > 0 ? (
-                  jobDetails.responsibilities.map((responsibility, index) => <li key={index}>{responsibility}</li>)
+                  jobDetails.responsibilities.map((responsibility, index) => (
+                    <li key={index}>{responsibility}</li>
+                  ))
                 ) : (
                   <li>Not specified</li>
                 )}
@@ -116,25 +138,33 @@ const JobDescription = () => {
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">Job Details:</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                Job Details:
+              </h3>
               <p className="text-sm text-gray-600">
-                <strong>Job Type:</strong> {jobDetails?.jobType || "Not specified"}
+                <strong>Job Type:</strong>{" "}
+                {jobDetails?.jobType || "Not specified"}
               </p>
               <p className="text-sm text-gray-600">
-                <strong>Working Days:</strong> {jobDetails?.duration || "Not specified"}
+                <strong>Working Days:</strong>{" "}
+                {jobDetails?.duration || "Not specified"}
               </p>
               <p className="text-sm text-gray-600">
-                <strong>No. of Openings:</strong> {jobDetails?.numberOfOpening || "Not specified"}
+                <strong>No. of Openings:</strong>{" "}
+                {jobDetails?.numberOfOpening || "Not specified"}
               </p>
               <p className="text-sm text-gray-600">
-                <strong>Posted Date:</strong> {jobDetails?.postedDate || "Not specified"}
+                <strong>Posted Date:</strong>{" "}
+                {jobDetails?.postedDate || "Not specified"}
               </p>
             </div>
           </div>
 
           {/* Job Requirements */}
           <div className="mt-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-2">Job Requirements:</h2>
+            <h2 className="text-lg font-semibold text-gray-800 mb-2">
+              Job Requirements:
+            </h2>
             <div className="space-y-4">
               <div>
                 <h4 className="font-semibold text-gray-700">Qualifications:</h4>
@@ -164,4 +194,3 @@ const JobDescription = () => {
 };
 
 export default JobDescription;
-

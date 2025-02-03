@@ -41,7 +41,6 @@ const ApplyForm = ({ setRight }) => {
   const [step4, setStep4] = useState(false);
   const [review, setReview] = useState(false);
   const [coverLetter, setCoverLetter] = useState(true);
-  // const [coverLetterText, setCoverLetterText] = useState("");
   const [showCoverLetterError, setShowCoverLetterError] = useState(false);
 
   const [fileURL, setFileURL] = useState(null);
@@ -49,6 +48,28 @@ const ApplyForm = ({ setRight }) => {
 
   // Validation errors
   const [errors, setErrors] = useState({});
+
+  const maxWords = 500;
+
+  // Function to handle word limit restriction
+  const handleWordLimitChange = (e, field) => {
+    const text = e.target.value.trim(); // Store trimmed text
+    const words = text.split(/\s+/); // Split input into words
+  
+    if (words.length <= maxWords) {
+      setInput((prev) => ({
+        ...prev,
+        [field]: e.target.value, // Update state dynamically based on the field name
+      }));
+  
+      if (field === "coverLetter") {
+        setShowCoverLetterError(text.trim() === "");
+      }
+    } else {
+      // Show toast message if the word limit is exceeded
+      toast.error(`${field === 'experience' ? 'Experience' : 'Cover letter'} cannot exceed ${maxWords} words!`);
+    }
+  };
 
   const handleChange = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
@@ -81,11 +102,6 @@ const ApplyForm = ({ setRight }) => {
     } else {
       setErrors({ resume: "Resume is required to proceed." });
     }
-  };
-
-  const handleCoverLetterChange = (e) => {
-    setInput((prev) => ({ ...prev, coverLetter: e.target.value }));
-    setShowCoverLetterError(false); // Clear the error message as soon as they type
   };
 
   const [input, setInput] = useState({
@@ -144,7 +160,15 @@ const ApplyForm = ({ setRight }) => {
     <div className="w-full">
       {step1 && (
         <div className="shadow-md rounded-md p-6 bg-white">
-          <ProgressBar percent={20} unfilledBackground="gray" />
+          <ProgressBar percent={20} filledBackground="green"/>
+          <div className="flex items-center mt-4">
+            <BiArrowBack
+              className="text-gray-600 cursor-pointer text-2xl"
+            />
+            <h6 className="ml-2 text-sm text-gray-500">
+              Application step 1 of 5
+            </h6>
+          </div>
           <h4 className="text-xl font-semibold my-4">
             Add your contact information
           </h4>
@@ -270,10 +294,10 @@ const ApplyForm = ({ setRight }) => {
       {/* Step 2 */}
       {step2 && (
         <div className="w-full p-6 bg-white shadow-md rounded-md">
-          <ProgressBar percent={40} unfilledBackground="gray" />
+          <ProgressBar percent={40} filledBackground="green"/>
           <div className="flex items-center mt-4">
             <BiArrowBack
-              className="text-gray-600 cursor-pointer"
+              className="text-gray-600 cursor-pointer text-2xl"
               onClick={() => {
                 setStep2(false);
                 setStep1(true);
@@ -372,18 +396,17 @@ const ApplyForm = ({ setRight }) => {
       )}
 
       {step3 && (
-        <div className="w-full  p-6 bg-white shadow-md rounded-md">
-          <ProgressBar percent={60} unfilledBackground="gray" />
+        <div className="w-full p-6 bg-white shadow-md rounded-md">
+          <ProgressBar percent={60} filledBackground="green"/>
 
           <div className="flex items-center mt-4">
             <BiArrowBack
-              className="text-gray-600 cursor-pointer"
+              className="text-gray-600 cursor-pointer text-2xl"
               onClick={() => {
                 setStep3(false);
                 setStep2(true);
               }}
             />
-
             <h6 className="ml-2 text-sm text-gray-500 my-4">
               Application step 3 of 5
             </h6>
@@ -402,6 +425,7 @@ const ApplyForm = ({ setRight }) => {
             className="mt-1 w-full p-2 border border-gray-300 rounded-md"
             value={input.jobTitle}
           />
+
           <label
             htmlFor="company"
             className="block text-sm font-medium text-gray-700 mt-4"
@@ -417,17 +441,23 @@ const ApplyForm = ({ setRight }) => {
           />
 
           <h4 className="text-lg font-bold mt-6">
-            Add Your Experience<span className="text-gray-400">(optional)</span>
+            Add Your Experience{" "}
+            <span className="text-gray-400">(optional)</span>
           </h4>
 
           <textarea
             name="experience"
-            onChange={handleChange}
+            onChange={(e) => handleWordLimitChange(e, "experience")}
             rows="6"
             className="mt-4 w-full p-2 border border-gray-300 rounded-md"
             placeholder="Add Experience..."
             value={input.experience}
           ></textarea>
+
+          <p className="text-sm text-gray-600 mt-2">
+            {input.experience ? input.experience.trim().split(/\s+/).length : 0}
+            /{maxWords} words
+          </p>
 
           <div className="flex justify-between items-center mt-6">
             <Link
@@ -452,13 +482,14 @@ const ApplyForm = ({ setRight }) => {
           </p>
         </div>
       )}
+
       {step4 && (
         <div className="w-full p-6 bg-white shadow-md rounded-md">
-          <ProgressBar percent={80} unfilledBackground="gray" />
+          <ProgressBar percent={80} filledBackground="green"/>
 
           <div className="flex items-center mt-4">
             <BiArrowBack
-              className="text-gray-600 cursor-pointer"
+              className="text-gray-600 cursor-pointer text-2xl"
               onClick={() => {
                 setStep4(false);
                 setStep3(true);
@@ -477,7 +508,6 @@ const ApplyForm = ({ setRight }) => {
             Cover letter <span className="text-gray-400">(optional)</span>
           </h4>
 
-          {/* Option to Apply Without Cover Letter */}
           <div
             className={`flex items-center p-4 border ${
               coverLetter ? "border-gray-300" : "border-blue-500"
@@ -496,7 +526,6 @@ const ApplyForm = ({ setRight }) => {
             {!coverLetter && <TiTick className="text-green-500" />}
           </div>
 
-          {/* Option to Write Cover Letter */}
           <div
             className={`flex items-center p-4 border ${
               coverLetter ? "border-blue-500" : "border-gray-300"
@@ -513,18 +542,24 @@ const ApplyForm = ({ setRight }) => {
             {coverLetter && <TiTick className="text-green-500" />}
           </div>
 
-          {/* Textarea for Cover Letter */}
           {coverLetter && (
-            <textarea
-              className="w-full p-3 border border-gray-300 rounded-md mt-4"
-              rows="6"
-              placeholder="Write your cover letter here..."
-              value={input.coverLetter}
-              onChange={handleCoverLetterChange}
-            />
+            <>
+              <textarea
+                className="w-full p-3 border border-gray-300 rounded-md mt-4"
+                rows="6"
+                placeholder="Write your cover letter here..."
+                value={input.coverLetter}
+                onChange={(e) => handleWordLimitChange(e, "coverLetter")}
+              />
+              <p className="text-sm text-gray-600 mt-2">
+                {input.coverLetter
+                  ? input.coverLetter.trim().split(/\s+/).length
+                  : 0}
+                /{maxWords} words
+              </p>
+            </>
           )}
 
-          {/* Error message if cover letter is empty */}
           {coverLetter && showCoverLetterError && (
             <p className="text-sm text-red-500 mt-2">
               Please provide a cover letter before proceeding.
@@ -544,9 +579,9 @@ const ApplyForm = ({ setRight }) => {
                   coverLetter &&
                   (!input.coverLetter || !input.coverLetter.trim())
                 ) {
-                  setShowCoverLetterError(true); // Display error message
+                  setShowCoverLetterError(true);
                 } else {
-                  handleReview(); // Proceed to the next step
+                  handleReview();
                 }
               }}
               className="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
