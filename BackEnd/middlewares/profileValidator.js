@@ -24,7 +24,7 @@ export const validateProfileUpdate = [
   // Bio (If provided, max length: 300)
   body("bio")
     .optional()
-    .isLength({ max: 300 })
+    .isLength({ max: 500 })
     .withMessage("Bio cannot exceed 300 characters"),
 
   // Skills (If provided, should be an array)

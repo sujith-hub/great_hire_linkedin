@@ -55,19 +55,23 @@ const ApplyForm = ({ setRight }) => {
   const handleWordLimitChange = (e, field) => {
     const text = e.target.value.trim(); // Store trimmed text
     const words = text.split(/\s+/); // Split input into words
-  
+
     if (words.length <= maxWords) {
       setInput((prev) => ({
         ...prev,
         [field]: e.target.value, // Update state dynamically based on the field name
       }));
-  
+
       if (field === "coverLetter") {
         setShowCoverLetterError(text.trim() === "");
       }
     } else {
       // Show toast message if the word limit is exceeded
-      toast.error(`${field === 'experience' ? 'Experience' : 'Cover letter'} cannot exceed ${maxWords} words!`);
+      toast.error(
+        `${
+          field === "experience" ? "Experience" : "Cover letter"
+        } cannot exceed ${maxWords} words!`
+      );
     }
   };
 
@@ -160,11 +164,9 @@ const ApplyForm = ({ setRight }) => {
     <div className="w-full">
       {step1 && (
         <div className="shadow-md rounded-md p-6 bg-white">
-          <ProgressBar percent={20} filledBackground="green"/>
+          <ProgressBar percent={20} filledBackground="green" />
           <div className="flex items-center mt-4">
-            <BiArrowBack
-              className="text-gray-600 cursor-pointer text-2xl"
-            />
+            <BiArrowBack className="text-gray-600 cursor-pointer text-2xl" />
             <h6 className="ml-2 text-sm text-gray-500">
               Application step 1 of 5
             </h6>
@@ -294,7 +296,7 @@ const ApplyForm = ({ setRight }) => {
       {/* Step 2 */}
       {step2 && (
         <div className="w-full p-6 bg-white shadow-md rounded-md">
-          <ProgressBar percent={40} filledBackground="green"/>
+          <ProgressBar percent={40} filledBackground="green" />
           <div className="flex items-center mt-4">
             <BiArrowBack
               className="text-gray-600 cursor-pointer text-2xl"
@@ -397,7 +399,7 @@ const ApplyForm = ({ setRight }) => {
 
       {step3 && (
         <div className="w-full p-6 bg-white shadow-md rounded-md">
-          <ProgressBar percent={60} filledBackground="green"/>
+          <ProgressBar percent={60} filledBackground="green" />
 
           <div className="flex items-center mt-4">
             <BiArrowBack
@@ -485,7 +487,7 @@ const ApplyForm = ({ setRight }) => {
 
       {step4 && (
         <div className="w-full p-6 bg-white shadow-md rounded-md">
-          <ProgressBar percent={80} filledBackground="green"/>
+          <ProgressBar percent={80} filledBackground="green" />
 
           <div className="flex items-center mt-4">
             <BiArrowBack

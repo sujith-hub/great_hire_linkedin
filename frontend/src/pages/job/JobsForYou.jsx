@@ -48,15 +48,6 @@ const JobsForYou = () => {
   // for hide job for particular user
   const handleHiddenJob = () => {};
 
-  useEffect(() => {
-    // Set the initial selected job if it's not already set
-    if (!selectedJob) {
-      const defaultJob = jobs.find(
-        (job) => job._id === "678233e5103cc54b0fd68b2d"
-      ); // Find the job with a specific ID
-      setSelectedJob(defaultJob); // Set default selected job
-    }
-  }, [jobs]);
 
   const calculateActiveDays = (createdAt) => {
     const jobCreatedDate = new Date(createdAt); // Convert the 'createdAt' timestamp to a Date object
