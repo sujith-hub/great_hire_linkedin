@@ -264,7 +264,7 @@ const CandidateList = () => {
           </Combobox>
           <input
             type="text"
-            placeholder="Min Experience (years)"
+            placeholder="Min Experience (0, 1, 2 years)"
             className="p-2 border rounded-md w-full md:w-60"
             value={filters.experience}
             onChange={(e) =>
@@ -274,7 +274,7 @@ const CandidateList = () => {
 
           <input
             type="text"
-            placeholder="Max CTC (₹) eg.. 50000, 60000"
+            placeholder="Max CTC (₹) eg.. 0, 50000"
             className="p-2 border rounded-md w-full md:w-60"
             value={filters.salaryBudget}
             onChange={(e) =>

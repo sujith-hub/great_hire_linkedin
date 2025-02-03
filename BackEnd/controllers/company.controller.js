@@ -25,6 +25,7 @@ export const isUserAssociated = async (companyId, userId) => {
     const isUserAssociated = company.userId.some(
       (userObj) => userObj.user.toString() === userId
     );
+    return isUserAssociated;
   } catch (err) {
     console.log("error in recruiter validation");
   }
