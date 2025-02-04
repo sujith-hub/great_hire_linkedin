@@ -178,7 +178,7 @@ const FilterCard = () => {
                 onChange={(e) => setSalaryRange(e.target.value)}
                 className="w-full"
               />
-              <p className="text-sm text-gray-600 mt-2">Salary: ₹{salaryRange.toLocaleString()} Yearly</p>
+              <p className="text-smtext-gray-600 mt-2">Salary: ₹{salaryRange.toLocaleString()} Yearly</p>
             </div>
           )}
         </div>
