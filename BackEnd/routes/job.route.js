@@ -26,12 +26,12 @@ router.route("/hide-job/:id").get(isAuthenticated, hideJob);
 router.route("/toggle-active").put(isAuthenticated, toggleActive);
 
 router.route("/get").get(getAllJobs);
-router.route("/get/:id").get(getJobById);
+router.route("/get/:id").get(isAuthenticated, getJobById);
 router.route("/jobs/:id").get(isAuthenticated, getJobByRecruiterId);
 router.route("/jobs-list/:id").get(isAuthenticated, getJobByCompanyId);
 
 router.route("/delete/:id").delete(isAuthenticated, deleteJobById);
-router.route("/update-job").put(isAuthenticated, updateJob);
+router.route("/update/:jobId").put(isAuthenticated, updateJob);
 router.route("/job-statistics/:id").get(isAuthenticated, getJobsStatistics);
 
 export default router;
