@@ -10,6 +10,7 @@ import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import { BlacklistedCompany } from "../models/blacklistedCompany.model.js";
 import { JobSubscription } from "../models/jobSubscription.model.js";
+import JobReport from "../models/jobReport.model.js";
 
 export const isUserAssociated = async (companyId, userId) => {
   try {
@@ -457,5 +458,36 @@ export const getCompanyApplicants = async (req, res) => {
   } catch (error) {
     console.error("Error fetching applicants:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+export const reportJob = async (req, res) => {
+  try {
+    const { jobId, reportTitle, description } = req.body;
+    const userId = req.id;
+    console.log(req.body, req.id)
+
+    if (!jobId || !userId || !reportTitle) {
+      return res
+        .status(400)
+        .json({ message: "Job ID, User ID, and Report Title are required." });
+    }
+
+    const newReport = new JobReport({
+      userId,
+      jobId,
+      reportTitle,
+      description: reportTitle === "Other" && !description ? null : description,
+    });
+
+    await newReport.save();
+    res.status(201).json({
+      success: true,
+      message: "Report submitted successfully.",
+    });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Internal Server Error", error: err.message });
   }
 };
