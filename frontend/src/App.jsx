@@ -39,7 +39,7 @@ import RecruitersDetails from "./pages/recruiter/rec_job_details/RecruitersDetai
 import CurrentPlans from "./pages/recruiter/CurrentPlans";
 import RecruiterSuccess from "./pages/recruiter/RecruiterSuccess";
 import CandidateList from "./pages/recruiter/candidate/CandidateList";
-import CandidatePlans from "./pages/recruiter/CandidatePlans";
+import CandidatePlans from "./pages/recruiter/candidate/CandidatePlans";
 import AllApplicantsList from "./pages/recruiter/AllApplicantsList";
 
 // Admin Routes
@@ -140,6 +140,7 @@ const appRouter = createBrowserRouter([
     element: <RecruiterSignup />,
   },
 
+  // Recruiter dashboard navlink
   {
     path: "/recruiter/dashboard",
     element: <RecruiterDashboard />,

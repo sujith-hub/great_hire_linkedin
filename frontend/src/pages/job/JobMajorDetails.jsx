@@ -5,10 +5,11 @@ import { PiMoneyWavyFill } from "react-icons/pi";
 import { FaToolbox } from "react-icons/fa";
 import { BsFlagFill } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const JobMajorDetails = ({ selectedJob }) => {
   const navigate = useNavigate();
-
+  const { user } = useSelector((state) => state.auth);
   return (
     <div>
       {/* profile insight */}
@@ -50,16 +51,16 @@ const JobMajorDetails = ({ selectedJob }) => {
             <span className="text-xl font-bold text-black">Pay</span>
           </h3>
           <div className="flex items-center w-fit px-4 py-2 rounded-lg  bg-slate-200 gap-1 text-sm text-gray-800 font-semibold">
-              {selectedJob?.jobDetails?.salary
-                .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
-                .split("-")
-                .map((part, index) => (
-                  <span key={index}>
-                    ₹{part.trim()}
-                    {index === 0 ? " - " : ""}
-                  </span>
-                ))}
-            </div>
+            {selectedJob?.jobDetails?.salary
+              .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
+              .split("-")
+              .map((part, index) => (
+                <span key={index}>
+                  ₹{part.trim()}
+                  {index === 0 ? " - " : ""}
+                </span>
+              ))}
+          </div>
         </div>
 
         {/* Experience Section */}
@@ -186,6 +187,7 @@ const JobMajorDetails = ({ selectedJob }) => {
         <button
           className="flex items-center gap-2 bg-gray-400 p-2 rounded-lg cursor-pointer"
           onClick={() => navigate(`/report-job/${selectedJob?.jobDetails?.id}`)}
+          disabled={!user}
         >
           <BsFlagFill /> <span className="font-semibold">Report Job</span>
         </button>
