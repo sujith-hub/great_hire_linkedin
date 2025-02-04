@@ -467,6 +467,10 @@ export const updateJob = async (req, res) => {
       ? jobData.skills
       : jobData.skills.split(",").map((skill) => skill.trim());
 
+    // Remove empty values from arrays (benefits, qualifications, responsibilities)
+    const cleanArray = (arr) =>
+      Array.isArray(arr) ? arr.filter((item) => item.trim() !== "") : [];
+
     // Find the job by its ID and update
     const updatedJob = await Job.findByIdAndUpdate(
       jobId,
@@ -474,11 +478,9 @@ export const updateJob = async (req, res) => {
         $set: {
           "jobDetails.details": jobData.details,
           "jobDetails.skills": skillsArray, // Convert to an array
-          "jobDetails.qualifications": jobData.qualifications,
-          "jobDetails.benefits": jobData.benefits.filter(
-            (b) => b.trim() !== ""
-          ), // Remove empty values
-          "jobDetails.responsibilities": jobData.responsibilities,
+          "jobDetails.qualifications": cleanArray(jobData.qualifications),
+          "jobDetails.benefits": cleanArray(jobData.benefits), // Remove empty values
+          "jobDetails.responsibilities": cleanArray(jobData.responsibilities),
           "jobDetails.experience": jobData.experience,
           "jobDetails.salary": jobData.salary,
           "jobDetails.jobType": jobData.jobType,

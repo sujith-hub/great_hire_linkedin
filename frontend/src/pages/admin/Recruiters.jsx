@@ -1,8 +1,12 @@
 import React from 'react'
+import Navbar from '@/components/admin/Navbar'
 
 const Recruiters = () => {
   return (
-    <div>Recruiters</div>
+    <>
+      <Navbar linkName={"Recruiters"}/>
+      <div className='p-4'>Recruiters</div>
+    </>
   )
 }
 

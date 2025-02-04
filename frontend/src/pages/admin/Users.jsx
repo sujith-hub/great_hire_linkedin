@@ -1,9 +1,13 @@
-import React from 'react'
+import React from "react";
+import Navbar from "@/components/admin/Navbar";
 
 const Users = () => {
   return (
-    <div>Users</div>
-  )
-}
+    <>
+      <Navbar linkName={"Users"} />
+      <div className="p-4">Users</div>
+    </>
+  );
+};
 
-export default Users
+export default Users;

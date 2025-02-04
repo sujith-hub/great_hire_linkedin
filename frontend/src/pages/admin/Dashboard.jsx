@@ -1,8 +1,12 @@
 import React from 'react'
+import Navbar from '@/components/admin/Navbar'
 
 const Dashboard = () => {
   return (
-    <div>Dashboard</div>
+    <>
+    <Navbar linkName={"Dashboard"}/>
+    <div className='p-4'>Dashboard</div>
+    </>
   )
 }
 
