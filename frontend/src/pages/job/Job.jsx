@@ -49,8 +49,7 @@ const Job = ({ job }) => {
       <h3 className="text-lg font-semibold">{job?.jobDetails?.title}</h3>
       <div className="flex items-center justify-between gap-2 my-2">
         <div>
-          {job?.jobDetails?.companyName} - rating {job?.jobDetails?.rating}
-          <IoIosStar className="inline text-yellow-500" />
+          {job?.jobDetails?.companyName} 
         </div>
         <div>
           <p className="text-sm text-gray-500">{job?.jobDetails?.location}</p>

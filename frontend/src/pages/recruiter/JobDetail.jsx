@@ -70,7 +70,7 @@ const JobDetail = () => {
         "There was an error deleting the job. Please try again later."
       );
     } finally {
-      dsetLoading(true);
+      dsetLoading(false);
     }
   };
 
