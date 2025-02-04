@@ -49,27 +49,27 @@ const ApplyForm = ({ setRight }) => {
   // Validation errors
   const [errors, setErrors] = useState({});
 
-  const maxWords = 500;
+  const maxChars = 750;
 
-  // Function to handle word limit restriction
-  const handleWordLimitChange = (e, field) => {
-    const text = e.target.value.trim(); // Store trimmed text
-    const words = text.split(/\s+/); // Split input into words
-  
-    if (words.length <= maxWords) {
-      setInput((prev) => ({
-        ...prev,
-        [field]: e.target.value, // Update state dynamically based on the field name
-      }));
-  
-      if (field === "coverLetter") {
-        setShowCoverLetterError(text.trim() === "");
-      }
-    } else {
-      // Show toast message if the word limit is exceeded
-      toast.error(`${field === 'experience' ? 'Experience' : 'Cover letter'} cannot exceed ${maxWords} words!`);
+// Function to handle character limit restriction
+const handleCharLimitChange = (e, field) => {
+  const text = e.target.value; // Get the input text
+  const charCount = text.length; // Count characters
+
+  if (charCount <= maxChars) {
+    setInput((prev) => ({
+      ...prev,
+      [field]: text, // Update state dynamically based on the field name
+    }));
+
+    if (field === "coverLetter") {
+      setShowCoverLetterError(text.trim() === "");
     }
-  };
+  } else {
+    // Show toast message if the character limit is exceeded
+    toast.error(`${field === 'experience' ? 'Experience' : 'Cover letter'} cannot exceed ${maxChars} characters!`);
+  }
+};
 
   const handleChange = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
@@ -447,7 +447,7 @@ const ApplyForm = ({ setRight }) => {
 
           <textarea
             name="experience"
-            onChange={(e) => handleWordLimitChange(e, "experience")}
+            onChange={(e) => handleCharLimitChange(e, "experience")}
             rows="6"
             className="mt-4 w-full p-2 border border-gray-300 rounded-md"
             placeholder="Add Experience..."
@@ -455,8 +455,7 @@ const ApplyForm = ({ setRight }) => {
           ></textarea>
 
           <p className="text-sm text-gray-600 mt-2">
-            {input.experience ? input.experience.trim().split(/\s+/).length : 0}
-            /{maxWords} words
+            {input.experience ? input.experience.trim().length : 0} / {maxChars} characters
           </p>
 
           <div className="flex justify-between items-center mt-6">
@@ -549,13 +548,10 @@ const ApplyForm = ({ setRight }) => {
                 rows="6"
                 placeholder="Write your cover letter here..."
                 value={input.coverLetter}
-                onChange={(e) => handleWordLimitChange(e, "coverLetter")}
+                onChange={(e) => handleCharLimitChange(e, "coverLetter")}
               />
               <p className="text-sm text-gray-600 mt-2">
-                {input.coverLetter
-                  ? input.coverLetter.trim().split(/\s+/).length
-                  : 0}
-                /{maxWords} words
+              {input.coverLetter ? input.coverLetter.trim().length : 0} / {maxChars} characters
               </p>
             </>
           )}

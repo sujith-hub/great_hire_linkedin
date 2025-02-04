@@ -37,19 +37,19 @@ const UserUpdateProfile = ({ open, setOpen }) => {
     user?.profile?.profilePhoto || ""
   );
 
-  const maxBioWords = 300;
+  const maxBioChars = 500;
   const handleChange = (e) => {
     const { name, value } = e.target;
 
     if (name === "bio") {
-      // Count the number of words in the bio field
-      const wordCount = value.trim().split(/\s+/).length;
+      // Count the number of characters in the bio field
+      const charCount = value.length;
 
-      if (wordCount <= maxBioWords) {
+      if (charCount <= maxBioChars) {
         setInput((prev) => ({ ...prev, [name]: value }));
       } else {
         // Optionally, show an error message or prevent further input
-        toast.error("Bio cannot exceed 300 words");
+        toast.error("Bio cannot exceed 500 characters");
       }
     } else {
       // Handle other fields as normal
@@ -307,8 +307,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
               placeholder="Enter your bio..."
             />
             <p className="text-sm text-gray-600 mt-1 text-right">
-              {input.bio.trim() ? input.bio.trim().split(/\s+/).length : 0}/
-              {maxBioWords}
+              {input.bio.trim() ? input.bio.trim().length : 0}/{maxBioChars}
             </p>
           </div>
 
