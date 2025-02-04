@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Pencil } from "lucide-react";
+import { toast } from "react-hot-toast";
 
 const JobDetail = () => {
   const { id } = useParams();
@@ -12,6 +13,7 @@ const JobDetail = () => {
   const { company } = useSelector((state) => state.company);
   const [jobDetails, setJobDetails] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [saveLoading, setSaveLoading] = useState(false);
   const [error, setError] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [editedJob, setEditedJob] = useState({});
@@ -42,7 +44,7 @@ const JobDetail = () => {
       }
     };
 
-    if (id) {
+    if (id && !jobDetails) {
       fetchJobDetails();
     }
   }, [id]);
@@ -70,7 +72,7 @@ const JobDetail = () => {
         "There was an error deleting the job. Please try again later."
       );
     } finally {
-      dsetLoading(true);
+      dsetLoading(false);
     }
   };
 
@@ -81,17 +83,21 @@ const JobDetail = () => {
 
   const handleSave = async () => {
     try {
+      setSaveLoading(true);
       const response = await axios.put(
         `${JOB_API_END_POINT}/update/${id}`,
         editedJob,
         { withCredentials: true }
       );
       if (response.data.success) {
-        setJobDetails(editedJob);
+        setJobDetails(response.data.updatedJob.jobDetails);
         setEditMode(false);
+        toast.success("Job updated successfully 😊");
       }
     } catch (error) {
       console.error("Error updating job:", error);
+    } finally {
+      setSaveLoading(false);
     }
   };
 
@@ -143,7 +149,15 @@ const JobDetail = () => {
           />
         ) : (
           <p className="text-lg font-semibold">
-            ₹{jobDetails?.salary} <span className="text-sm">Monthly</span>
+            {jobDetails?.salary
+              .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
+              .split("-")
+              .map((part, index) => (
+                <span key={index}>
+                  ₹{part.trim()}
+                  {index === 0 ? " - " : ""}
+                </span>
+              ))} monthly
           </p>
         )}
       </div>
@@ -381,8 +395,9 @@ const JobDetail = () => {
                 handleSave();
                 handleCancel();
               }}
+              disabled={saveLoading}
             >
-              Save
+              {saveLoading ? "Saving...." : "Save"}
             </Button>
             <Button
               className="bg-gray-600 hover:bg-gray-700"
