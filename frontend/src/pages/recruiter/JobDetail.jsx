@@ -61,7 +61,7 @@ const JobDetail = () => {
       );
 
       if (response.data.success) {
-        setJobs((prevJobs) => prevJobs.filter((job) => job._id !== jobId));
+        navigate(-1);
         toast.success(response.data.message);
       } else {
         toast.error(response.data.message);
@@ -157,7 +157,8 @@ const JobDetail = () => {
                   ₹{part.trim()}
                   {index === 0 ? " - " : ""}
                 </span>
-              ))} monthly
+              ))}{" "}
+            monthly
           </p>
         )}
       </div>
