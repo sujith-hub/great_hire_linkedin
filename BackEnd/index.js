@@ -6,6 +6,7 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import cron from "node-cron";
 import rateLimit from "express-rate-limit"; // Import Rate Limiter
+import mongoose from "mongoose";
 import connectDB from "./utils/db.js";
 
 // Import Routes
