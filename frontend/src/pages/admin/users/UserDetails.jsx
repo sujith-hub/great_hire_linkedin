@@ -101,7 +101,7 @@ const UserDetails = () => {
                 className="w-32 h-32 rounded-full object-cover"
               />
               <h2 className="mt-4 text-2xl font-bold">{user?.fullname}</h2>
-              <p className="text-gray-600">{user?.emailId?.email}</p>
+              <p className="text-gray-600">{user?.emailId?.email || user?.email }</p>
             </div>
             <div className="mt-6">
               <h3 className="text-xl font-semibold">Contact Information</h3>

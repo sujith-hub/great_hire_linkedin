@@ -7,7 +7,7 @@ const connectDB = async () => {
       minPoolSize: 10, // Keeps at least 10 connections alive
       socketTimeoutMS: 45000
     });
-    console.log(`MongoDB Connected 🔥`);
+    console.log(`MongoDB Connected 🔥 at ${conn.connection.host}`);
   } catch (error) {
     console.error("MongoDB Connection Error:", error);
     process.exit(1); // Exit if connection fails

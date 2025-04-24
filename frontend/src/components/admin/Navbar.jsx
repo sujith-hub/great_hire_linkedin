@@ -92,11 +92,11 @@ const Navbar = ({ linkName }) => {
                     user?.profile?.profilePhoto ||
                     "https://github.com/shadcn.png"
                   }
-                  alt={`${user?.fullname || "User"}'s avatar`}
+                  alt={`${user?.name || user?.fullname || "User"} avatar`}
                   className="h-10 w-10 rounded-full border object-cover"
                 />
                 <div className="hidden md:block">
-                  <p className="font-bold">{user?.fullname}</p>
+                  <p className="font-bold">{ user?.fullname || user?.name }</p>
                   <p className="font-medium text-gray-400">
                     {user?.role || "User"}
                   </p>

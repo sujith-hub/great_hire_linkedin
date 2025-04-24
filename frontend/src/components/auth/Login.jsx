@@ -46,6 +46,7 @@ const Login = () => {
       else navigate("/profile");
     }
   }, [user]);
+  
   // Update state when input fields change
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -109,8 +110,9 @@ const Login = () => {
             <GoogleOAuthProvider clientId={google_client_id}>
               <GoogleLogin text="Login" role={null} route="user" />
             </GoogleOAuthProvider>
+
             <p className="text-sm font-semibold text-gray-400 text-center">
-              ---- or Login with email ----
+              ---- Login with email ----
             </p>
             <div className="flex flex-col space-y-4">
               <label className="font-bold">Email</label>

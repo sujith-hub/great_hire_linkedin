@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2, Pencil } from "lucide-react";
 import { useSelector } from "react-redux";
+import axios from "axios";
+import { toast } from "react-hot-toast";
 
 // Component for updating user profile
 const UpdateProfile = ({ open, setOpen }) => {
@@ -14,11 +16,14 @@ const UpdateProfile = ({ open, setOpen }) => {
   // Retrieve user data from Redux store
   const { user } = useSelector((store) => store.auth);
 
+  // Log user._id to verify it's available
+  console.log("Current user ID:", user?._id);
+  
   // State to manage input fields for profile update
   const [input, setInput] = useState({
     fullname: user?.fullname || "",
     email: user?.emailId?.email || "",
-    phoneNumber: user?.phoneNumber?.number || "",
+    phoneNumber: user?.phoneNumber?.number || user?.phone ||"",
     position: user?.role || "",
     profilePhoto: user?.profile?.profilePhoto || "",
   });

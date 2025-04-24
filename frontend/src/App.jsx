@@ -26,6 +26,7 @@ import About from "./pages/services/About";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import PageNotFound from "./pages/PageNotFound";
+import LinkedInCallback from "./components/LinkedInCallback";
 
 // Recruiter Pages
 import RecruiterSignup from "./components/auth/recruiter/Signup.jsx";
@@ -91,6 +92,7 @@ const appRouter = createBrowserRouter([
   { path: "/forgot-password", element: <ForgotPassword /> },
   { path: "/reset-password/:token", element: <ResetPassword /> },
   { path: "/recruiter/signup", element: <RecruiterSignup /> },
+  { path: "/linkedin/callback", element: <LinkedInCallback /> },
   {
     path: "/recruiter/dashboard",
     element: <ProtectedRecruiterRoute><RecruiterDashboard /></ProtectedRecruiterRoute>,

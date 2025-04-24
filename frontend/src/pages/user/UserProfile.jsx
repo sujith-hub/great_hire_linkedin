@@ -151,7 +151,7 @@ const UserProfile = () => {
                 />
               </Avatar>
               <h1 className="mt-4 text-3xl font-bold text-gray-800">
-                {user?.fullname || "User Name"}
+                {user?.fullname || user?.name || "User Name"}
               </h1>
               <h1 className="mt-1 text-gray-600">
                 {user?.profile?.experience?.jobProfile || "Job Title"}
@@ -186,13 +186,16 @@ const UserProfile = () => {
               <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
                 Contact Information
               </h2>
+
+              {/* Email Verification */}
               <div className="mt-4 space-y-4">
                 <div className="flex items-center gap-4">
                   <Mail className="text-blue-500" />
                   <span className="text-gray-700">
-                    {user?.emailId?.email || "Not Provided"}
+                    { user?.emailId?.email || "Not Provided" }
                   </span>
-                  {!user?.emailId?.isVerified ? (
+
+                  {(!user?.emailId?.isVerified ) ? ( 
                     <span
                       className="text-blue-600 text-sm cursor-pointer hover:underline"
                       onClick={() => setOpenEmailOTPModal(true)}
@@ -205,6 +208,8 @@ const UserProfile = () => {
                     </span>
                   )}
                 </div>
+
+                {/* Phone Number Verification */}
                 <div className="flex items-center gap-4">
                   <LuPhoneIncoming size={25} className="text-blue-500" />
                   <span className="text-gray-700">

@@ -13,6 +13,7 @@ import { RECRUITER_API_END_POINT } from "@/utils/ApiEndPoint";
 import { setUser } from "@/redux/authSlice";
 import { useDispatch } from "react-redux";
 
+
 const Signup = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -72,6 +73,7 @@ const Signup = () => {
       setLoading(false); // Set loading to false
     }
   };
+
 
   return (
     <>
@@ -144,9 +146,11 @@ const Signup = () => {
             <GoogleOAuthProvider clientId={google_client_id}>
               <GoogleLogin text="Sign up" role="recruiter" route="recruiter" />
             </GoogleOAuthProvider>
+
             <h1 className="text-sm font-semibold text-gray-400 text-center">
-              ---- or Sign up with email ----
+              ---- Sign up with Email ----
             </h1>
+
             <div className="flex flex-col space-y-2">
               <label className="font-bold">Full Name</label>
               <input

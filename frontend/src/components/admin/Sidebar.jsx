@@ -129,7 +129,7 @@ const Sidebar = () => {
                 src={
                   user.profile?.profilePhoto || "https://github.com/shadcn.png"
                 }
-                alt={`${user.fullname || "User"}'s avatar`}
+                alt={`${user?.fullname || user?.fullname || "User"}'s avatar`}
                 className="h-10 w-10 rounded-full border object-cover"
               />
               <div className={`md:block ${isOpen ? "block" : "hidden"}`}>

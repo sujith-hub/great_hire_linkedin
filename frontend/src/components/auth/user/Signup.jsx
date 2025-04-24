@@ -90,6 +90,20 @@ const Signup = () => {
     }
   };
 
+  //Handle Login for LinkedIn Signup
+  const handleLogin = () => {
+    const params = new URLSearchParams({
+      response_type: 'code',
+      client_id: import.meta.env.VITE_LINKEDIN_CLIENT_ID,
+      //redirect_uri: 'http://localhost:8000/api/linkedin/callback',
+      redirect_uri: 'http://localhost:5173/linkedin/callback',  // frontend callback page
+      scope: 'openid email profile',
+      role: 'student',
+    })
+    window.location.href=`https://www.linkedin.com/oauth/v2/authorization?${params}`
+    //`https://www.linkedin.com/oauth/v2/authorization?${params}`)
+  }
+
   return (
     <>
     <div className="flex flex-col min-h-screen">
@@ -129,13 +143,37 @@ const Signup = () => {
             <h1 className="text-md font-semibold text-gray-500 text-center">
               Find your next opportunity!
             </h1>
+            
             {/* Google Sign up Button */}
             <GoogleOAuthProvider clientId={google_client_id}>
               <GoogleLogin text="Sign up" role="student" route="user" />
             </GoogleOAuthProvider>
-            <h1 className="text-sm font-semibold text-gray-400 text-center">
-              ---- or Sign up with email ----
+
+
+             {/* LinkedIn Signup Button */}
+             <button
+              style={{ marginTop: "10px" }}
+              type="sign up"
+              onClick={handleLogin}
+              className="w-full flex items-center justify-center gap-2 bg-[#0077B5] text-white py-2 rounded-lg hover:bg-[#005983] transition duration-200"
+            >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 34 34"
+              className="w-5 h-5"
+              fill="white"
+            >
+            <path d="M34,17C34,7.6,26.4,0,17,0S0,7.6,0,17s7.6,17,17,17S34,26.4,34,17z M10.1,25H5.8V13.5h4.3V25z M8,11.7 c-1.4,0-2.4-1.1-2.4-2.4S6.6,6.9,8,6.9s2.4,1.1,2.4,2.4S9.4,11.7,8,11.7z M28.2,25h-4.3v-5.5c0-1.3,0-3-1.9-3s-2.2,1.5-2.2,2.9V25 h-4.3V13.5h4.1v1.6h0.1c0.6-1.1,2.1-2.2,4.3-2.2c4.6,0,5.5,3,5.5,6.9V25z"/>
+            </svg>
+              Sign up with LinkedIn
+            </button>
+
+            {/*<LinkedInLogin text="Sign up" role="recruiter" route="recruiter" />*/}
+
+            <h1 style={{'margin-top': "10px"}} className="text-sm font-semibold text-gray-400 text-center">
+              ---- Sign up with Email or LinkedIn ----
             </h1>
+
             <div className="flex flex-col space-y-2">
               <label className="font-bold">Full Name</label>
               <input

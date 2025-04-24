@@ -49,7 +49,7 @@ import { Contact } from "./models/contact.model.js";
 import { CandidateSubscription } from "./models/candidateSubscription.model.js";
 
 import chatbotRoutes from "./routes/chatbot.js";
-
+import AuthRoutes from "./routes/auth.route.js";
 
 const app = express();
 const server = createServer(app);
@@ -94,6 +94,7 @@ app.use(cookieParser());
 
 app.use("/socket.io/", (req, res, next)=> next());
 
+app.use("/api/linkedin", AuthRoutes)
 
 // // 📌 CSRF Protection
 // const csrfProtection = csurf({ cookie: true });

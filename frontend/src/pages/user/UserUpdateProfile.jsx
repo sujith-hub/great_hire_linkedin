@@ -22,8 +22,7 @@ import { Label } from "@/components/ui/label";
 import { Loader2, Pencil } from "lucide-react";  
 
 // Import API endpoint for user-related requests
-import { USER_API_END_POINT } from "@/utils/ApiEndPoint";  
-
+import { USER_API_END_POINT } from "@/utils/ApiEndPoint";
 
 
 const UserUpdateProfile = ({ open, setOpen }) => {
@@ -37,12 +36,16 @@ const UserUpdateProfile = ({ open, setOpen }) => {
   const [hasExperience, setHasExperience] = useState(
     !!user?.profile?.experience?.jobProfile // true if experience exists
   );
-
+// Prevent rendering until user is available
+console.log("Redux user in profile page:", user);
+if (!user) {
+  return <div>Loading your profile...</div>;
+}
   // Initialize state with user details, ensuring default values if user data is missing
   const [input, setInput] = useState({
     fullname: user?.fullname || "",
-    email: user?.emailId.email || "",
-    phoneNumber: user?.phoneNumber.number || "",
+    email: user?.emailId?.email || user?.email ||"",
+    phoneNumber: user?.phoneNumber?.number || "",
     bio: user?.profile?.bio || "",
     experience: user?.profile?.experience?.duration || "",
     skills: user?.profile?.skills?.join(", ") || "",
@@ -146,6 +149,7 @@ const UserUpdateProfile = ({ open, setOpen }) => {
       return; // Stop form submission
     }
     const formData = new FormData();
+    //formData.append("userId", user._id);
     formData.append("fullname", input.fullname);
     formData.append("email", input.email);
     formData.append("phoneNumber", input.phoneNumber);
